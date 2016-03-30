@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+
+    </head>
+    <body class="um-vp" ontouchstart>
+        <div class="ub ub-f1 ub-ver" style="background-color: #FFFFFF;line-height: 3em;margin-bottom: .5em;">
+            <div class="ub" style="height:3em;border-bottom: 1px solid #DBDBDB;padding:0 1em;color: #7A7A7A">
+                订单号：<span id="orderNo"></span>
+            </div>
+            <div class="ub" style="height:3em;padding:0 1em;color: #FF3B77">
+                等待买家付款
+            </div>
+        </div>
+        <div class="ub ub-f1" style="padding: 0.8em;background-color: #FFFFFF;margin-bottom: .5em;">
+            <div class="ub ub-ver ub-f1" >
+                <div class="" style="color:#3D3D3D;line-height: 2em;margin:0 1em;">
+                    收货人：<span id="contact"></span>
+                    <div style="float: right" id="tel"></div>
+                </div>
+                <div class="ub ulev-1" style="color:#808080;line-height: 1.4em;margin-top: .5em;padding: 0 1em;">
+                    <img class="" src="../image/Pin-Assistor.png" style="width:1.2em"/>
+                    <div style="width:85%;margin: 0 1em;">
+                        收货地址：<span id="address"></span>
+                    </div>
+                    <!-- <div class="fa fa-angle-right fa-2x"></div> -->
+
+                </div>
+            </div>
+        </div>
+
+        <div class="ub ub-ver" style="padding: 0.8em;background-color: #FFFFFF;margin-bottom: .5em;">
+            <ul id="List">
+
+            </ul>
+        </div>
+
+        <div class="ub ub-f1" style="padding: 0.8em;background-color: #FFFFFF;margin-bottom: 1px;">
+            <div class="ub ub-f1" style="line-height: 2em;">
+                <div class="" style="color:#3D3D3D;margin: 0 .5em;">
+                    配送
+                </div>
+                <img class="" src="../image/Question2.png" style="width:1.5em;margin-top: .2em;" id="peisong"/>
+                <div style="color:#808080;margin-left: 30%;">
+                    卖家回国后发货，到付
+                </div>
+            </div>
+        </div>
+
+        <div class="ub ub-f1 isover" style="padding: 0.8em;background-color: #FFFFFF;margin-bottom: 1px;">
+            <div class="ub ub-f1" style="line-height: 2em;" id="couponlist">
+                <div class="ub ub-f1" style="color:#3D3D3D;margin: 0 .5em;">
+                    优惠券
+                </div>
+                <div style="color:#808080;margin-right: 1em;" id="coupon">满99元可以使用10元优惠券</div>
+                <div class="fa fa-angle-right fa-2x" style="font-size: 1.5em;margin-right: 0.5em;color:#808080"></div>
+
+            </div>
+        </div>
+        <div class="ub ub-f1 isover" style="padding: 0.8em;background-color: #FFFFFF;margin-bottom:1px;">
+            <div class="ub ub-f1" style="line-height: 2em;">
+                <div class="ub ub-f1" style="color:#3D3D3D;margin: 0 .5em;">
+                    积分
+                </div>
+                <div style="color:#808080;margin-right: 1em;" id="points"></div>
+                <div class="ub ub-ac ub-pc" style="margin-right: .5em;">
+                    <div id="choose1" class="ub ub-ac false" style="width: 2em;height: 1.2em;border-radius: 1em;">
+                        <div class="cbgb" style="width: 1.1em;height: 1.2em;border-radius: 1em;"></div>
+                    </div>
+                    <!-- <div class="ub ub-ac ub-pe true" style="width: 2em;height: 1.2em;border-radius: 1em;">
+                    <div class="cbgw" style="width: 1.1em;height: 1.2em;border-radius: 1em;"></div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+        <div class="ub ub-f1 isover" style="padding: 0.8em;background-color: #FFFFFF;margin-bottom: 1px;">
+            <div class="ub ub-f1" style="line-height: 2em;">
+                <div class="ub ub-f1" style="color:#3D3D3D;margin: 0 .5em;">
+                    余额
+                </div>
+                <div style="color:#808080;margin-right: 1em;" id="balance"></div>
+                <div class="ub ub-ac ub-pc" style="margin-right: .5em;">
+                    <div id="choose2" class="ub ub-ac false" style="width: 2em;height: 1.2em;border-radius: 1em;">
+                        <div class="cbgb" style="width: 1.1em;height: 1.2em;border-radius: 1em;"></div>
+                    </div>
+                    <!-- <div class="ub ub-ac ub-pe true" style="width: 2em;height: 1.2em;border-radius: 1em;">
+                    <div class="cbgw" style="width: 1.1em;height: 1.2em;border-radius: 1em;"></div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+
+        <div class="ub ub-f1 ub-pc ub-ac ub-ver isover" id="pricepart" style="margin:1em;">
+            <div class="ub ub-ac ub-pc" style="width: 15em" id="test">
+                <div id="mustpay">
+                    应付
+                </div>
+                <div style="color:#FF0D57;" id="totalPrice">
+                    ￥0
+                </div>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <div style="font-size: .8em;width:9em">
+                    已优惠<span style="color:#FF0D57;" id="cheap">￥0</span>
+                </div>
+            </div>
+            <!-- <div>调价原因</div>             -->
+
+        </div>
+        <div class="ub ub-f1 ub-ver isover" id="paymode" style="background: #FFFFFF;">
+            <div class="ub ub-ac ub-pc" style="width: 100%;line-height: 3em;color: #999999">
+                支付方式
+            </div>
+            <div class="ub ub-f1" style="padding: .5em;">
+                <ul style="width:100%;padding-bottom: .5em;">
+                    <li style='width:31%;display: inline-block;margin-left: 1.5%;text-align: center'  onclick="Alipay();">
+                        <img src="../image/alipay.png" style="height:2.2em"/>
+                        <div class="ub ub-ac ub-pc" style="width:100%;line-height: 2.4em;">
+                            支付宝
+                        </div>
+                    </li>
+                    <li style='width:31%;display: inline-block;margin-left: 1.5%;text-align: center' onclick="weixinpay();">
+                        <img src="../image/weixin.png" style="height:2.8em"/>
+                        <div class="ub ub-ac ub-pc" style="width:100%;line-height: 2.4em;">
+                            微信支付
+                        </div>
+                    </li>
+                    <li style='width:31%;display: inline-block;margin-left: 1.5%;text-align: center' onclick="unionPay();">
+                        <img src="../image/yinlian.png" style="height:2.5em"/>
+                        <div class="ub ub-ac ub-pc" style="width:100%;line-height: 2.4em;">
+                            银联支付
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+         <div class="ub ub-ac ub-pc uhide" id="cancleorder" style="height: 4em;padding:.5em;background-color: #F2F2F2">
+           <div class="ub ub-ac ub-pc ulev-3" id="cancle" style="width:9em;height: 2.2em;border-radius:.2em;color:#00C1F9;background-color:#FFFFFF;border: 1px solid #00C1F9;">
+                                       取消定单
+            </div>
+        </div>
+
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/moment.js"></script>
+        <script src="../js/main.js"></script>
+        <script src="../js/country.js"></script>
+        <script src="../js/md5-min.js"></script>
+    </body>
+    <script>
+        var minusMy=appcan.locStorage.getVal("minusMy");
+        // alert(minusMy);
+        //var totalPrice=400;
+        var partner = "******";
+        var seller = "******";
+        var rsaPrivate = "************";
+        var rsaPublic = "************";
+        var notifyUrl;
+        //http://120.26.77.175:3000
+        var orderId = appcan.locStorage.getVal("orderId");
+        var userId = appcan.locStorage.getVal("userId");
+        console.log(orderId);
+        var country = appcan.locStorage.getVal("country");
+        var countryf=areaList[country].name; 
+        var back = appcan.locStorage.getVal("back");
+        var fetchgoSeller;
+        //卖家id;
+        var originAmount;
+        //订单初始金额，外币
+        var priceCode;
+        //币种
+        var payRate;
+        //汇率
+        var userCoupon;
+        //var points=appcan.locStorage.getVal("integar");//获取到的用户积分
+        var points;
+        //积分
+        var rates = Number(0.01);
+        //积分兑换率
+        var totalPrice = 0;
+        var cheap;
+        //积分可以兑换的金额
+        var couponPrice = 0;
+        var num;
+        var last = 0;
+        var balance;
+        //余额
+        var lastCheap = 0;
+        var showBalance = 0;
+        //最后用户使用的余额
+
+        appcan.ready(function() {
+            if(minusMy<=0){
+                $(".isover").remove();
+                $("#cancleorder").removeClass("uhide");
+            }else{
+                /*查询用户的积分和余额*/
+                appcan.request.ajax({
+                    url : api + '/api/user/me/' + userId,
+                    type : 'get',
+                    dataType : 'json',
+                    success : function(data) {
+                        balance = data.data.user.money;
+                        //查询到用户的余额
+                        $("#balance").html(balance + "元");
+                        point = data.data.user.score;
+                        points = point-point%100;
+                        //查询到用户的积分
+                        cheap = points * rates;
+                        /*单个订单只允许使用1000积分*/
+                        if (points < 1000) {
+                            $("#points").html(points + "积分抵扣" + cheap + "元");
+                        } else {
+                            points = 1000;
+                            cheap=10;
+                            $("#points").html(points + "积分抵扣" + cheap + "元");
+                        }
+    
+                    },
+                    error : function(errMessage) {
+                        //alert("errMessage:" + JSON.stringify(errMessage));
+                    }
+                });
+            }
+            show();
+            uexAliPay.onStatus = function(status, des) {
+                //alert(des);
+                uexWindow.evaluatePopoverScript("paylist", "content", "show()");
+                uexWindow.evaluateScript('waitpay', '0', 'appcan.window.close(-1)');
+            }
+            
+            
+            //微信授权回调
+            uexWeiXin.cbRegisterApp = function(opCode, dataType, data) {
+                // alert("cbRegisterApp" + data);
+                if (data == 0) {
+                    uexWeiXin.isSupportPay();
+                   
+                }
+            };
+            uexWeiXin.cbIsSupportPay = function (opCode,dataType,data) {
+                // alert("cbIsSupportPay"+data);
+                if(data==0){
+                    getPrepayId(); 
+                }
+            }
+            uexWeiXin.cbGetPrepayId = function(data) {
+                // alert("cbGetPrepayId"+data);
+                var pay = JSON.parse(data);
+                var date = new Date();
+                var timestamp = date.getTime().toString().substring(0,10);
+                if(JSON.parse(data).result_code=="SUCCESS"){
+                    // alert(11111);
+                    var json ={
+                        appid:"******",//(必选)微信分配的AppID
+                        partnerid:"******",//(必选)微信支付分配的商户号
+                        prepayid:pay.prepay_id,//(必选)微信返回的支付交易会话ID,从gettextareapayId接口的回调方法中获取
+                        "package":"Sign=WXPay",//(必选)暂填写固定值Sign=WXPay
+                        noncestr:pay.nonce_str,//(必选)随机字符串
+                        timestamp:timestamp,//(必选)时间戳
+                        sign:pay.sign//(必选)签名} 
+                    }
+                   var strrrr="appid=******&noncestr="+pay.nonce_str+"&package=Sign=WXPay&partnerid=******&prepayid="+pay.prepay_id+"&timestamp="+timestamp+"&key=******";
+                    json.sign = hex_md5(strrrr).toUpperCase();
+                    // alert("start"+JSON.stringify(json));
+                    uexWeiXin.startPay(JSON.stringify(json));
+                }
+            }
+        });
+        function weixinpay(){
+            // alert("kaishi");
+            uexWeiXin.registerApp('******');
+        }
+        function getPrepayId() {
+            var money;
+            var userCouponId;
+             if ($("#choose1").hasClass("true")) {
+            } else {
+                points = 0;
+            }
+            if ($("#choose2").hasClass("true")) {
+                money = showBalance;
+            } else {
+                money = 0;
+            }
+            // alert($('#coupon').html());
+            if ($('#coupon').html() == '满99元可以使用10元优惠券') {
+                // alert('没有选择优惠券');   
+                userCouponId = 'X';
+            } else {
+                userCouponId = userCoupon;
+            }
+            // alert("getPrepayId");
+            // alert(orderId+","+originAmount+","+payRate+","+priceCode);
+            // alert(money+","+points+","+userCouponId);
+            var date = new Date();
+            var timestamp = date.getTime().toString().substring(0,10);
+            var param1 = {
+                appid : "******",
+                mch_id : "******",
+                nonce_str : "******",
+                body : "海外购",
+                detail :"detail",
+                attach :orderId+"_"+originAmount+"_"+payRate+"_"+priceCode+"_"+money+"_"+points+"_"+userCouponId+"_"+"1",
+                out_trade_no : timestamp,
+                fee_type : "CNY",
+                total_fee :last*100 ,//last*100
+                spbill_create_ip : "127.0.0.1",
+                // time_start : "20160201144625",
+                // time_expire : "20160201175225",
+                notify_url : api+"/api/trans/wxpay",
+                trade_type : "APP",
+                sign : "******"
+            };
+            var stringSign = "appid=******&attach="+param1.attach+"&body="+param1.body+"&detail="+param1.detail+"&fee_type=CNY&mch_id=******&nonce_str=******&notify_url="+ param1.notify_url +"&out_trade_no="+param1.out_trade_no+"&spbill_create_ip=127.0.0.1&total_fee="+param1.total_fee+"&trade_type=APP&key=******";
+            var md = hex_md5(stringSign).toUpperCase();
+            // alert(md);
+            param1.sign = md;
+            var data1 = JSON.stringify(param1);
+            // alert(data1);
+            uexWeiXin.getPrepayId(data1);
+        }
+        function setInfo() {
+            if ($("#choose2").hasClass("true")) {
+                var money = showBalance;
+                // appcan.locStorage.setVal("lastbalance",);
+            } else {
+                var money = 0;
+            }
+            if ($('#coupon').html() == '满99元可以使用10元优惠券') {
+                // alert('没有选择优惠券');
+                var userCouponId = '';
+            } else {
+                var userCouponId = userCoupon;
+            }
+            // console.log("userId"+userId+"&orderId"+orderId+"&fetchgoSeller"+fetchgoSeller+"&originAmount"+originAmount+"&priceCode"+priceCode+"&rate"+payRate+"&score"+score+"&money"+money+"&userCouponId"+userCoupon+"&action=1");
+            notifyUrl = api + "/api/trans/alipay?orderId=" + orderId + "&originAmount=" + originAmount + "&priceCode=" + priceCode + "&rate=" + payRate + "&score=" + points + "&money=" + money + "&userCouponId=" + userCouponId + "&action=1";
+            console.log(notifyUrl);
+            uexAliPay.setPayInfo(partner, seller, rsaPrivate, rsaPublic, notifyUrl);
+        }
+
+        function Alipay () {
+            setInfo();
+            var subject = "海外购" + num;
+            var body = "订单内容";
+            var fee = last;
+            // alert(num+","+ subject+","+ body+","+ fee);
+            uexAliPay.pay(num, subject, body, fee);
+        }
+        
+        function show() {
+            appcan.request.ajax({//567e69d8785c71ca2ab3dfeb
+                url : api + '/api/order/shoppingInfo?orderId=' + orderId,
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {
+                    if (data.status == 1) {
+                        var address = data.data.address.detail;
+                        var contact = data.data.address.contact;
+                        var tel = data.data.address.tel;
+                        var orderNo = data.data.orderNo;
+                        $("#orderNo").html(orderNo);
+                        $("#address").html(address);
+                        $("#contact").html(contact);
+                        $("#tel").html(tel);
+                        var len = data.data.items.length;
+
+                        //alert(len);
+                        var html = "";
+                        for (var i = 0; i < len; i++) {
+                            var price = data.data.items[i].item.price;
+                            var count = data.data.items[i].count;
+                            var imgSrc = api + data.data.items[i].item.images[0];
+                            var code = data.data.items[i].item.priceCode;
+                            var rate = data.data.items[i].item.rate;
+                            var unit = areaList[country].currency;
+                            var lastprice = Math.ceil(price *rate*1.15);
+                            var desc = data.data.items[i].item.desc;
+                             html += '<li>' + '<div class="ub ub-f1" style="padding: 0.8em;background-color: #FFFFFF;margin-bottom: .1em;">' + '<img src="' + imgSrc + '" style="width:7em;margin-right: 0.7em;height:7em"/>' + '<div class="ub ub-ver ub-f1" >' + '<div class="" style="color:#3D3D3D;line-height: 2em;">' + desc + '<div style="float: right">×' + count + '</div>' + '</div>' + '<div class="ub ulev-1" style="color:#808080;line-height: 1.6em;">' + '<img src="../image/flag/'+countryf+'.png" style="width:1.2em"/>&nbsp;' + country + '&nbsp;&nbsp; ' + '<img src="../image/plane.png" style="width:0.7em"/>&nbsp;' + back + '回国' + '</div>' + '<div class="" style="color:#3D3D3D;line-height: 1.2em;color:red">' + '￥ ' + lastprice + '<span class="ulev-1" style="color:#808080; ">=' + price + unit + '×' + rate + '(汇率)+15%代购费</span>' + '</div>' + '</div>' + '</div>' + '</li>'
+                            $("#List").html(html);
+                        }
+                        if (data.data.finalAmount) {
+                                // var finalprice = Math.ceil(data.data.finalAmount*rate*1.15);
+                                var finalprice = Math.ceil(data.data.finalAmount);
+                                totalPrice += Number(finalprice - lastCheap);
+                                $("#mustpay").html("调价后应付");
+                                last=totalPrice;
+                                $("#totalPrice").html("￥" + totalPrice);
+                                var htmla = '<div class="ub ulev-1" style="line-height: 1.8em;color:#808080;">调价说明：' + data.data.changeAmountReason + '</div>';
+                                $("#test").after(htmla);
+                            } else {
+                                totalPrice += Number(lastprice * count - lastCheap);
+                                last=totalPrice;
+                                $("#totalPrice").html("￥" + totalPrice);
+                            }
+                           
+                        fetchgoSeller = data.data.shoplive.seller;
+                        //卖家id;
+                        originAmount = Number(price * count);
+                        //订单初始金额，外币
+                        priceCode = areaList[country].code;
+                        //币种
+                        payRate = data.data.items[0].item.rate;
+                        //汇率
+                        num = data.data.orderNo;
+                        //补税的时候num后面加0001
+
+                    }
+                },
+                error : function(errMessage) {
+                    //alert("errMessage:" + JSON.stringify(errMessage));
+                }
+            });
+        }
+
+        function DownCount() {
+            var today = new Date();
+            now = parseInt(today.getTime() / 1000);
+            var over = [];
+            for (var i = 0; i < arr.length; i++) {
+                var overtime = moment(arr[i], 'YYYY-MM-DDTHH:mm:ss.sssZ');
+                var deadline = overtime.unix();
+                var minus = deadline - now;
+                if (minus > 0) {
+                    $("#time").html('<div style="color:#ADADAD">剩余</div><div class="ub ub-ac ub-pc time" id="hour' + i + '" style="margin-left: 0.5em"></div>：<div class="ub ub-ac ub-pc time" id="minute' + i + '"></div>：<div class="ub ub-ac ub-pc time" id="second' + i + '"></div>');
+                    timechange(minus, i);
+                } else {
+                    $("#time").html('<div style="color:#F1F1F1;background-color:#B0B5B6;padding:.3em .7em;border-radius: .3em;font-size: 1em; ">已经结束</div>');
+                }
+            }
+            window.setTimeout("DownCount()", 1000);
+        }
+
+        function timechange(minus, i) {
+            CSecond = minus % 60;
+            CMinute = parseInt(minus % 3600 / 60);
+            CHour = parseInt(minus / 3600);
+            if (CMinute < 10) {
+                CMinute = "0" + CMinute;
+            }
+            if (CHour < 10) {
+                CHour = "0" + CHour;
+            }
+            if (CSecond < 10) {
+                CSecond = "0" + CSecond;
+            }
+            $("#hour" + i).html(CHour);
+            $("#minute" + i).html(CMinute);
+            $("#second" + i).html(CSecond);
+        }
+
+
+        $("#choose1").click(function() {
+            if(totalPrice<cheap){//判断商品总金额是否小于积分可抵扣金额
+                uexWindow.toast(0, 5, "抱歉，您的总金额暂不能使用积分抵扣哦", 3000); 
+                cheap=0;
+                return;
+            }
+            else if(totalPrice-couponPrice<cheap){//判断商品总金额减去优惠券后剩余的金额是否小于积分可抵扣金额
+               uexWindow.toast(0, 5, "抱歉，您的总金额暂不能使用积分抵扣哦", 3000); 
+                cheap=0;
+                return; 
+            }
+            $(this).children().toggleClass("cbgw");
+            $(this).toggleClass("true").toggleClass("ub-pe");
+            if ($("#choose1").hasClass("true")) {
+                lastCheap += cheap;
+                //积分算进优惠金额里面
+                var data = Number(lastCheap + couponPrice);
+                $("#cheap").html("￥" + data);
+                last = Math.ceil(totalPrice - data);
+                $("#totalPrice").html("￥" + last);
+            } else {
+                lastCheap -= cheap;
+                //积分算进优惠金额里面
+                var data = Number(lastCheap + couponPrice);
+                $("#cheap").html("￥" + data);
+                last = Math.ceil(totalPrice - data);
+                $("#totalPrice").html("￥" + last);
+            }
+            if (last == 0) {
+                $("#paymode").empty();
+                var html = '';
+                html += '<div class="ub ub-ac ub-pc" style="height: 5em;padding:.5em;display:none;">' + '<div class="ub ub-ac ub-pc ulev-3" id="submit" style="width:8em;height: 2.2em;border-radius:.2em;color:#00C1F9;background-color:#FFFFFF;border: 1px solid #00C1F9;">' + '点击支付' + '</div>' + '</div>';
+                $("#paymode").append(html);
+            }
+        })
+        $("#choose2").click(function() {
+            if(totalPrice<cheap){//判断商品总金额是否小于积分可抵扣金额
+                cheap=0;
+            }
+            else if(totalPrice-couponPrice<cheap){//判断商品总金额减去优惠券后剩余的金额是否小于积分可抵扣金额
+                cheap=0;
+            }
+            $(this).children().toggleClass("cbgw");
+            $(this).toggleClass("true").toggleClass("ub-pe");
+            if ($("#choose2").hasClass("true")) {
+                /*余额>总金额-优惠券-积分*/
+                if (balance > Number(totalPrice - couponPrice - cheap)) {
+                    showBalance = Math.ceil(totalPrice - couponPrice - cheap);
+                    //显示可用余额就是总金额-优惠券-积分
+                    $("#balance").html(showBalance + "元");
+                    //余额处更改可用余额
+                    lastbalance = Math.ceil(balance - showBalance);
+                    appcan.locStorage.setVal("lastbalance", lastbalance);
+                    //存下付款后剩下的余额，以备补税付款的时候取用
+                    lastCheap += showBalance//余额算进优惠里面
+
+                } else {
+                    showBalance = balance;
+                    //否则的话，可用余额显示就是从用户处获取到的总余额
+                    $("#balance").html(showBalance + "元");
+                    lastCheap += balance;
+                    //余额算进优惠券里面
+                    appcan.locStorage.setVal("lastbalance", 0);
+                    //存下付款后剩下的余额，以备补税付款的时候取用
+                }
+                var data = Number(lastCheap + couponPrice);
+                $("#cheap").html("￥" + data);
+                last = Math.ceil(totalPrice - data);
+                $("#totalPrice").html("￥" + last);
+            } else {
+                if (balance > Number(totalPrice - couponPrice - cheap)) {
+                    showBalance = Number(totalPrice - couponPrice - cheap);
+                    //显示可用余额就是总金额-优惠券-积分
+                    $("#balance").html(balance + "元");
+                    //余额处更改更用余额
+                    lastCheap -= showBalance//余额算进优惠里面
+                    appcan.locStorage.setVal("lastbalance", balance);
+                    //存下付款后剩下的余额，以备补税付款的时候取用
+                } else {
+                    showBalance = balance;
+                    //否则的话，可用余额显示就是从用户处获取到的总余额
+                    $("#balance").html(balance + "元");
+                    //余额处更改更用余额
+                    lastCheap -= balance;
+                    //余额算进优惠券里面
+                    appcan.locStorage.setVal("lastbalance", balance);
+                    //存下付款后剩下的余额，以备补税付款的时候取用
+                }
+                // lastCheap-=balance;
+                var data = Number(lastCheap + couponPrice);
+                $("#cheap").html("￥" + data);
+                last = Math.ceil(totalPrice - data);
+                $("#totalPrice").html("￥" + last);
+            }
+            if (last == 0) {
+                $("#paymode").empty();
+                var html = '';
+                html += '<div class="ub ub-ac ub-pc" style="height: 5em;padding:.5em;display:none;">' + '<div class="ub ub-ac ub-pc ulev-3" id="submit" style="width:8em;height: 2.2em;border-radius:.2em;color:#00C1F9;background-color:#FFFFFF;border: 1px solid #00C1F9;" onclick="submit()">' + '点击支付' + '</div>' + '</div>';
+                $("#paymode").append(html);
+            } else {
+                $("#paymode").empty();
+                var html = '';
+                html += '<div class="ub ub-ac ub-pc" style="width: 100%;line-height: 3em;color: #999999">支付方式</div>' + '<div class="ub ub-f1" style="padding: .5em;">' + '<ul style="width:100%;padding-bottom: .5em;">' 
+                + '<li style="width:31%;display: inline-block;margin-left: 1.5%;text-align: center" onclick="pay();">' 
+                + '<img src="../image/alipay.png" style="height:2.2em"/>' 
+                + '<div class="ub ub-ac ub-pc" style="width:100%;line-height: 2.4em;">支付宝</div>' 
+                + '</li>' + '<li style="width:31%;display: inline-block;margin-left: 1.5%;text-align: center" onclick="weixinpay();">' 
+                + '<img src="../image/weixin.png" style="height:2.8em"/>' 
+                + '<div class="ub ub-ac ub-pc" style="width:100%;line-height: 2.4em;">微信支付</div>'
+                 + '</li>' + '<li style="width:31%;display: inline-block;margin-left: 1.5%;text-align: center">' 
+                 + '<img src="../image/yinlian.png" style="height:2.5em"/>' + '<div class="ub ub-ac ub-pc" style="width:100%;line-height: 2.4em;">银联支付</div>' + '</li>' + '</ul>' + '</div>';
+                $("#paymode").append(html);
+            }
+        })
+
+        appcan.button("#peisong", "btn-act", function() {
+            appcan.frame.open("questionPop", "questionPop.html",0,0);
+        });
+        appcan.button("#couponlist", "btn-act", function() {
+            if(totalPrice<99){
+              uexWindow.toast(0, 5, "抱歉，满99元才能使用优惠券哦", 3000); 
+              return;       
+            }
+            appcan.window.open('couponlist', 'couponlist.html', 10);
+        })
+        function submit(){
+            appcan.request.ajax({
+                url : api +'/api/trans/pay/',
+                type : 'post',
+                dataType : 'json',
+                data : {
+                    "orderId" : orderId,
+                    "originAmount" : originAmount,
+                    "rate" : payRate,
+                    "priceCode" : priceCode,
+                    "money" : showBalance,
+                    "score" : points,
+                    "action" : 1,
+                    "userCouponId" : couponPrice //非必须
+                },
+                success : function(data) {
+                    // alert('余额支付成功');
+                    uexWindow.toast("0", "5", "余额支付成功", "2000");
+                    //uexWindow.reload();
+                    uexWindow.evaluatePopoverScript("myorder", "content", "show()");
+                    uexWindow.evaluatePopoverScript("paylist", "content", "show()");
+                    uexWindow.evaluateScript("waitpay", "0", "appcan.window.close(-1);");
+                },
+                error : function(errMessage) {
+                    alert("errMessage:" + JSON.stringify(errMessage));
+                }
+            }) 
+        }
+        
+        function couponlist(price, id) {
+            couponPrice = Number(price);
+            userCoupon = id;
+            $('#coupon').html('已抵扣' + price+"元");
+            var data = Number(lastCheap + price);
+            $("#cheap").html("￥" + data);
+            last = Math.ceil(totalPrice - data);
+            $("#totalPrice").html("￥" + last);
+            
+        }
+        function unionPay(){
+            var alertcontent="暂时没有开通银联支付，请使用其他方式支付！";
+            appcan.locStorage.setVal("alertcontent",alertcontent);
+            appcan.frame.open("alertPop","alertPop.html");
+        }
+        
+        $("#cancle").click(function(){   
+            //alert(userId+","+orderid);     
+            appcan.request.ajax({
+                url :api+'/api/order/cancel?userId='+userId+'&orderId='+orderId,
+                type : 'get',
+                dataType : 'json',
+                success : function(data) {
+                      if(data.status == 1){
+                          uexWindow.toast("1","5","订单取消成功","2000");                 
+                          uexWindow.evaluateScript('paylist',0,'uexWindow.reload();');           
+                          uexWindow.evaluateScript('waitpay',0,'appcan.window.close(-1);'); 
+                          uexWindow.evaluatePopoverScript("my", "content", "showMyData()");
+                         }
+                     },
+                error : function(errMessage) {
+                    alert("errMessage:"+JSON.stringify(errMessage));                         
+                }
+            });            
+        })
+
+    </script>
+</html>

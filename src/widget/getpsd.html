@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+         <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+         <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <link rel="stylesheet" href="css/content.css">
+        <link rel="stylesheet" href="css/common.css">
+        <script src="js/main.js"></script>
+        
+    </head>
+    <body class="um-vp" style="background: #fff" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m">
+                <div class="nav-btn blue" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <h1 class="ut  bc-text ub-f1 ulev-3 ut-s tx-c" tabindex="0">重置密码</h1>
+                <div class="nav-btn blue" id="nav-right"></div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l " style="background-color: #FFFFFF;padding: 1.5em;">  
+                <div class="ub ub-ver" style="font-size: 1.1em;">
+                    <div class="ub uinput5" style="color: #898989;height: 2.5em;border: 1px solid #DFDFDF;">
+                        <input type="tel" id="phone" placeholder="请输入手机号" onblur="checkTel(this)" />
+                    </div>
+                    <div class="ub uinput5" style="color: #DFDFDF;margin: .8em 0;">                                                           
+                         <div class="ub ub-f1" style="height: 2.5em;border: 1px solid #DFDFDF;margin-right:.5em;padding:0 .25em">                                     
+                            <input class="ub" type="number" maxlength="6" placeholder="请输入验证码" id="code" style="width: 80%"/>
+                        </div>
+                        <input class="tx-c" id="getcode" type="button" style="border: 1px solid #DFDFDF;width: 100%;margin:0;height:2.5em;color: #000;background-color: #FFFFFF" value="获取验证码" onclick="time(this)"/>
+                      
+                    </div>
+                    <div class="ub uinput5" style="color: #898989;height: 2.5em;border: 1px solid #DFDFDF;border-bottom: none;">
+                        <input type="password" id="psd" placeholder="请输入密码" onblur="checkPsd(this)" />
+                    </div>
+                     <div class="ub uinput5" style="color: #DFDFDF;height: 2.5em;border: 1px solid #DFDFDF;">
+                        <input type="password" placeholder="请再次输入密码" id="psd" onblur="checkPsdag(this)"/>
+                    </div>
+                    <div id="reset" class="ub ub-ac ub-pc" style="background: #00C1F9;color: #FFFFFF;padding: .6em 2.5em;margin-top: 1.5em">
+                        确定                   
+                    </div>
+                </div>   
+               
+            </div>        
+            <!--content结束-->
+        </div>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+    </body>
+    <script>
+        appcan.ready(function() {
+
+        });
+        appcan.button(".nav-btn", "btn-act", function() {
+            appcan.window.close(-1);
+        })
+      
+         appcan.button("#getcode","btn-act",function(){         
+            var partten = /^(\+?0?86\-?)?1[345789]\d{9}$/; 
+             var phone = $("#phone").val();
+             if(!partten.test(phone)){
+                 return alert("非法电话号码");
+             } 
+            appcan.request.ajax({
+                url : api+'/api/user/getVerifyCodeWhenForgetPass?phone='+phone,
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {   
+                    console.log(data);
+                    if (data.status == 1) {
+                         time(document.getElementById("getcode"));
+                    } 
+                    uexWindow.toast("0", "5", data.msg, "2000");
+                },
+                error : function(errMessage) {
+                    uexWindow.toast("0", "5", "网络异常，请稍后重试", "2000");
+                 
+                }
+            });
+        })
+           var wait = 60;
+        function time(o) {
+            if (wait == 0) {
+                o.removeAttribute("disabled");
+                //o.className = 'btn-cl bc-l1 code';
+                 o.style.color = "#00C1F9"
+                o.value = "获取验证码";
+                wait = 60;
+            } else {
+                o.setAttribute("disabled", true);
+                //o.className = 'btn-cl code gary';
+                o.style.color = "gray"
+                o.value = "重新发送(" + wait + ")";
+                wait--;
+                setTimeout(function() {
+                    time(o)
+                }, 1000)
+            }
+        }
+        
+        appcan.button("#reset","btn-act",function(){  
+            var phone = $("#phone").val();
+            var code = $("#code").val();
+            var psd = $("#psd").val();
+            var data = {
+                phone: phone,
+                password: psd,
+                verifyCode: code  
+            }
+           console.log(data);
+             appcan.request.ajax({
+                url : api+'/api/user/forgetPassword',
+                type : 'POST',
+                dataType : 'json',
+                data : data,
+                success : function(data) { 
+                    uexWindow.toast("0", "5", data.msg, "2000");                                              
+                    if (data.status == 1) {
+                        appcan.window.close(-1);
+                    }
+                },
+                error : function(errMessage) {
+                    alert("errMessage"+errMessage);
+                 
+                }
+            });
+        })
+        
+         //验证手机号
+        function checkTel(object) {
+            var phone = object.value;
+            var patrn = /^(\+?0?86\-?)?1[345789]\d{9}$/;
+            if (phone.length == 0) {
+                object.value = '';
+                object.placeholder = "手机号不能为空！";
+                return false;
+            } else if (0 <= phone.indexOf(' ')) {
+                object.value = '';
+                object.placeholder = "手机号不能有空格！";
+                return false;
+            } else if (!patrn.exec(phone)) {
+                object.value = '';
+                object.placeholder = "请输入正确的手机号！";
+                return false;
+            } else {
+                object.placeholder = '';
+                return true
+            }
+        }
+
+        //验证密码
+        function checkPsd(object) {
+            var psd = object.value;
+            var patrn =/^(?=.{6,16}$)[0-9a-zA-Z_]+$/;
+            if (psd.length == 0) {
+                object.value = '';
+                object.placeholder = "密码不能为空!";
+                return false;
+            } else if (0 <= psd.indexOf(' ')) {
+                object.value = '';
+                object.placeholder = "密码不能有空格!";
+                return false;
+            } else if (!patrn.exec(psd)) {
+                object.value = '';
+                object.placeholder = "6-16位数字、字母、下划线！";
+                return false;
+            } else {
+                object.placeholder = '';
+                return true
+            }
+        }
+        
+        //再次验证密码
+        function checkPsdag(object) {
+            var psd = $("#psd").val();
+            var psdag = object.value;
+            if (psd.length == 0) {
+                object.value = '';
+                object.placeholder = "密码不能为空!";
+                return false;
+            } else if (psd != psdag) {
+                object.value = '';
+                object.placeholder = "两次输入密码不一致!";
+                return false;
+            } else {
+                object.placeholder = '';
+                return true
+            }
+        }
+    </script>
+</html>

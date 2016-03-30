@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+         <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart id="list" style="background-color: #F2F2F2">
+        
+    </body>
+    <script src="../js/appcan.js"></script>
+    <script src="../js/appcan.control.js"></script>
+    <script src="../js/main.js"></script>
+    </body>
+    <script>
+    var userId = appcan.locStorage.getVal("userId");
+        appcan.ready(function() {
+            show();
+        });
+         
+        function show(){
+            appcan.request.ajax({
+                url :api+'/api/user/findCare?userId='+userId,
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {
+                    if(data.status==1){
+                        var len=data.data[0].brand.length;
+                        if(len==0){
+                        // uexWindow.toast("1", "5", "您还没有关注的品牌", "1000"); 
+                          var html='';
+                           html+='<div class="ub ub-ac ub-pc ub-ver" >'
+                           +'<img src="../image/noon.png" style="margin-top:10em"/>'
+                           +'<div class="ub" style="color:red;margin-top:0.8em">'
+                           +'您还没有关注的品牌哦!'
+                           +'</div>'
+                           +'</div>'                           
+                          $("#list").html(html);
+                        }
+                        else{
+                             var html='';
+                        for(var i=0;i<len;i++){
+                           var name=data.data[0].brand[i].name;
+                           var id=data.data[0].brand[i]._id;
+                           var desc=data.data[0].brand[i].desc;
+                           var imgSrc=api+data.data[0].brand[i].brandImage;
+                           html+= '<div class="ub ub-f1 ub-ac hb1" style="background-color: #FFFFFF;" id="cancle'+id+'">'
+                               +'<img src="'+imgSrc+'" class="logo1"/>'
+                               +'<div class="ub ub-f1 ub-ver">'
+                               +'<div class="ub ulev-5" >'
+                               +name
+                               +'</div>'
+                               // +'<div class="ub ulev-1" style="color:#808080">'
+                               // +desc
+                               // + '</div>'
+                                + '</div>'
+                               +'<div class="ub ub-ac ub-pc ulev-3 concern" onclick="cancle(\'' + id + '\')">'
+                               +' 取消关注'
+                               +'</div>'
+                               +' </div>'
+                          $("#list").html(html);     
+                        }
+                        }
+                       
+                        
+                    }    
+                },
+                error : function(errMessage) {
+                    //alert("errMessage:"+JSON.stringify(errMessage));                         
+                }
+            }); 
+        }
+        function cancle(id){
+            appcan.window.alert({
+                    title : "提示",
+                    content : "您是否要取消关注?",
+                    buttons : ['确定', '取消'],
+                    callback : function(err, data, dataType, optId) {
+                       if(['确定', '取消'][data]=='确定'){
+                               appcan.request.ajax({
+                                    url :api+'/api/user/brandCancel',
+                                    type : 'post',
+                                    dataType :'json',
+                                    data : {
+                                         "userId": userId,
+                                         "brandId": id
+                                    },
+                                    success : function(data) {
+                                          if(data.status == 1){
+                                              $("#cancle"+id).remove(); 
+                                              if($("#list").html()==""){
+                                                 var html='';
+                                                   html+='<div class="ub ub-ac ub-pc ub-ver" >'
+                                                   +'<img src="../image/noon.png" style="margin-top:10em"/>'
+                                                   +'<div class="ub" style="color:red;margin-top:0.8em">'
+                                                   +'您还没有关注的品牌哦!'
+                                                   +'</div>'
+                                                   +'</div>'                           
+                                                  $("#list").html(html);   
+                                             }
+                                          }                  
+                                    },
+                                    error : function(errMessage) {
+                                       // alert("errMessage:"+JSON.stringify(errMessage));                         
+                                    }
+                                });
+                            }
+                       }
+                })
+            }
+
+    </script>
+</html>

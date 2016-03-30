@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <style type="text/css">
+            #page_0{width: 100%;height: 100%;background-color: rgba(0,0,0,0.4)}
+            #content{width: 75%;background-color: #fff;margin:60% auto;border-radius: 0.4em;padding: 0.8em;padding-bottom: 0.6em;border: 1px solid rgba(0,0,0,0.1); }
+            .tit{text-align: center;font-size: 1.1em;margin-bottom: -.3em}
+            .body{text-align: center;font-size: 0.85em;padding: 1em;}
+        </style>
+    </head>
+    <body class="um-vp" style="" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <div id="content">
+                <div class="tit" style="font-weight: bolder;">提示</div>
+                <div class="body" style="line-height: 1.6em"></div>
+                <div style="text-align: center;line-height:2.4em; border-top: 1px solid #ddd;margin: 0 -0.8em;color:#348AD6;">
+                    <div class="cancel" style="float: left;border-right: 1px solid rgba(0,0,0,0.1);width:49%;height:2.5em;margin-bottom: -.7em;">确定</div>
+                    <div class="setGPS" style="float: right;width:49%;height: 100%;height:2.5em;margin-bottom: -.7em;">取消</div>
+                </div>
+            </div>
+        </div>
+    <script src="../js/appcan.js"></script>
+    <script src="../js/appcan.control.js"></script>
+    <script src="../js/country.js"></script>
+    </body>
+    <script>
+        var confirmcontent=appcan.locStorage.getVal("confirmcontent");
+        appcan.ready(function() {
+            $(".body").html(confirmcontent);
+        });
+        
+        appcan.button(".cancel","btn-act",function(){
+            appcan.frame.close('alertPop'); 
+        })
+    
+    
+        appcan.ready(function() {
+        });
+        appcan.button(".setGPS","btn-act",function(){
+            // uexWindow.evaluateScript('root',0,'setGPS();');
+            // appcan.frame.close('GPSpop');
+            var params = {
+                setting:"GPS"//位置服务功能
+            };
+            var data = JSON.stringify(params);
+            uexDevice.openSetting(data);
+            uexDevice.cbOpenSetting = function(data){
+                // var data = JSON.parse(data);
+                // alert(data);
+                $("#content").remove();
+                $("#page_0").css("background","rgba(0,0,0,0)");
+                appcan.locStorage.setVal("setGPS",true);
+                // appcan.frame.close('GPSpop'); 
+                uexWindow.evaluateScript('root',0,'getaddress();'); 
+                // appcan.window.open('root','../index.html', 10,4);
+                appcan.frame.close('GPSpop'); 
+            };
+            // appcan.frame.close('GPSpop');
+        })
+        appcan.button(".cancel","btn-act",function(){
+            appcan.frame.close('GPSpop'); 
+        })
+    </script>
+</html>

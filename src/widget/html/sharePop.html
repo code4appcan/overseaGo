@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <style type="text/css">
+            #page_0{width: 100%;height: 100%;background-color: rgba(0,0,0,0.6)}
+            #content{width: 80%;background-color: #fff;margin:30% auto;border-radius: 0.4em;padding: 0.8em;position: relative;}
+            .tit{text-align: center;font-size: 1.1em;padding-top: 0.5em;}
+            .text{padding: 1.8em 0;}
+            
+            .ico img{width: 3em;margin-left: 0.5em;}
+            .subTit{margin-left: 1em;width: 70%;font-size: 0.8em;}
+            .share{font-size: 0.75em;text-align: center;margin:0 -0.5em;overflow: auto;}
+            .share div{width:25%;float: left;}
+            .share img{width: 3em}
+            .share div img,.share div p{padding: 0.5em 0 0.1em;}
+            .row2{margin-top: 1em;padding-bottom: 0.5em;}
+            #close{position: absolute;right: 0.1em;top: -0.15em;font-size: 2em;color: #333;}
+        </style>
+    </head>
+    <body class="um-vp" style="" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <div id="content">
+                <div class="tit">分享邀请函</div>
+                <div class="text ub">
+                    <div class="ico ub">
+                    <img src="../image/vip-2.png"/>
+                    </div>
+                    <div class='subTit ub'>成功邀请朋友注册海外购会员，即可赢10元优惠券哦~</div>
+                </div>
+                    <div class="share">
+                    <div id="QQ" class="qq"><img src="../image/QQ.png"/><p>QQ好友</p></div>
+                    <div id="QQzone" class="qzone"><img src="../image/QQzone.png"/><p>QQ空间</p></div>
+                    <div id="weixin"><img src="../image/weixin.png"/><p>微信</p></div>
+                    <div id="friends"><img src="../image/weixin2.png"/><p>朋友圈</p></div>
+                    <div id="Sina" class="row2"><img src="../image/weibo.png"/><p>新浪微博</p></div>
+                </div>
+                <div id="close" style="padding: .5em;">×</div>
+            </div>
+        </div>
+    <script src="../js/appcan.js"></script>
+    <script src="../js/appcan.control.js"></script>
+      <script src="../js/main.js"></script>
+    </body>
+    <script>      
+        var content = appcan.locStorage.getVal('inviteCode');
+        var share_scene_weixin = 0;
+        var appId_QQ = "****";
+        var appId_weixin = "******";
+        var url = api + "/api/invitefriend?inviteCode="+content;
+        var img_url =appcan.locStorage.getVal("myavatar");
+        appcan.ready(function() {
+            uexQQ.cbShareQQ = function(opId, dataType, data) {
+               // alert(data);
+                if(JSON.parse(data).errCode==0){
+                    //addPoints();
+                }
+            }
+            //微信授权回调
+            uexWeiXin.cbRegisterApp = function(opCode, dataType, data) {
+                if (data == 0) {
+                    var JsonData = {
+                        "thumbImg" : api+img_url,
+                        "wedpageUrl" : url,
+                        "scene" : share_scene_weixin,
+                        "title" : "海外购邀请码",
+                        "description":content
+                    };
+                    uexWeiXin.shareLinkContent(JSON.stringify(JsonData));
+                }
+            };
+              
+            //微信分享回调
+            uexWeiXin.cbShareLinkContent = function (data) {
+                // alert('popover'+data);
+            }
+
+            uexSina.cbShare = function(opId, dataType, data) {
+                //alert("新浪分享-------" + data);
+                if(data == 0) {
+                   // addPoints();
+                   //alert('分享成功');
+                }
+            }
+            
+            uexSina.cbLogin = function(opCode,dataType,data) {
+                   //alert("新浪登录----"+data);
+                  
+                  if(JSON.parse(data).uid){
+                      sharePic();
+                  }
+            }
+            
+            uexSina.cbRegisterApp = function(opId,dataType,data) {
+                //alert("新浪注册----"+data);
+                if(data==0){
+                    sharePic();
+                }
+            }
+        });
+        
+        appcan.button("#close","btn-act",function(){
+            appcan.frame.close('sharePop'); 
+        })
+        
+        
+        function sharePic() {
+            uexSina.sendImageContent(img_url, content+"    "+url);
+        }
+        appcan.button("#QQzone", "btn-act", function() {
+            var json = {
+                "title":"海外购邀请码,现在就去注册吧",
+                "summary":content,
+                "targetUrl":url,
+                "imageUrl":api+img_url,
+                "appName":"uexQQ", 
+                "cflag":"1"
+              };
+            uexQQ.shareWebImgTextToQQ(appId_QQ, JSON.stringify(json));
+        })
+
+        appcan.button("#QQ", "btn-act", function() {
+            var json = {
+                "title":"海外购邀请码,现在就去注册吧",
+                "summary":content,
+                "targetUrl":url,
+                "imageUrl":api+img_url,
+                "appName":"uexQQ", 
+                "cflag":"2"
+              };
+            //alert(JSON.stringify(json));
+            uexQQ.shareWebImgTextToQQ(appId_QQ, JSON.stringify(json));
+        })
+
+        appcan.button("#weixin", "btn-act", function() {
+            share_scene_weixin = 0;
+            uexWeiXin.registerApp(appId_weixin);
+        })
+
+        appcan.button("#friends", "btn-act", function() {
+            share_scene_weixin = 1;
+            uexWeiXin.registerApp(appId_weixin);
+        })
+        appcan.button("#Sina", "btn-act", function() {
+            var appKey = "****";
+            var appSecret = "******";
+            var registerUrl = "https://api.weibo.com/oauth2/default.html";
+            //uexSina.registerApp(appKey,appSecret,registerUrl);
+            uexSina.login(appKey,registerUrl);
+        })
+    </script>
+</html>

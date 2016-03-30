@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+        <link rel="stylesheet" href="../css/gsyx.css">
+
+    </head>
+    <style type="text/css">
+        .over {
+            height: 1.5em;
+            color: #F1F1F1;
+            background-color: #B0B5B6;
+            padding: .2em .7em;
+            border-radius: .3em;
+            font-size: .9em;
+            margin-top: .35em;
+        }
+        .uinput4 input {
+            width: 2.5em;
+            height: 2.2em;
+            -webkit-appearance: none;
+            text-decoration: none;
+            font-size: 1em;
+            display: block;
+            color: #B8B8B8;
+            border: 1px solid #D6D6D6;
+            border-radius: .1em;
+        }
+    </style>
+    <body class="um-vp" ontouchstart>
+
+
+        <div class="ub ub-f1" style="padding: 0.8em;background-color: #FFFFFF;margin-bottom: .5em;" id="openAddress">
+            <div class="ub ub-ver ub-f1" >
+                <div class="ub ub-hor ub-f1" style="color:#3D3D3D;line-height: 2em;margin:0 1em;">
+                    <div class="ub ">
+                        收货人：
+
+                    </div>
+                    <div class="ub  ub-f1" id="contact"></div>
+                    <div  class="ub " id="tel"></div>
+                </div>
+
+                <div class="ub ulev-1" style="color:#808080;line-height: 1.4em;margin-top: .5em;padding: 0 1em;" >
+                    <img class="" src="../image/Pin-Assistor.png" style="width:1.2em"/>
+                    <div id="address" style="width:85%;margin: 0 1em;"></div>
+                    <div class="fa fa-angle-right fa-2x"></div>
+
+                </div>
+            </div>
+        </div>
+        <div class="ub ub-ver">
+            <ul style="width: 100%" id="shoppingTrolleyList">
+
+            </ul>
+        </div>
+        <div class="ub ub-f1" style="padding: 0.8em;background-color: #FFFFFF;margin-bottom: .5em;">
+            <div class="ub ub-f1" style="line-height: 2em;">
+                <div class="" style="color:#3D3D3D;margin: 0 .5em;" >
+                    配送
+                </div>
+                <img class="" src="../image/Question2.png" style="width:1.5em;margin-top: .2em;" id="peisong"/>
+                <div style="color:#808080;margin-left: 30%;" id="transType">
+                    卖家回国后发货，到付
+                </div>
+            </div>
+        </div>
+        <div class="ub ub-f1" style="padding:2em 0;">
+            <div class="ub ub-ac ub-pc ub-ver">
+                <div style="width:90%;color:#808080;font-size:.9em;line-height:1.5em">
+                    温馨提示：关于订单、物流、关税、售后等问题请在提交订单前在“常见问题”中了解详情。
+                </div>
+                <div id="submit" class="ub ub-ac ub-pc" style="background: #00C1F9;width:5em;color: #FFFFFF;padding: .5em 1em;border-radius:.23em;margin-top: 2em">
+                                常见问题                     
+                </div>
+            </div>
+        </div>
+        
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/main.js"></script>
+        <script src="../js/country.js"></script>
+        <script src="../js/moment.js"></script>
+    </body>
+    <script>
+        var itemId;
+        var cartId;
+
+        // var userId="5699dce9a5dc79c35cb89678";
+       var userId=appcan.locStorage.getVal("userId"); 
+       var List;
+       var GoodsObj=appcan.locStorage.getVal("GoodsObj");
+       var localPrice=0;
+     // alert(JSON.parse(GoodsObj));
+        appcan.ready(function() {
+          defaultadr();
+          showGood();
+        });
+
+        appcan.button("#openAddress", "btn-act", function() {
+            appcan.window.open("address", "address.html", 10);
+
+        })
+        appcan.button("#peisong", "btn-act", function() {
+            appcan.frame.open("questionPop", "questionPop.html",0,0);
+        });
+
+        function defaultadr(){
+            appcan.request.ajax({
+                url : api + '/api/user/getAddress?userId=' + userId,
+                type : 'get',
+                dataType : 'json',
+                success : function(data, status, xhr) {
+                    if (data.status == 1) {
+                        for ( i = 0; i < data.data.length; i++) {
+                            if (data.data[i].isDefault == true) {
+                                $('#address').html(data.data[i].detail);
+                                $('#tel').html(data.data[i].tel);
+                                $('#contact').html(data.data[i].contact);                      
+                            }
+                        }
+                    }
+                     else {
+                        //alert(data.msg);
+                    }
+                  
+                },
+                error : function() {
+                    //alert('查询失败，请稍后重试');
+                }
+            })
+
+        }
+        function showGood(){
+            var data = JSON.parse(GoodsObj);
+            //alert(data.length);
+            var html = '';
+            var over = [];
+
+            for (var i = 0; i < data.length; i++) {
+                cartId = data[i].list.cartId;
+                var imgSrc = data[i].list.image;
+                var item_id = data[i].id;
+                var itemDesc = data[i].list.desc;
+                var price = data[i].list.itemPrice;
+                var itemCount = data[i].list.itemCount;
+                var country = data[i].shoplive.country;
+                var code = data[i].list.code;
+                var rate = data[i].list.rate;
+                var unit = areaList[country].currency;
+                over[i] = data[i].shoplive.deadline;
+                appcan.locStorage.setVal("over[" + i + "]", over[i]);
+                DownCount();
+                var lastprice = data[i].list.lastprice;
+                var back = data[i].shoplive.to_back_day;
+                html += '<li style="display: inline;width:100%" id="edit' + item_id + '" class="edit">' 
+                + '<div class="ub ub-f1 ub-ac ub-pc" style="padding: 0.8em;background-color: #FFFFFF;margin-bottom: .5em;">'
+                 + '<div id="' + item_id + '" class=" ub ub-ac ub-pc uhide shop shopSecond" style="width: 1.2em;height: 1.2em;border-radius: .5em;border: 1px solid #00C1F9;margin-right:0.7em " onclick="changeColor(\'' + item_id + '\')">' 
+                 + '</div>' + '<img src="' + imgSrc + '" style="width:7em;margin-right: 0.7em;height:7em"/>' + '<div class="ub ub-ver ub-f1" >'
+                  + '<div class="" style="color:#3D3D3D;">' + itemDesc + '<div style="float: right">×'
+                   + itemCount + '</div>' + '</div>' 
+                   + '<div class="ub ulev-1" style="color:#808080;line-height: 1.6em;">' 
+                   + '<img src="../image/americaFlag.png" style="width:1.2em"/>&nbsp;' 
+                   + country + '&nbsp;&nbsp;' + '<img src="../image/plane.png" style="width:0.7em"/>&nbsp;' 
+                   + back + '回国' + '</div>' + '<div class="" style="color:#3D3D3D;line-height: 1.5em;color:red">' 
+                   + '￥ ' + lastprice + '<span class="ulev-1" style="color:#808080; ">=' + price + unit + '×' + rate + '(汇率)+15%代购费</span>' 
+                   + '</div>' + '<div class="ub ub-f1">'
+                    + '<div class="ub" id="time' + i + '" style="color:#323232;margin-top: .5em;font-size: .9em;display: none;line-height:1.5em;margin-left:1em">'
+                     + '</div>' + '</div>' + '</div>' + '</div>' + '</li>'
+                $("#shoppingTrolleyList").html(html);
+                localPrice += Number(lastprice * itemCount);
+            }
+            uexWindow.evaluateScript('order', '0', 'localPrice(' + localPrice + ')');
+        }
+
+        function showGoods() {
+            appcan.request.ajax({
+                url : api + '/api/cart/getAll?userId=' + userId,
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {
+                    if (data.status == 1) {
+                        var len = data.data[0].items.length;
+                        appcan.locStorage.setVal("live_len", len);
+                        var html = '';
+                        var goodsArr = [];
+                        var over = [];
+                        for (var i = 0; i < len; i++) {
+                            var shopliveId = data.data[0].items[i].itemId.shoplive;
+                            cartId = data.data[0]._id;
+                            itemId = JSON.stringify(data.data[0].items[i].itemId);
+                            var itemCount = data.data[0].items[i].count;
+                            //商品数量
+                            var item_id = data.data[0].items[i].itemId._id;
+                            var itemDesc = JSON.parse(itemId).desc;
+                            //商品描述
+                            var itemImg = api + JSON.parse(itemId).images[0];
+                            var price = JSON.parse(itemId).price;
+                            var country = JSON.parse(itemId).shoplive.country;
+                            var code = JSON.parse(itemId).priceCode;
+                            var rate = JSON.parse(itemId).rate;
+                            var unit = areaList[country].currency;
+                            over[i] = JSON.parse(itemId).shoplive.deadline;
+                            appcan.locStorage.setVal("over[" + i + "]", over[i]);
+                            DownCount();
+                            var lastprice = Math.ceil(price*rate*1.15);
+                            var shoplive = JSON.parse(itemId).shoplive;
+
+                            html += '<li style="display: inline;width:100%" id="edit' + item_id + '" class="edit">' + '<div class="ub ub-f1 ub-ac ub-pc" style="padding: 0.8em;background-color: #FFFFFF;margin-bottom: .5em;">' + '<div id="' + item_id + '" class=" ub ub-ac ub-pc uhide shop shopSecond" style="width: 1.2em;height: 1.2em;border-radius: .5em;border: 1px solid #00C1F9;margin-right:0.7em " onclick="changeColor(\'' + item_id + '\')">' + '</div>' + '<img src="' + itemImg + '" style="width:7em;margin-right: 0.7em;height:7em"/>' + '<div class="ub ub-ver ub-f1" >' + '<div class="" style="color:#3D3D3D;">' + itemDesc + '<div style="float: right">×' + itemCount + '</div>' + '</div>' + '<div class="" style="color:#3D3D3D;line-height: 1.5em;color:red">' + '￥ ' + lastprice + '<span class="ulev-1" style="color:#808080; ">=' + price + unit + '×' + rate + '(汇率)+15%代购费</span>' + '</div>' + '<div class="ub ub-f1">' + '<div class="ub" id="time' + i + '" style="color:#323232;margin-top: .5em;font-size: .9em;display: none;line-height:1.5em;margin-left:1em">' + '</div>' + '</div>' + '</div>' + '</div>' + '</li>'
+                            $("#shoppingTrolleyList").html(html);
+                            localPrice += Number(lastprice * itemCount);
+                                            
+                       }
+                       //showdata(List);
+                        uexWindow.evaluateScript('order','0','localPrice('+localPrice+')'); 
+                   }                             
+
+                },
+                error : function(errMessage) {
+                    console.log("errMessage:" + JSON.stringify(errMessage));
+                }
+
+            });
+        }
+
+        function sendDatas() {
+            var dataStr = JSON.parse(GoodsObj);
+            var a = {},
+                shopArr = [],
+                i,
+                j;
+            for ( i = 0; i < dataStr.length; i++) {
+                if ( typeof a[dataStr[i].shoplive._id] == 'undefined') {
+                    a[dataStr[i].shoplive._id] = '';
+                }
+            }
+            for (j in a) {
+                shopArr.push(j);
+            }
+            console.log('-------' + shopArr);
+            for (var n = 0; n < shopArr.length; n++) {
+                var itemArr = [];
+                for (var m = 0; m < dataStr.length; m++) {
+                    if (dataStr[m].shoplive._id == shopArr[n]) {
+                        itemArr.push({
+                            item : dataStr[m].list.itemId,
+                            count : dataStr[m].list.itemCount
+                        });
+                    }
+                }
+                var detail = $('#address').html();
+                var contact = $('#contact').html();
+                var tel = $('#tel').html();
+                if (detail == '' || contact == '' || tel == '') {
+                    // alert("请完善收货信息");
+                    uexWindow.toast("0", "5","请完善收货信息", "2000");
+                    return;
+                }
+                var adddress = {
+                    'contact' : contact,
+                    'detail' : detail,
+                    'tel' : tel
+                };
+                var transType = $('#transType').html();
+                //var amount=localPrice;
+                List = {
+                    'userId' : userId,
+                    'items' : itemArr,
+                    'address' : adddress,
+                    'transType' : transType,
+                    'cartId' : cartId,
+                    'amount' : localPrice,
+                    'shopliveId' : shopArr[n]
+                }
+                //var dataObj=JSON.parse(List);
+
+                appcan.request.ajax({
+                    url : api + '/api/order/add',
+                    type : 'post',
+                    dataType : 'json',
+                    contentType : 'application/json',
+                    data : List,
+                    success : function(data) {
+                        if (data.status == 1) {
+                            appcan.locStorage.remove("GoodsObj");
+                            uexWindow.toast("0", "5", "提交成功，等待卖家接单", "2000");
+                            uexWindow.evaluatePopoverScript("cart", "content", "shoppingTrolley()");
+                            uexWindow.evaluatePopoverScript("shopping", "content", "shoppingTrolley()");
+                            uexWindow.evaluatePopoverScript("my", "content", "showMyData()");
+                            //刷新首页购物车列表
+                            //uexWindow.evaluateScript('root', '0', 'shoppingTrolley()');
+                            //setTimeout("appcan.window.open('waitfirm','waitfirm.html',10)", 200 );
+                            appcan.window.open('waitfirm', 'waitfirm.html', 10);
+                            setTimeout("uexWindow.evaluateScript('order', '0', 'appcan.window.close(-1)');", 1000);
+                            //关闭当前页
+                        } else {
+                            uexWindow.toast("0", "5", "出错了", "2000");
+                            //alert("出错了");
+                        }
+                    },
+                    error : function(errMessage) {
+                        //alert("errMessage:" + JSON.stringify(errMessage));
+                    }
+                });
+                //appcan.locStorage.setVal('subList',List);
+            }
+
+        }
+
+        function sendData() {
+            // alert("sendData");
+
+            appcan.request.ajax({
+                url : api + '/api/cart/getAll?userId=' + userId,
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {
+                    if (data.status == 1) {
+                        var items = data.data[0].items;
+                        var a = {},
+                            shopArr = [],
+                            i,
+                            j;
+                        for ( i = 0; i < items.length; i++) {
+                            if ( typeof a[items[i].itemId.shoplive._id] == 'undefined') {
+                                a[items[i].itemId.shoplive._id] = '';
+                            }
+
+                        }
+                        for (j in a) {
+                            shopArr.push(j);
+                        }
+                        console.log('-------' + shopArr);
+                        for (var n = 0; n < shopArr.length; n++) {
+                            var itemArr = [];
+                            for (var m = 0; m < items.length; m++) {
+                                if (items[m].itemId.shoplive._id == shopArr[n]) {
+                                    itemArr.push({
+                                        item : items[m].itemId._id,
+                                        count : items[m].count
+                                    });
+                                }
+                            }
+                            var detail = $('#address').html();
+                            var contact = $('#contact').html();
+                            var tel = $('#tel').html();
+                            var adddress = {
+                                'contact' : contact,
+                                'detail' : detail,
+                                'tel' : tel
+                            };
+                            var transType = $('#transType').html();
+                            //var amount=localPrice;
+                            List = {
+                                'userId' : userId,
+                                'items' : itemArr,
+                                'address' : adddress,
+                                'transType' : transType,
+                                'cartId' : cartId,
+                                'amount' : localPrice,
+                                'shopliveId' : shopArr[n]
+                            }
+                            //var dataObj=JSON.parse(List);
+
+                            appcan.request.ajax({
+                                url : api + '/api/order/add',
+                                type : 'post',
+                                dataType : 'json',
+                                contentType : 'application/json',
+                                data : List,
+                                success : function(data) {
+                                    if (data.status == 1) {
+                                        // alert("提交订单成功");
+                                        uexWindow.toast("0", "5", "提交成功，等待卖家接单", "2000");
+                                        uexWindow.evaluatePopoverScript("cart", "content", "shoppingTrolley()");
+                                        uexWindow.evaluatePopoverScript("my", "content", "showMyData()");
+                                        //刷新首页购物车列表
+
+                                        appcan.window.open("waitfirm", "waitfirm.html", 10);
+                                        setTimeout("uexWindow.evaluateScript('order', '0', 'appcan.window.close(-1)');", 1000);
+                                        //关闭当前页
+
+                                        // setTimeout(function() {
+                                        // uexWindow.evaluateScript('order', '0', 'appcan.window.close(-1)');
+                                        // }, 1000);
+
+                                    } else {
+                                        // alert("出错了");
+                                         uexWindow.toast("0", "5", "出错了", "2000");
+                                    }
+                                },
+                                error : function(errMessage) {
+                                    //alert("errMessage:" + JSON.stringify(errMessage));
+                                }
+                            });
+                            console.log(JSON.stringify(List));
+                            //appcan.locStorage.setVal('subList',List);
+                        }
+                    }
+                }
+            })
+        }
+
+        function DownCount() {
+            var today = new Date();
+            now = parseInt(today.getTime() / 1000);
+            var over = [];
+            var live_len = appcan.locStorage.getVal("live_len");
+            for (var i = 0; i < live_len; i++) {
+                over[i] = appcan.locStorage.getVal("over[" + i + "]");
+                var overtime = moment(over[i], 'YYYY-MM-DDTHH:mm:ss.sssZ');
+                var deadline = overtime.unix();
+                minus = deadline - now;
+                //console.log(minus);
+                if (minus > 0) {
+                    $("#time" + i).html('<div style="color:#ADADAD">剩余</div><div class="ub ub-ac ub-pc time" id="hour' + i + '" style="margin-left: 0.5em"></div>：<div class="ub ub-ac ub-pc time" id="minute' + i + '"></div>：<div class="ub ub-ac ub-pc time" id="second' + i + '"></div>');
+                    timechange(minus, i);
+                    //$('#changeHtml').html('<div class="ub ub-ac ub-pc ulev-3 concern" >取消订单 </div>');
+                } else {
+                    $("#time" + i).html('<div style="color:#F1F1F1;background-color:#B0B5B6;padding:.3em .7em;border-radius: .3em;font-size: 1em; ">已经结束</div>');
+                    //$('#changeHtml').html('<div class="ub ub-ac ub-pc ulev-3 concern" style="border:1px solid #cdcdcd;color:#cdcdcd">取消订单 </div>');
+                }
+            }
+            window.setTimeout("DownCount()", 1000);
+        }
+
+        function timechange(minus, i) {
+            CSecond = minus % 60;
+            CMinute = parseInt(minus % 3600 / 60);
+            CHour = parseInt(minus / 3600);
+            if (CMinute < 10) {
+                CMinute = "0" + CMinute;
+            }
+            if (CHour < 10) {
+                CHour = "0" + CHour;
+            }
+            if (CSecond < 10) {
+                CSecond = "0" + CSecond;
+            }
+            $("#hour" + i).html(CHour);
+            $("#minute" + i).html(CMinute);
+            $("#second" + i).html(CSecond);
+        }
+
+        function showAdr(detail, tel, contact) {
+            $('#address').html(detail);
+            $('#tel').html(tel);
+            $('#contact').html(contact);
+        }
+        
+        appcan.button("#submit","btn-act",function(){  
+            var linkurl='http://mp.weixin.qq.com/s?__biz=MzA5OTc5ODc0Mg==&mid=403164819&idx=1&sn=910e4218da0ee456817eb692d0205dbd&scene=18#wechat_redirect';
+            appcan.locStorage.setVal("linkurl",linkurl);
+            appcan.window.open("link","../link.html",0);
+             // appcan.window.open({
+                    // name:'demo',
+                    // dataType:0,
+                    // data:'http://mp.weixin.qq.com/s?__biz=MzA5OTc5ODc0Mg==&mid=403164819&idx=1&sn=910e4218da0ee456817eb692d0205dbd&scene=18#wechat_redirect'
+                // }); 
+        })
+
+    </script>
+</html>

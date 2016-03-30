@@ -1,0 +1,191 @@
+.nav-btn{
+    /*background:#eee;*/
+}
+#nav-left{
+    padding-right: 1.5em;
+    
+}
+#nav-right{
+     padding-left: 1.5em;
+}
+
+.shopStyle{
+   color:#fff;
+   font-weight:lighter; 
+   background-color: #00C1F9;
+}
+.a{
+    padding-bottom: 0.5em;margin-top: 0.5em;    
+    width: auto;padding-right:1em;
+}
+.b{
+   padding-bottom: 0.5em;margin-top: 0.5em;
+    width: auto;padding-right:1em;
+}
+.uba-blue{
+    color: #1DC4F9;
+    text-align:center;
+}
+.ubb-blue{
+    color:#1DC7F8;
+    text-align:center;
+}
+#first{
+    
+}
+.border1{
+    border-top:1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    
+}
+.border2{
+    border-top:1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+}
+.g_img{
+    background-size: 100% 100%;width:100%;height:width;
+   /*background-size: 100% 100%;width:7.8em;height:7.8em;*/
+}
+.transparent{
+    background-color: rgba(0,0,0,0.5);
+    height:1.5em;position: absolute;bottom:0;
+    width:100%;color:white;
+}
+.rc{
+    margin-left:4%;line-height: 1.5em;color:#FF0D57;
+}
+.tdesc{
+     margin-bottom:.5em;padding-bottom: .5em;background-color: #FFFFFF
+}
+.desc{
+     line-height: 2em;color:#3D3D3D;margin-left:4%;font-weight: bold
+}
+.box{
+    background-color: #DCDCDC;
+}
+.over{
+    height:2em;color:#F1F1F1;
+    background-color:#B0B5B6;padding:.2em .7em;
+    border-radius: .3em;font-size:.9em;
+    margin-left: 2.5em;margin-top: .35em;
+}
+.over1{
+    height:2em;
+    color:#F1F1F1;
+    background-color:#B0B5B6;
+    padding:0 .8em;
+    border:1px solid #B0B5B6;
+    border-radius: .2em;
+    line-height: 2em;
+}
+/*.slid{
+    height: 10em;
+}*/
+.sli{
+    width:100%;height:width/2.4;
+}
+.tab1{
+    background-color: white;color:#5e5e5e;height:3.5em;
+}
+.tab2{
+    background-color: #F2F2F2;color:#8a8989;height:auto;line-height: 2em;
+}
+
+.hb{
+     border-bottom: 1px solid #cdcdcd;padding: 0.4em;
+}
+.hb1{
+     border-bottom: 1px solid #E9E9E9;padding: 0.5em;
+}
+.hbi{
+    width:3em;height:3em;
+    border-radius:1.5em;margin: 0.4em;
+}
+.logo{
+    width:4em;margin: 0.5em 0.8em;
+}
+.logo1{
+    width:4em;margin: 0.8em;
+}
+.setting{    
+    width:4em;padding:.3em;margin-right:.8em;border:1px solid #00C1F9;
+    border-radius:.2em;color:#fff;background-color:#00C1F9;
+}
+.concern{
+    width:4.4em;padding:.2em;margin-right:.8em;border:1px solid #00C1F9;border-radius:.2em;color:#00C1F9;
+}
+.concern1{
+    width:4.4em;padding:.2em;margin-right:.8em;border:1px solid #00C1F9;
+    border-radius:.2em;color:#fff;background-color:#00C1F9;
+}
+.concern2{
+    width:7em;padding:.5em;border:1px solid #00C1F9;border-radius:.2em;color:#00C1F9;
+}
+.concern3{
+    width:4em;padding:0.25em .5em;margin-right:.8em;border:1px solid #00C1F9;
+    border-radius:.2em;color:#fff;background-color:#00C1F9;
+}
+.receive{
+    width:5em;padding:.2em;border:1px solid #00C1F9;
+    height:2.2em;
+    border-radius:.2em;color:#00C1F9;
+}
+.receive1{
+    width:5em;padding:.2em;border:1px solid #00C1F9;
+    height:2.2em;
+    border-radius:.2em;color:#fff;background-color:#00C1F9;
+}
+.outdate{
+    width:4.4em;padding:.2em;
+    font-size:.9em;border-radius:.2em;color:#fff;
+    background-color:#D7DADA;
+}
+.outdate1{
+    width:4.4em;padding:.2em;
+    font-size:.9em;border-radius:.2em;color:#D7DADA;
+    border: 1px solid #D7DADA;
+}
+.time{
+    width:1.35em;height:1.5em;background-color: black;
+    border-radius: 0.2em;color:white;
+    padding-top: .1em;
+}
+.order{
+    width:7em;height:2.5em;border:1px solid #ddd;border-radius: .3em;margin-right: 1em;
+}
+.order1{
+    width:5em;height:2em;border:1px solid #ddd;border-radius: .3em;margin-right: 1em;
+}
+.mhb{
+     border-bottom: 1px solid #cdcdcd;padding: 0.5em;
+}
+.cbgb{
+    background: #00C1F9;
+}
+.cbgw{
+    background: #FFFFFF;
+}
+.true{
+    background:#00C1F9;
+}
+.false{
+    border: 1px solid#00C1F9;
+}
+.hide{
+    display: none;
+}
+.display{
+    display: block;
+}
+.buy{
+    padding:0 .6em;height: 2em;line-height:2em;border:1px solid #00C1F9;border-radius:.2em;color:#00C1F9;
+}
+.addcart{
+    padding:0 .6em;height: 2em;line-height:2em;border:1px solid #00C1F9;border-radius:.2em;color:#fff;background-color:#00C1F9;
+}
+
+#header{
+    height: 2.6em;
+}

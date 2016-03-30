@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+         <!-- <meta name="viewport" content="initial-scale=1, maximum-scale=1.0, user-scalable=no, width=device-width,minimum-scale=1.0"> -->
+         <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+         <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+        <script src="../js/main.js"></script>
+        
+    </head>
+    <body class="um-vp" style="background: #fff" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m">
+                <div class="nav-btn blue" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <h1 class="ut  bc-text ub-f1 ulev-3 ut-s tx-c" tabindex="0">现场购物</h1>             
+                <div class="nav-btn blue" id="nav-right"><div class="fa fa-share-alt"></div></div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l " style="background-color: #F2F2F2">
+ 
+                
+            </div>        
+
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+    </body>
+    <script>
+      var userId=appcan.locStorage.getVal("userId");
+        var scene_id=appcan.locStorage.getVal("scene_id");
+        appcan.ready(function() {
+              //微信分享回调
+            uexWeiXin.cbShareLinkContent = function (data) {
+                //alert('window'+data);
+                if(data==0){
+                    var alertcontent="分享成功！";
+                    appcan.locStorage.setVal("alertcontent",alertcontent);
+                    appcan.frame.open("alertPop","alertPop.html");
+                }
+            }
+            var titHeight = $('#header').offset().height;
+            appcan.frame.open("content", "scene_content.html", 0, titHeight);
+            window.onorientationchange = window.onresize = function() {
+                appcan.frame.resize("content", 0, titHeight);
+            }
+            var opentimes=appcan.locStorage.getVal('first');
+            if(opentimes==2){ 
+                appcan.frame.open("firstscene", "../firstscene.html",0,0);
+            }
+            uexWindow.setReportKey(0, 1);
+            uexWindow.onKeyPressed = function(keyCode) {
+                if (keyCode == 0) { 
+                    appcan.window.close(-1); 
+                }
+            }
+        });        
+        appcan.button(".nav-btn", "btn-act", function() {
+            if(this.id == "nav-left"){
+                   appcan.window.close(-1); 
+            }
+            if(this.id == "nav-right"){     
+                var minusMy=appcan.locStorage.getVal("minusMy");
+                if(userId==null){
+                    appcan.window.open("login","../login.html",16);
+                }else if(minusMy<0){
+                    var alertcontent="淘现场已经结束！";
+                    appcan.locStorage.setVal("alertcontent",alertcontent);
+                    appcan.frame.open("alertPop","alertPop.html");
+                }else{           
+                    appcan.locStorage.setVal("scene_id",scene_id);
+                    appcan.frame.open('scene_share', 'scene_share.html', 0);
+                }
+            };
+        })
+    </script>
+</html>

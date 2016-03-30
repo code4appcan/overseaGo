@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+         <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+         <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+        <script src="../js/main.js"></script>
+        <script src="../js/moment.js"></script>
+        
+    </head>
+    <body class="um-vp" style="background: #fff" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m">
+                <div class="nav-btn blue" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <h1 class="ut  bc-text ub-f1 ulev-3 ut-s tx-c" tabindex="0">等待卖家确认</h1>
+                <div class="nav-btn blue" id="nav-right"></div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l " style="background-color: #F2F2F2">
+
+            </div>        
+            <!--content结束-->
+            <div id="footer">
+                <div class="ub ub-f1" style="height: 2em;background-color: #FFFFFF;padding: .68em .1em;border-top: 1px solid #DDDDDD">
+                   <div class="ub ub-f1" id="total" style="margin-left:.5em;width: 9em;line-height: 2.2em;">                  
+                                            
+                   </div>
+                   <div onclick="adjust();" id="adjust" class="ub ub-ac ub-pc ulev-3 concern" style="padding:0 .3em;">
+                                                调价
+                    </div>
+                    <div onclick="receiveorder();" id="receive" class="ub ub-ac ub-pc ulev-3 concern1" style="padding:0 .3em;">
+                                                接单
+                    </div>
+                </div>     
+            </div>
+
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+    </body>
+    <script>
+    var orderid;
+     var country;
+      var userId=appcan.locStorage.getVal("userId"); 
+      var deviceInfo=appcan.locStorage.getVal("deviceInfo");
+      var countryCode=appcan.locStorage.getVal("countryCode");
+        appcan.ready(function() {
+            var titHeight = $('#header').offset().height;
+            appcan.frame.open("content", "s_firmorder_content.html", 0, titHeight);
+            window.onorientationchange = window.onresize = function() {
+                appcan.frame.resize("content", 0, titHeight);
+            }
+            
+            var i=appcan.locStorage.getVal("forder");            
+            var orderdata=JSON.parse(appcan.locStorage.getVal("forderdata"+i));
+            orderid=orderdata._id;         
+            
+            var today=new Date();
+            var now=parseInt(today.getTime()/1000);
+            var over=orderdata.shoplive.deadline;            
+            country=orderdata.shoplive.country; 
+            var overtime=moment(over, 'YYYY-MM-DDTHH:mm:ss.sssZ');
+            var deadline=overtime.unix(); 
+            var minus=deadline-now;
+            if(minus<0){
+                $("#adjust").remove();
+                $("#receive").remove();
+            }
+            
+            var total=0;
+            var items_len=orderdata.items.length;
+            for(var j=0;j<items_len;j++){
+               var price=orderdata.items[j].item.price;
+               var count=orderdata.items[j].count;
+               var rate=orderdata.items[j].item.rate;
+               var lastprice=Math.ceil(price*rate*1.15);
+               total+=lastprice*count; 
+               //alert(total);
+            } 
+            if(orderdata.finalAmount){
+                $("#adjust").remove();                
+                // var finalprice=Math.ceil(orderdata.finalAmount*rate*1.15);
+                var finalprice=Math.ceil(orderdata.finalAmount);
+                appcan.locStorage.setVal('price',finalprice);
+                var html="";
+                html+='调价后总计：<span style="color:#FF0D57">￥'+finalprice+'</span>';
+                $("#total").append(html);
+            } else{
+                appcan.locStorage.setVal('price',total);
+                var html="";
+                html+='总计：<span style="color:#FF0D57">￥'+total+'</span>';
+                $("#total").append(html);
+            } 
+        });
+        appcan.button(".nav-btn", "btn-act", function() {
+            appcan.window.close(-1);
+        })
+        function adjust() {             
+            appcan.locStorage.setVal('orderid',orderid);             
+            appcan.locStorage.setVal('country',country);        
+            appcan.frame.open('orderadjust', 'orderadjust.html', 0);        
+        }
+        function receiveorder(){
+            var price=appcan.locStorage.getVal('price');
+             // alert(countryCode+","+price);
+            if(countryCode==0){
+                //alert("请先授权海外购通过网络或卫星对您的手机定位！");
+                // var alertcontent="请开启【海外购】定位服务，以便在您使用期间获取您接单的位置信息！";
+                // appcan.locStorage.setVal("alertcontent",alertcontent);
+                // appcan.frame.open("alertPop","alertPop.html");
+                appcan.frame.open("GPSpop","html/GPSpop.html");
+            // }else if(price>=5000){
+                // // var confirmcontent="根据国家税务条例，过关商品总额超过5000元要纳税！";
+                // // appcan.locStorage.setVal("confirmcontent",confirmcontent);
+                // // appcan.frame.open("confirmPop","confirmPop.html"); 
+                // appcan.window.alert({
+                 // title : "提示",
+                 // content : "根据国家税务条例，过关商品总额超过5000元要纳税！",
+                 // buttons : ['确定', '取消'],
+                 // callback : function(err, data, dataType, optId) {
+                    // if(['确定', '取消'][data]=='确定'){
+                         // appcan.request.ajax({
+                            // url : api+'/api/order/accept?userId='+userId+'&orderId='+id+'&deviceInfo='+deviceInfo+'&countryCode='+countryCode,
+                            // type : 'GET',
+                            // dataType : 'json',
+                            // success : function(data) {  
+                                    // //alert(JSON.stringify(data));
+                                // if(data.status == 0){
+                                    // // uexWindow.toast("0", "5", data.msg, "2000"); 
+                                    // appcan.locStorage.setVal("reminder", "2");
+                                    // appcan.window.open("reminder","reminder.html",10);                           
+                                // }
+                                // if (data.status == 1) {
+                                    // // uexWindow.toast("0", "5", data.msg, "2000");
+                                    // uexWindow.reload();
+                                    // uexWindow.evaluatePopoverScript("my", "content", "showMyData()");
+                                // }  
+                                // if(data.status==2){
+                                    // // uexWindow.toast("0", "5", data.msg, "2000");
+                                    // setTimeout(function() {
+                                        // appcan.window.open("apply","apply.html"); 
+                                    // }, 2000); 
+                                // }  
+                            // },
+                            // error : function(errMessage) {
+                                // //alert("errMessage"+errMessage);                 
+                            // } 
+                        // });  
+                    // }
+                 // }
+             // });
+            }else{
+                appcan.request.ajax({
+                    url : api+'/api/order/accept?userId='+userId+'&orderId='+orderid+'&deviceInfo='+deviceInfo+'&countryCode='+countryCode,
+                    type : 'GET',
+                    dataType : 'json',
+                    success : function(data) {  
+                            //alert(JSON.stringify(data));                        
+                        if(data.status == 0){
+                            // uexWindow.toast("0", "5", data.msg, "2000"); 
+                            appcan.locStorage.setVal("reminder", "2");
+                            appcan.window.open("reminder","reminder.html",10);                             
+                        }
+                        if (data.status == 1) {
+                            // uexWindow.toast("0", "5", data.msg, "2000");
+                            //uexWindow.reload();
+                            // var alertcontent="请根据相关法规自行申报携带入境商品。";
+                            // appcan.locStorage.setVal("alertcontent",alertcontent);
+                            // appcan.frame.open("alertPop","alertPop.html"); 
+                            uexWindow.evaluateScript('s_firm',0,'window.location.reload();');                            
+                            appcan.window.close(-1); 
+                            uexWindow.evaluatePopoverScript("my", "content", "showMyData()");        
+                        } 
+                        if(data.status==2){
+                             // uexWindow.toast("0", "5", data.msg, "2000");
+                            setTimeout(function() {
+                                appcan.window.open("apply","apply.html"); 
+                            }, 2000); 
+                        }   
+                    },
+                    error : function(errMessage) {
+                        //alert("errMessage"+errMessage);                 
+                    }
+                }); 
+            }
+        }
+        function cancleresult(){
+            uexWindow.evaluateScript('s_firm',0,'uexWindow.reload();'); 
+            appcan.window.close(-1);
+        }
+        
+    </script>
+</html>

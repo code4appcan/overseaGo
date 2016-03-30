@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+        <link rel="stylesheet" href="../css/mystyle.css">
+        <style type="text/css">
+            input[type='button']{
+                width:12em;
+                height: 2.2em;
+                background-color:#00C1F9;
+                color:#fff;border:none;
+                border-radius: .2em;
+            }
+            input[type="button"]:disabled{
+                background-color:#D7D7D7;
+            }
+              input[type="text"]:disabled{
+                background-color:#FFFFFF;
+            }
+        </style>
+    </head>
+    <body class="um-vp" style="background-color: #fff" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m">
+                <div class="nav-btn blue" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <h1 class="ut  bc-text ub-f1 ulev-3 ut-s tx-c" tabindex="0">新建收货地址</h1>
+                <div class="nav-btn blue" id="nav-right"></div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class=" tx-l " style="background-color: #F2F2F2">
+                <div class="ub ub-f1 ub-ver cbgw" style="margin-bottom: .8em;color:#9F9F9F">
+                    <div class="ub" style="border-bottom: 1px solid #D9D9D9;">
+                        <div  class="ub uinput9" style="padding:1em 1.5em;">
+                            收货人：&nbsp;&nbsp;&nbsp;&nbsp;
+                            <input id="contact" type="text"  />
+                        </div>
+                    </div>
+                    <div class="ub" style="border-bottom: 1px solid #D9D9D9;">
+                        <div class="ub uinput9" style="padding:1em 1.5em;">
+                            联系方式：
+                            <input id="tel" type="number" maxlength="11"  />
+                        </div>
+                    </div>
+                      <div class="ub" id="city" style="border-bottom: 1px solid #D9D9D9;">
+                        <div class="ub ub-f1 uinput9" style="padding:1em 1.5em;">
+                            所在地区：
+                            <input id = "area" type="text" disabled="disabled" />
+                        </div>
+                        <div class="ub ub-ac ub-pc fa fa-angle-right fa-2x" style="margin-right: .5em;"></div>
+                    </div>
+                    <div class="ub" style="border-bottom: 1px solid #D9D9D9;">
+                        <div class="ub uinput9" style="padding:1em 1.5em;">
+                            详细地址：
+                            <input id="detail" type="text"  />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--content结束00C1F9-->
+            <div id="footer" style="margin-top: 8em">
+               <div class="ub ub-ac ub-pc" style="padding:1em;background-color: #F2F2F2">
+                    <!-- <div id="save" class="ub ub-ac ub-pc ulev-3" style="width:75%;height: 2.2em;border-radius:.2em;color:#fff;background-color:#D7D7D7;">
+                        保存
+                    </div> -->
+                       <input type="button"  class="ulev-3 tx-c" id="save" value="保存" />
+                </div> 
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/main.js"></script>
+    </body>
+        <script>
+                
+        var userId=appcan.locStorage.getVal("userId");
+       // var userId = "56754cf3e09de0337cd185b0";
+        appcan.ready(function() {
+            uexAreaPickerView.onConfirmClick = function(json){
+             $("#area").val(JSON.parse(json).city.replace(/ /g, ""));
+             uexAreaPickerView.close();
+            }
+        });
+        appcan.button(".nav-btn", "btn-act", function() {
+            appcan.window.close(-1);
+        })
+         appcan.button("#city", "btn-act", function() {
+           uexAreaPickerView.open();
+        })
+         appcan.button("#save", "btn-act", function() {
+             var contact = $('#contact').val();
+             var tel = $('#tel').val();
+             var area = $('#area').val();
+             var detail = $('#detail').val();
+             var partten = /^(\+?0?86\-?)?1[345789]\d{9}$/; 
+             if(!partten.test(tel)){
+                 return alert("非法电话号码");
+             } 
+             if(!contact||!tel||!area||!detail){
+                 return alert("信息不完整");
+             }
+             $("#save").attr({"disabled":true});
+
+             var info = { 
+                 "userId": userId,
+                 "address": {"desc":"test", 
+                             "detail":area+'/'+detail,
+                             "tel":tel,
+                             "contact":contact, 
+                             "isDefault": false
+                             }
+                 }
+             var url = api + '/api/user/addAddress';
+             // console.log(JSON.stringify(data));
+             // alert(JSON.stringify(data));
+             // uexWindow.evaluateScript('address',0,'addAddress('+ JSON.stringify(data.address) +')');
+             // appcan.window.close(-1);
+             appcan.request.ajax({
+                url : url,
+                type : 'post',
+                data : info,
+                dataType : 'json',
+                success : function(data, status, xhr) {
+                    // alert(JSON.stringify(data));
+                    if(data.status==1){
+                        uexWindow.toast("0", "5", data.msg, "2000");
+                        info.address._id = data.addressId;
+                        uexWindow.evaluateScript('address',0,'addAddress('+ JSON.stringify(info.address) +')');
+                        //appcan.window.open("address","address.html",10);
+                        appcan.window.close(-1);
+                    }else{
+                        uexWindow.toast("0", "5", data.msg, "2000");
+                         $("#save").removeAttr("disabled");
+                    }
+                },
+                error : function(){
+                   uexWindow.toast("0", "5", "网络异常，请稍后重试", "2000");
+                    $("#save").removeAttr("disabled");
+                }
+            })
+        })
+        
+        
+        
+        // function ajax_post(param){
+            // var data = JSON.parse(param);
+            // appcan.request.ajax({
+                // url : urls,
+                // type : 'post',
+                // data : data,
+                // dataType : 'json',
+                // success : function(data, status, xhr) {
+                    // alert(data);
+                    // if(data.status==1){
+                        // alert(data.msg);
+//                         
+                    // }
+                // },
+                // error : function(){
+//                     
+                // }
+            // })
+        // }
+    </script>
+
+</html>

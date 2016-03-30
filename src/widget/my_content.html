@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <link rel="stylesheet" href="css/common.css">
+        <link rel="stylesheet" href="css/content.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+    </head>
+    <body class="um-vp bc-bg" style="background-color: #FFFFFF" ontouchstart>
+            <div class="ub" style="background-image: url('image/loginBg.png');background-size: 100% 100%;width:100%;height:14em">
+                <div style="width:100%;height: 10em;position: absolute;">
+                    <div onclick="info();" style="width:5em;height:5em;border-radius: 2.5em;background-color: #FFFFFF;margin:2.2em;float: left;">
+                        <img src="image/profile.png" id="myavatar" style="width:5em;height: 5em;border-radius: 2.5em;border: 1px solid #727272;">
+                        <div class="ub ub-ac ub-pc" style="padding:0;color: #fff;font-size: .8em">
+                   编辑个人资料
+                        </div>
+                    </div>
+                    <div onclick="info();" id="mynickname" style="color: #FFFFFF;float: left;font-size: 1.2em;font-weight: bold;margin-top: 3.2em;margin-left:-1em "></div>
+                </div>
+                <div class="ub ub-ac ub-pc" style="background-color: rgba(0,0,0,0.3);height:3.5em;position: absolute;bottom:0;width:100%;color:white">
+                    <div class="ub ub-f1 ub-ver ubr">
+                        <div class="ub ub-ac ub-pc" id="sellerCount" style="height:1em;margin-bottom: 0.4em">
+                            0
+                        </div>
+                        <div class="ub ub-ac ub-pc" onclick="caredStore();">
+                            关注卖家
+                        </div>
+                    </div>
+                    <div class="ub ub-f1 ub-ver">
+                        <div class="ub ub-ac ub-pc" id="brandsCount" style="height:1em;margin-bottom: 0.4em">
+                            0
+                        </div>
+                        <div class="ub ub-ac ub-pc" onclick="caredBrands();">
+                            关注品牌
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ub" style="background-color: #F2F2F2;">
+                <div class="ub ub-f1 ub-ac mhb" style="background: #FFFFFF;margin-top: 1em;">
+                    <img src="image/usermy.png" style="width:1.1em; margin: .5em;"/>
+                    <div class="ub ub-f1 ulev-3">
+                        我是买家
+                    </div>
+                    <div class="" style="font-size: .9em;color: #ADADAD;margin-right: .5em;" onclick="allOrder();">
+                        查看所有订单 <span class="icon icon-right ion-ios-arrow-right" ></span>
+                    </div>
+                </div>
+            </div>
+            <div class="ub ulev-4" style="background-color: white;margin-top:1.2em;color:#969494;line-height: 1.5em;">
+                <div class="ub ub-f1 ub-ver" style="width:0" onclick="confirm();">
+                    <div id="view" class="ub ub-ac ub-pc ub-ver" >
+                        <img src="image/order.png" style="height:2em;" />
+                        <div class="">
+                            待确认
+                        </div>
+                        <div class="ub ub-ac ub-pc uhide" style="color:#fff;width: 1.1em;height: 1.1em;line-height: 1em;border-radius: .5em;background-color: #FF0000;position: relative;top: -4.5em;left:1em" id="CustomerWaitConfirm"></div>
+                    </div>
+                </div>
+                <div class="ub ub-f1 ub-ver" style="width:0" onclick="waitpay();">
+                    <div id="view" class="ub ub-ac ub-pc ub-ver">
+                        <img src="image/needPay.png" style="height:2em;" />
+                        <div class="">
+                            待付款
+                        </div>
+                        <div class="ub ub-ac ub-pc uhide" style="color:#fff;width: 1.1em;height: 1.1em;line-height: 1em;border-radius: .5em;background-color: #FF0000;position: relative;top: -4.5em;left:1.2em" id="CustomerWaitPay"></div>
+                    </div>
+                </div>
+                <div class="ub ub-f1 ub-ver" style="width:0"  onclick="receipt();">
+                    <div id="view" class="ub ub-ac ub-pc ub-ver">
+                        <img src="image/deliver.png" style="height:2em;" />
+                        <div class="">
+                            待收货
+                        </div>
+                        <div class="ub ub-ac ub-pc uhide" style="color:#fff;width: 1.1em;height: 1.1em;line-height: 1em;border-radius: .5em;background-color: #FF0000;position: relative;top: -4.5em;left:1.6em" id="CustomerWaitRecept"></div>
+                    </div>
+                </div>
+
+                <div class="ub ub-f1 ub-ver" style="width:0" onclick="afterSale()">
+                    <div id="view" class="ub ub-ac ub-pc">
+                        <img src="image/service.png" style="height:2em;"  />
+                    </div>
+                    <div class="ub ub-ac ub-pc">
+                        售后服务
+                    </div>
+                </div>
+            </div>
+
+            <div class="ub" style="background-color: #F2F2F2;">
+                <div class="ub ub-f1 ub-ac mhb" style="background: #FFFFFF;margin-top: 1em;">
+                    <img src="image/seller.png" style="width:1.1em; margin: .5em;"/>
+                    <div class="ub ub-f1 ulev-3">
+                        我是卖家
+                    </div>
+                    <div style="font-size: .9em;color: #ADADAD;margin-right: .5em;" onclick="s_order();">
+                        查看所有订单 <span class="icon icon-right ion-ios-arrow-right" ></span>
+                    </div>
+                </div>
+            </div>
+            <div class="ub ulev-4" style="background-color: white;margin-top:1.2em;padding-bottom:0.5em;color:#969494;border-bottom: 1px solid #cdcdcd; line-height: 1.5em;">
+                <div class="ub ub-f1 ub-ver " style="width:0">
+                    <div id="view" class="ub ub-ac ub-pc ub-ver" onclick="s_firm();">
+                        <img src="image/order.png" style="height:2em;" />
+                        <div class="">
+                            待确认
+                        </div>
+                        <div class="ub ub-ac ub-pc uhide" style="color:#fff;width: 1em;height: 1em;line-height: 1em;border-radius: .5em;background-color: #FF0000;position: relative;top: -4.5em;left:1em" id="SellerWaitConfirm"></div>
+                    </div>
+
+                    <div id="view" class="ub ub-ac ub-pc ub-ver" style="margin-top: .8em" onclick="apply();">
+                        <img src="image/apply.png" style="height:2em;" />
+                        <div class="" onclick="apply();">
+                            资质申请
+                        </div>
+                    </div>
+                </div>
+                <div class="ub ub-f1 ub-ver" style="width:0" onclick="s_waitpay();">
+                    <div id="view" class="ub ub-ac ub-pc ub-ver">
+                        <img src="image/needPay.png" style="height:2em;" />
+                        <div class="">
+                            待付款
+                        </div>
+                        <div class="ub ub-ac ub-pc uhide" style="color:#fff;width: 1.1em;height: 1.1em;line-height: 1em;border-radius: .5em;background-color: #FF0000;position: relative;top: -4.5em;left:1.2em" id="SellerWaitPay"></div>
+                    </div>
+                </div>
+                <div class="ub ub-f1 ub-ver" style="width:0" onclick="s_waitdeliver();">
+                    <div id="view" class="ub ub-ac ub-pc ub-ver">
+                        <img src="image/deliver.png" style="height:2em;" />
+                        <div class="">
+                            待发货
+                        </div>
+                        <div class="ub ub-ac ub-pc uhide" style="color:#fff;width: 1.1em;height: 1.1em;line-height: 1em;border-radius: .5em;background-color: #FF0000;position: relative;top: -4.5em;left:1.6em" id="SellerWaitSend"></div>
+                    </div>
+                </div>
+                <div class="ub ub-f1 ub-ver" style="width:0" onclick="s_waitsign();">
+                    <div id="view" class="ub ub-ac ub-pc ub-ver">
+                        <img src="image/service.png" style="height:2em;"  />
+                        <div class="">
+                            待签收
+                        </div>
+                        <div class="ub ub-ac ub-pc uhide" style="color:#fff;width: 1.1em;height: 1.1em;line-height: 1em;border-radius: .5em;background-color: #FF0000;position: relative;top: -4.5em;left:.8em" id="SellerWaitRecept"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="ub ub-f1 ub-ac" onclick="myscene();" style="padding: .5em;">
+                <img src="image/Airplane.png" style="width:1.1em; margin: .5em;"/>
+                <div class="ub ub-f1 ulev-3">
+                    现场购物活动
+                </div>
+                <div style="font-size: .9em;color: #ADADAD;margin-right: .5em;">
+                    我创建的现场购物活动 <span class="icon icon-right ion-ios-arrow-right"></span>
+                </div>
+            </div>
+            <div class="ub" style="background-color: #F2F2F2;">
+                <div class="ub ub-f1 ub-ac mhb" style="background: #FFFFFF;margin-top: 1em;">
+                    <img src="image/wallet.png" style="width:1.3em; margin: .5em;"/>
+                    <div class="ub ub-f1 ulev-3">
+                        我的钱包
+                    </div>
+                    <div style="font-size: .9em;color: #ADADAD;margin-right: .5em;" onclick="myalinum();">
+                        设置支付宝收款账号 <span class="icon icon-right ion-ios-arrow-right"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="ub ulev-4" style="background-color: white;margin-top:1em;padding-bottom:0.5em;color:#969494;line-height: 1.5em;">
+                <div class="ub ub-f1 ub-ver" onclick="remainder();">
+                    <div id="view" class="ub ub-ac ub-pc">
+                        <img src="image/Money.png" style="height:2em;" />
+                    </div>
+                    <div class="ub ub-ac ub-pc">
+                        余额及提现
+                    </div>
+                </div>
+                <div class="ub ub-f1 ub-ver" onclick="integral();">
+                    <div id="view" class="ub ub-ac ub-pc">
+                        <img src="image/Coins.png" style="height:2em;" />
+                    </div>
+                    <div class="ub ub-ac ub-pc">
+                        积分
+                    </div>
+                </div>
+                <div class="ub ub-f1 ub-ver" onclick="coupon();">
+                    <div id="view" class="ub ub-ac ub-pc">
+                        <img src="image/ticket.png" style="height:2em;" />
+                    </div>
+                    <div class="ub ub-ac ub-pc">
+                        优惠券
+                    </div>
+                </div>
+            </div>
+            <div class="ub" style="background-color: #F2F2F2;">
+                <div class="ub ub-f1 ub-ac mhb" onclick="vip();" style="background: #FFFFFF;margin-top: 1em;">
+                    <img src="image/VIP.png" style="width:1.4em; margin: .5em;"/>
+                    <div class="ub ub-f1 ulev-3">
+                        VIP
+                    </div>
+                    <div style="font-size: .9em;color: #ADADAD;margin-right: .5em;">
+                        会员 <span class="icon icon-right ion-ios-arrow-right" ></span>
+                    </div>
+                </div>
+            </div>
+            <div class="ub ub-ac" style="padding:.5em;" onclick="sharepop();">
+                <img src="image/share.png" style="width:1.2em; margin: .5em;"/>
+                <div class="ub ub-f1 ulev-3">
+                    邀请好友
+                </div>
+                <div style="font-size: .9em;color: #ADADAD;margin-right: .5em;">
+                    赢优惠券 <span class="icon icon-right ion-ios-arrow-right" ></span>
+                </div>
+            </div>
+
+            <div class="ub" style="background-color: #F2F2F2;"> <!-- onclick="question();" -->
+                <div class="ub ub-f1 ub-ac mhb" style="background: #FFFFFF;margin-top: 1em;">
+                    <img src="image/Question.png" style="width:.8em; margin: .5em;"/>
+                    <div class="ub ub-f1 ulev-3" style="margin-left: .4em">
+                        常见问题
+                    </div>
+                    <div style="font-size: .9em;color: #ADADAD;margin-right: .5em;">
+                        教你玩转海外购 <span class="icon icon-right ion-ios-arrow-right" ></span>
+                    </div>
+                </div>
+            </div>
+            <div class="ub ub-ac" style="padding:.5em;" onclick="feedback();">
+                <img src="image/contactUs.png" style="width:1.1em; margin: .5em;"/>
+                <div class="ub ub-f1 ulev-3">
+                    联系我们
+                </div>
+                <div style="font-size: .9em;color: #ADADAD;margin-right: .5em;">
+                    产品功能与反馈 <span class="icon icon-right ion-ios-arrow-right" ></span>
+                </div>
+            </div>
+            <div class="ub" style="background-color: #F2F2F2;">
+                <div class="ub ub-ac ub-pc ulev-5" style="height:4em;width:100%;color: #ADADAD;">
+                    客服邮箱：<span class="serviceContact">15572788888</span>
+                </div>
+            </div>
+    </body>
+    <script src="js/appcan.js"></script>
+    <script src="js/appcan.control.js"></script>
+    <script src="js/main.js"></script>
+    </body>
+    <script>
+      var userId=appcan.locStorage.getVal("userId");
+      // alert("my"+userId);
+        // var userId = "5699d882a5dc79c35cb8966c";
+        appcan.ready(function() {               
+            showMyData();
+        });
+        //my的方法
+        function showMyData(){  
+
+            appcan.request.ajax({//564f05aa88eb79982c4bf2ae
+                url :api+'/api/user/me/'+userId,
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {
+                    if(data.status==1){
+                        //alert("进来了");
+                        var nickname= data.data.user.nickname;  
+                        var img_url= api+data.data.user.avatar;                          
+                        $("#myavatar").attr("src",img_url);                        
+                        appcan.locStorage.setVal("myavatar",data.data.user.avatar);
+                        $("#mynickname").html(nickname);
+                        var sellerCount=data.data.user.seller.length;
+                        var brandsCount=data.data.user.brand.length;
+                        $("#sellerCount").html(sellerCount);
+                        $("#brandsCount").html(brandsCount);
+                        var count1=0;
+                        var count2=0;
+                        var count3=0;
+                        var count4=0;
+                        $("#CustomerWaitConfirm").addClass("uhide");
+                        $("#CustomerWaitPay").addClass("uhide");
+                        $("#CustomerWaitRecept").addClass("uhide");
+                        for(var i=0;i<data.data.customerOrdersStat.length;i++){                           
+                            var CustomerorderStatus=data.data.customerOrdersStat[i].orderStatus;
+                            var Customercount=data.data.customerOrdersStat[i].count;
+                            if(CustomerorderStatus==1){
+                                //待确认订单
+                                $("#CustomerWaitConfirm").removeClass("uhide");
+                                $("#CustomerWaitConfirm").html(Customercount);                                
+                            }
+                            if(CustomerorderStatus==3||CustomerorderStatus==7){
+                                //代付款
+                                count4+=Customercount;
+                                $("#CustomerWaitPay").removeClass("uhide");
+                                $("#CustomerWaitPay").html(count4);
+                            }
+                            if(CustomerorderStatus==4||CustomerorderStatus==5||CustomerorderStatus==8){
+                                //等卖家发货
+                                 count1+=Customercount;
+                                $("#CustomerWaitRecept").removeClass("uhide");
+                                $("#CustomerWaitRecept").html(count1);
+                            }                          
+                        }
+                        $("#SellerWaitConfirm").addClass("uhide");
+                        $("#SellerWaitPay").addClass("uhide");
+                        $("#SellerWaitSend").addClass("uhide");
+                        $("#SellerWaitRecept").addClass("uhide");
+                        for(var j=0;j<data.data.sellerOrdersStat.length;j++){                            
+                            var sellerorderStatus=data.data.sellerOrdersStat[j].orderStatus;
+                            var sellercount=data.data.sellerOrdersStat[j].count;
+                            if(sellerorderStatus==1){
+                                //待确认订单
+                                $("#SellerWaitConfirm").removeClass("uhide");
+                                $("#SellerWaitConfirm").html(sellercount);                                
+                            }
+                            if(sellerorderStatus==3||sellerorderStatus==7){
+                                //代付款
+                                count2+=sellercount;
+                                $("#SellerWaitPay").removeClass("uhide");
+                                $("#SellerWaitPay").html(count2);                                
+                            }
+                            if(sellerorderStatus==4||sellerorderStatus==8){
+                                //等卖家发货
+                                count3+=sellercount;
+                                $("#SellerWaitSend").removeClass("uhide");
+                                $("#SellerWaitSend").html(count3);
+                            }
+                            if(sellerorderStatus==5){
+                                //等买家确认签收
+                                $("#SellerWaitRecept").removeClass("uhide");
+                                $("#SellerWaitRecept").html(sellercount);                                
+                            }
+                        }
+                        //appcan.locStorage.setVal("exp",data.data.user.exp);
+                        appcan.locStorage.setVal("money",data.data.user.money);
+                        appcan.locStorage.setVal("score",data.data.user.score);
+                        appcan.locStorage.setVal("moneyInTrans",data.data.user.moneyInTrans);  
+                        if(data.data.user.account){
+                            appcan.locStorage.setVal("myalinum",1);
+                        }else{
+                            appcan.locStorage.setVal("myalinum",0);                            
+                        }                        
+                    }        
+                },
+                error : function(errMessage) {
+                    //alert("errMessage:"+JSON.stringify(errMessage));                         
+                }
+            }); 
+        }        
+        
+        function caredStore(){
+           // appcan.window.open('concern_s', 'html/concern_s.html', 10,1024); 
+           if(uexWidgetOne.platformName == "iOS"){                                        
+                appcan.window.open("concern_s","html/concern_s.html",0,1024);
+            } else {
+                appcan.window.open("concern_s","html/concern_s.html",0);
+            }
+        }  
+        function caredBrands(){
+            // appcan.window.open('concernbrand', 'html/concernbrand.html', 10,1024);
+            if(uexWidgetOne.platformName == "iOS"){                                        
+                appcan.window.open("concernbrand","html/concernbrand.html",0,1024);
+            } else {
+                appcan.window.open("concernbrand","html/concernbrand.html",0);
+            }
+        }
+        function confirm(){
+            // appcan.window.open('waitfirm', 'html/waitfirm.html', 10,1024);
+            if(uexWidgetOne.platformName == "iOS"){                                        
+                appcan.window.open("waitfirm","html/waitfirm.html",0,1024);
+            } else {
+                appcan.window.open("waitfirm","html/waitfirm.html",0);
+            }
+        }
+        function afterSale(){
+            // appcan.window.open('asservice', 'html/asservice.html', 10,1024); 
+            if(uexWidgetOne.platformName == "iOS"){                                        
+                appcan.window.open("asservice","html/asservice.html",0,1024);
+            } else {
+                appcan.window.open("asservice","html/asservice.html",0);
+            }
+        }
+        function allOrder(){
+            // appcan.window.open('myorder', 'html/myorder.html', 10,1024);
+            if(uexWidgetOne.platformName == "iOS"){                                        
+                appcan.window.open("myorder","html/myorder.html",0,1024);
+            } else {
+                appcan.window.open("myorder","html/myorder.html",0);
+            }             
+        }
+        function waitpay(){
+            // appcan.window.open('paylist', 'html/paylist.html', 10,1024);
+            if(uexWidgetOne.platformName == "iOS"){                                        
+                appcan.window.open("paylist","html/paylist.html",0,1024);
+            } else {
+                appcan.window.open("paylist","html/paylist.html",0);
+            }             
+        }
+        function receipt(){
+            // appcan.window.open('receipt', 'html/receipt.html', 10,1024); 
+            if(uexWidgetOne.platformName == "iOS"){                                        
+                appcan.window.open("receipt","html/receipt.html",0,1024);
+            } else {
+                appcan.window.open("receipt","html/receipt.html",0);
+            }
+        }           
+        function apply(){
+             // appcan.window.open('applylist', 'html/applylist.html', 10,1024);
+             if(uexWidgetOne.platformName == "iOS"){                                        
+                appcan.window.open("applylist","html/applylist.html",0,1024);
+            } else {
+                appcan.window.open("applylist","html/applylist.html",0);
+            }
+        }
+        function info(){
+             // appcan.window.open('info', 'html/info.html', 10,1024); 
+             if(uexWidgetOne.platformName == "iOS"){                                        
+                appcan.window.open("info","html/info.html",0,1024);
+            } else {
+                appcan.window.open("info","html/info.html",0);
+            } 
+             // appcan.frame.open('info', 'html/info.html', 0);              
+        }      
+        function myscene(){
+            // appcan.window.open('myscene', 'html/myscene.html', 10,1024); 
+            if(uexWidgetOne.platformName == "iOS"){                                        
+                appcan.window.open("myscene","html/myscene.html",0,1024);
+            } else {
+                appcan.window.open("myscene","html/myscene.html",0);
+            }
+        }
+        function myalinum(){
+            // appcan.window.open('myalinum', 'html/myalinum.html', 10,1024);
+            if(uexWidgetOne.platformName == "iOS"){                                        
+                appcan.window.open("myalinum","html/myalinum.html",0,1024);
+            } else {
+                appcan.window.open("myalinum","html/myalinum.html",0);
+            } 
+        }
+        function integral(){
+            // appcan.window.open('integral', 'html/integral.html', 10,1024); 
+            if(uexWidgetOne.platformName == "iOS"){                                        
+                appcan.window.open("integral","html/integral.html",0,1024);
+            } else {
+                appcan.window.open("integral","html/integral.html",0);
+            }
+        }
+        function coupon(){
+            // appcan.window.open('couponlist', 'html/couponlist.html', 10,1024); 
+            if(uexWidgetOne.platformName == "iOS"){                                        
+                appcan.window.open("couponlist","html/couponlist.html",0,1024);
+            } else {
+                appcan.window.open("couponlist","html/couponlist.html",0);
+            }
+        }
+        function sharepop(){
+            // appcan.window.open('sharePop', 'html/sharePop.html', 10);
+            // appcan.frame.open('sharePop', 'html/sharePop.html', 0);
+            uexWindow.evaluateScript('my',0,'openshare();'); 
+        }
+        function s_firm(){            
+            // appcan.window.open('s_firm', 'html/s_firm.html', 10,1024);
+            if(uexWidgetOne.platformName == "iOS"){                                        
+                appcan.window.open("s_firm","html/s_firm.html",0,1024);
+            } else {
+                appcan.window.open("s_firm","html/s_firm.html",0);
+            } 
+        }
+        function remainder(){
+            // appcan.window.open('remainder', 'html/remainder.html', 10,1024);
+            if(uexWidgetOne.platformName == "iOS"){                                        
+                appcan.window.open("remainder","html/remainder.html",0,1024);
+            } else {
+                appcan.window.open("remainder","html/remainder.html",0);
+            } 
+        }
+        function feedback(){
+            // appcan.window.open('feedback', 'html/feedback.html', 10,1024); 
+            if(uexWidgetOne.platformName == "iOS"){                                        
+                appcan.window.open("feedback","html/feedback.html",0,1024);
+            } else {
+                appcan.window.open("feedback","html/feedback.html",0);
+            }
+        }
+        function vip(){
+            // appcan.window.open('VIP', 'html/VIP.html', 10,1024);
+            if(uexWidgetOne.platformName == "iOS"){                                        
+                appcan.window.open("VIP","html/VIP.html",0,1024);
+            } else {
+                appcan.window.open("VIP","html/VIP.html",0);
+            }
+        }
+        function s_waitpay(){
+            // appcan.window.open('s_waitpay', 'html/s_waitpay.html', 10,1024);
+            if(uexWidgetOne.platformName == "iOS"){                                        
+                appcan.window.open("s_waitpay","html/s_waitpay.html",0,1024);
+            } else {
+                appcan.window.open("s_waitpay","html/s_waitpay.html",0);
+            }             
+        }
+        function s_waitdeliver(){
+            // appcan.window.open('s_waitdeliver', 'html/s_waitdeliver.html', 10,1024); 
+            if(uexWidgetOne.platformName == "iOS"){                                        
+                appcan.window.open("s_waitdeliver","html/s_waitdeliver.html",0,1024);
+            } else {
+                appcan.window.open("s_waitdeliver","html/s_waitdeliver.html",0);
+            }            
+        }
+        function s_waitsign(){
+            // appcan.window.open('s_waitsign', 'html/s_waitsign.html', 10,1024); 
+            if(uexWidgetOne.platformName == "iOS"){                                        
+                appcan.window.open("s_waitsign","html/s_waitsign.html",0,1024);
+            } else {
+                appcan.window.open("s_waitsign","html/s_waitsign.html",0);
+            }            
+        }
+        function s_order(){
+            // appcan.window.open('s_order', 'html/s_order.html', 10,1024);   
+            if(uexWidgetOne.platformName == "iOS"){                                        
+                appcan.window.open("s_order","html/s_order.html",0,1024);
+            } else {
+                appcan.window.open("s_order","html/s_order.html",0);
+            }          
+        }
+        function question(){   
+            var linkurl='http://mp.weixin.qq.com/s?__biz=MzA5OTc5ODc0Mg==&mid=403164819&idx=1&sn=910e4218da0ee456817eb692d0205dbd&scene=18#wechat_redirect';
+            appcan.locStorage.setVal("linkurl",linkurl);
+            // appcan.window.open("link","link.html",10,1024);    
+            if(uexWidgetOne.platformName == "iOS"){                                        
+                appcan.window.open("link","link.html",0,1024);
+            } else {
+                appcan.window.open("link","link.html",0);
+            }     
+            // appcan.window.open('question', 'html/question.html', 10); 
+            // appcan.window.open({
+                // name:'demo',
+                // dataType:0,
+                // data:'http://mp.weixin.qq.com/s?__biz=MzA5OTc5ODc0Mg==&mid=403164819&idx=1&sn=910e4218da0ee456817eb692d0205dbd&scene=18#wechat_redirect'
+            // }); 
+        }
+
+    </script>
+</html>

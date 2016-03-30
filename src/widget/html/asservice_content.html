@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <ul id="List">
+            
+        </ul>
+        
+                
+                
+    </body>
+    <script src="../js/appcan.js"></script>
+    <script src="../js/appcan.control.js"></script>
+    <script src="../js/moment.js"></script>
+    <script src="../js/main.js"></script>
+    </body>
+    <script>
+    var userId = appcan.locStorage.getVal("userId");
+    console.log(userId);
+        appcan.ready(function() {
+            show();
+        });
+        function show(){
+            var html='';
+            var changeText;
+            var changeTime;
+            appcan.request.ajax({
+                url :api+'/api/saleService/getByCustomer?pageNo=1&pageSize=5&userId='+userId,
+                type : 'get',
+                dataType : 'json',
+                contentType : 'application/json',
+                success : function(data) {
+                      if(data.status == 1){
+                        var shopLen=data.data.length;
+                       if(shopLen==0){
+                           var html='';
+                            html+='<li class="ub ub-ac ub-pc ub-ver" >'
+                           +'<img src="../image/noon.png" style="margin-top:10em"/>'
+                           +'<div class="ub" style="color:red;margin-top:0.8em">'
+                           +'您还没有申请售后服务哦!'
+                           +'</div>'
+                           +'</li>'                           
+                          $("#List").html(html);
+                       }
+                       else{
+                           var html='';
+                        var over=[];
+                        for(var i=0;i<shopLen;i++){
+                            var createTime=data.data[i].createTime;
+                            var updateTime=data.data[i].updateTime;
+                            var serviceId=data.data[i]._id;
+                            var status=data.data.status;
+                            if(createTime==updateTime||status==1){
+                               changeText="等待受理";
+                               changeHtml='<div class="ub ub-ac ub-pc ulev-3 concern" id="buied'+serviceId+'" onclick="cancle(\'' + serviceId + '\')">取消售后</div><div class="ub ub-ac ub-pc ulev-3 concern1" id="confirm'+serviceId+'" onclick="detail(\'' + serviceId + '\')">查看进度</div>'
+                            }
+                            else if(createTime==updateTime||status==2){
+                                changeText="完成售后";
+                               changeHtml='<div class="ub ub-ac ub-pc ulev-3 concern1" id="confirm'+serviceId+'" onclick="detail(\'' + serviceId + '\')">查看进度</div>'
+                            }
+                            else{
+                               changeText="完成售后";
+                               changeHtml='<div class="ub ub-ac ub-pc ulev-3 concern1" id="confirm'+serviceId+'" onclick="detail(\'' + serviceId + '\')">查看进度</div>'
+                            }
+                            var imgSrc=api+data.data[i].images[0];
+                             var createTimeChange=moment(createTime, 'YYYY-MM-DDTHH:mm:ss.sssZ');
+                             var createline=createTimeChange.unix();
+                             var date = new Date(parseInt(createline+"000"));
+                             var Y = date.getFullYear() + '-';
+                             var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+                             var D = date.getDate() + ' ';
+                             var hour=date.getHours();     
+                             var minute=date.getMinutes();     
+                             var second=date.getSeconds();
+                             var nowDate = Y + M + D+" "+hour+":"+minute+":"+second;
+                            var len=data.data[i].order.items.length;
+                            var orderId=data.data[i]._id;
+                            var orderStatus=data.data[i].order.orderStatus;
+                            over[i]=data.data[i].order.shoplive.deadline;
+                            appcan.locStorage.setVal("over["+i+"]", over[i]);
+                            html+='<li id="'+orderId+'" style="background-color: #FFFFFF;margin-top: 0.8em">'
+                            var oneOrderPrice=0;
+                        for(var j=0;j<len;j++){
+                            //alert(data.data[i].items[j].item.images[0]);
+                           // var imgSrc='http://114.215.145.215:3000/api'+data.data[i].items[j].item.images[0];
+                            var price=data.data[i].order.amount;
+                            var code=data.data[i].order.orderNo;                           
+                            var itemCount=data.data[i].order.items[j].count;
+                            oneOrderPrice+=Number(itemCount*price);
+                             html+='<div class="ub ub-f1 ub-ver" style="">'
+                                 +'<div class="ub" style="padding: 0.8em;">'
+                                 +'<img src="'+imgSrc+'" style="width:7em;margin-right: 0.7em;height:7em"/>'
+                                 +'<div class="ub ub-ver ub-f1" >'
+                                 +'<div class="" style="color:#3D3D3D;line-height: 2em;margin-top:1em;">'
+                                 +'订单号： '+ code                      
+                                 +'</div>'
+                                 +'</div>'
+                                 +'</div>'                                      
+                                 +'</div>' 
+                        }
+                        html+='<div class="ub ub-hor" style="padding:0 0 0.6em 0.8em;;background-color:white;border-bottom:1px solid #cdcdcd">'
+                             +'<div class="ub" id="changeText" style="color: #FF3B77">'
+                             +changeText
+                             +'</div>'
+                             + '</div>'
+                             +'<div class="ub" style="border-top: 1px solid #F5F5F5;background-color: #FFFFFF;padding:.8em 0;">'
+                             +'<div class="ub ub-f1">'
+                             +'<div class="ub" id="time'+i+'" style="color:#323232;margin-top: .5em;font-size: .9em;display: none;line-height:1.5em;margin-left:1em">'
+                            +'</div>'
+                             +'</div>'
+                             +'<div class="ub ub-ac ub-pc" id="changeHtml" >'
+                             +changeHtml
+                             +'</div>'
+                             +'</div>' 
+                        html+='</li>';
+                         }
+                      $('#List').html(html); 
+                       }
+                       // appcan.locStorage.setVal("live_len", shopLen);
+                       
+                     // DownCount();
+                      }                  
+                },
+                error : function(errMessage) {
+                    //alert("errMessage:"+JSON.stringify(errMessage));                         
+                }
+            });
+            }
+            function detail(serviceId){
+                appcan.locStorage.setVal('serviceId',serviceId);
+                appcan.window.open("asprogress","asprogress.html",10);
+            }
+            function cancle(serviceId){
+                 appcan.window.alert({
+                    title : "提示",
+                    content : "您是否要取消当前售后?",
+                    buttons : ['确定', '取消'],
+                    callback : function(err, data, dataType, optId) {
+                       if(['确定', '取消'][data]=='确定'){
+                          appcan.request.ajax({
+                            url :api+'/api/saleService/cancel?id='+serviceId+'&userId='+userId,
+                            type : 'get',
+                            dataType : 'json',
+                            success : function(data) {
+                                  if(data.status == 1){
+                                     //alert('取消成功');
+                                     $("#buied"+serviceId).remove();
+                                     $("#confirm"+serviceId).html("完成售后");
+                                     $("#changeHtml").html("");
+                                     //uexWindow.evaluateScript("asservice","0","reload()");
+                                  }                  
+                                 },
+                            error : function(errMessage) {
+                                //alert("errMessage:"+JSON.stringify(errMessage));                         
+                            }
+                        });
+                       }
+                    }
+                });
+            }
+    </script>
+</html>

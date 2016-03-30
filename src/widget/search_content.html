@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <link rel="stylesheet" href="css/content.css">
+        <link rel="stylesheet" href="css/common.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver "  style="color:#969494;line-height: 2.3em;">
+            <!-- <div id="categories" class="ub ub-ae uhide" style="background-color:#F2F2F2;height:2.5em;line-height: 2.5em;color:#3B3B3B; padding-left: 0.8em;" >
+                类别
+            </div> -->
+            <ul style="width:100%;background-color: white;padding-top: .5em" id="categoriesList" class="ulev-4">
+            </ul> 
+            <div id="brands" class="ub ub-ae uhide" style="background-color:#F2F2F2;height:2.5em;line-height: 2.5em;color:#3B3B3B; padding-left: 0.8em;" >
+               热门品牌
+            </div>
+            <ul style="width:100%;background-color: white;padding: .5em 0" id="goodList" class="ulev-4" >
+            </ul>
+             <div id="more" class="ub ub-pe" onclick="openlist(11)" style="background-color:#fff;height:2.5em;line-height: 2.5em;padding:0.2em 0.5em;border-top: 1px solid #CDCDCD" >
+               更多<div class="fa fa-angle-right fa-x" style="padding:.3em;margin-right:.5em"></div>
+            </div>
+        </div>
+    </body>
+    <script src="js/appcan.js"></script>
+    <script src="js/appcan.control.js"></script>
+    <script src="js/main.js"></script>
+    </body>
+    <script>
+        var userId=appcan.locStorage.getVal("userId"); 
+        appcan.ready(function() {
+            show();
+        });
+        function show(){
+            appcan.request.ajax({
+                url : api+'/api/brandAndCategory/get',
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {                          
+                    if(data.status == 0){
+                        uexWindow.toast("0", "5", data.msg, "2000");
+                    }
+                    if (data.status == 1) { 
+                        var len=data.data.categories.length; 
+                        var lenbrands=data.data.brands.length; 
+                        if(lenbrands>12){
+                            lenbrands=12;
+                        }
+                        var html1='';
+                        var html2='';  
+                        console.log(data.data);                       
+                        // appcan.locStorage.setVal("brands", data.data.brands);
+                        for(var j=0;j<lenbrands;j++){
+                          var brands_id=data.data.brands[j]._id;
+                          var brands_name=data.data.brands[j].name;
+                          var brands_img=api+data.data.brands[j].brandImage;
+                          $("#brands").removeClass('uhide');
+                          $("#categories").removeClass('uhide');
+                           html2+='<li style="width:25%;display: inline-block;padding-top:0.5em" onclick="searchbrand(\'' + brands_id + '\', \'' + brands_name + '\', \'' + brands_img + '\')">'
+                              +'<div class="ub ub-ver">'
+                              +' <div class="ub ub-f1 ub-ver ub-pc ub-ac">'
+                              +'<img src="'+brands_img+'" style="width:3.3em"/ >'
+                              +'<div class="" style="margin-top:-1.5em">'+brands_name
+                              +'</div>'                                    
+                              +'</div>'
+                              +' </div>'
+                              + '</li>'
+                        $('#goodList').html(html2);
+                      }
+                      for(var i=0;i<len;i++){
+                          var good_id= data.data.categories[i]._id;
+                          var good_name=data.data.categories[i].name;
+                          console.log(data);
+                          var categories_img=api+data.data.categories[i].categoryImage;
+                          html1+='<li style="width:20%;display: inline-block;padding:0.5em 0" onclick="searchCategories(\'' + good_id + '\')">'
+                              +'<div class="ub ub-ver">'
+                              +' <div class="ub ub-f1 ub-ver ub-pc ub-ac">'
+                              +'<div class="" style="margin-top:-1.5em">'+good_name
+                              +'</div>'                                    
+                              +'</div>'
+                              +' </div>'
+                              + '</li>'
+                        $('#categoriesList').html(html1);
+                      }                    
+                      
+                      // var html1='<li style="width:24%;display: inline-block;padding-top:0.5em" onclick="openlist(11)">'
+                              // +'<div class="ub ub-ver">'
+                              // +' <div class="ub ub-f1 ub-ver ub-pc ub-ac">'
+                              // +'<img src="image/more.png" style="width:3.3em"/ >'
+                              // +'<div class="" style="margin-top:-1.5em">更多'
+                              // +'</div>'                                    
+                              // +'</div>'
+                              // +' </div>'
+                              // + '</li>'
+                      // $('#goodList').append(html1);
+                      var html2='<li style="width:19%;display: inline-block;padding:0.5em 0" onclick="show()">'
+                              +'<div class="ub ub-ver">'
+                              +' <div class="ub ub-f1 ub-ver ub-pc ub-ac">'
+                              +'<div class="" style="margin-top:-1.5em">全部'
+                              +'</div>'                                    
+                              +'</div>'
+                              +' </div>'
+                              + '</li>'
+                      $('#categoriesList').prepend(html2);
+                    }
+                },
+                error : function(errMessage) {
+                    //alert("errMessage"+errMessage);                 
+                }
+            });            
+        } 
+        
+        function searchbrand(id,name,img){
+            appcan.locStorage.setVal("brand_id", id);
+            appcan.locStorage.setVal("brand_name", name);
+            appcan.locStorage.setVal("brand_img",img); 
+            if((userId!=null)&&(uexWidgetOne.platformName == "iOS")){              
+                appcan.window.open('searchbrand', 'html/searchbrand.html', 10,1024); 
+            } else{            
+                appcan.window.open('searchbrand', 'html/searchbrand.html', 10); 
+            } 
+        }
+        function searchCategories(id){
+            // alert(id);
+           appcan.request.ajax({
+                url : api+'/api/brand/getBrandsByCategoryid?cid='+id,
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {                          
+                    if(data.status == 0){
+                        uexWindow.toast("0", "5", data.msg, "2000");
+                    }
+                    if (data.status == 1) { 
+                        var len=data.rows.length; 
+                        var html=''; 
+                        $("#goodList").html(" ");                    
+                        // appcan.locStorage.setVal("brands", data.data.brands);
+                        for(var j=0;j<12;j++){
+                          var brands_id=data.rows[j].brand._id;
+                          var brands_name=data.rows[j].brand.name;
+                          var brands_img=api+data.rows[j].brand.brandImage;
+                          $("#brands").removeClass('uhide');
+                           html+='<li style="width:25%;display: inline-block;padding-top:0.5em" onclick="searchbrand(\'' + brands_id + '\', \'' + brands_name + '\', \'' + brands_img + '\')">'
+                              +'<div class="ub ub-ver">'
+                              +' <div class="ub ub-f1 ub-ver ub-pc ub-ac">'
+                              +'<img src="'+brands_img+'" style="width:3.3em"/ >'
+                              +'<div class="" style="margin-top:-1.5em">'+brands_name
+                              +'</div>'                                    
+                              +'</div>'
+                              +' </div>'
+                              + '</li>'
+                        $('#goodList').html(html);
+                      }
+                    }
+                },
+                error : function(errMessage) {
+                    //alert("errMessage"+errMessage);                 
+                }
+            });   
+           // appcan.locStorage.setVal("good_id", id);          
+           // if((userId!=null)&&(uexWidgetOne.platformName == "iOS")){              
+                // appcan.window.open('searchCatgeras', 'html/searchCatgeras.html', 10,1024); 
+            // } else{            
+                // appcan.window.open('searchCatgeras', 'html/searchCatgeras.html', 10);
+            // } 
+        }
+         function openlist(i){
+            appcan.locStorage.setVal("flag",i);
+            if((userId!=null)&&(uexWidgetOne.platformName == "iOS")){              
+                appcan.window.open('list','html/list.html', 10,1024);
+            } else{            
+                appcan.window.open('list','html/list.html', 10);
+            } 
+        }
+        
+    </script>
+</html>

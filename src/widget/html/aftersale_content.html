@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver">   
+            <ul id="List" style="margin-bottom: 0.5em">
+                <!-- <li style="">
+                    <div class="ub ub-f1" style="padding: 0.8em;background-color: #FFFFFF;margin-bottom: .5em">
+                        <img src="../image/bag3-Assistor.png" style="width:6em;margin-right: 0.7em;"/>
+                        <div class="ub ub-ver ub-f1" >
+                            <div class="" style="color:#3D3D3D;line-height: 3em;">
+                                LV包包
+                                <div style="float: right;color: #AEAEAE" class="fa fa-remove"></div>
+                            </div>
+                            <div class="" style="color:#FF0D57;margin-top: 1em;">
+                               ￥200.00<span class="ulev-1" style="color:#808080; ">(原价1000+15%代购费)</span>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </li> -->
+                
+            </ul>                 
+                    
+                    <div class="ub ub-f1 ub-ver" style="background-color: #FFFFFF;padding: .8em 0;margin-bottom: .5em;height: 8em;">
+                        <div class="ub uinput3" style="height: 6em;">
+                            <textarea id="question" placeholder="问题描述"></textarea>
+                        </div>                  
+                    </div>
+                    <!-- <div class="ub ub-ver" style="padding: .5em;line-height: 1.4em;background-color: #FFFFFF;">
+                        <p>上传照片（最多可添加3张）</p>
+                        <img src="../image/choosePic.png" style="width: 6em;margin-top:.5em; " />
+                    </div> -->
+                    <div class="ub ub-ver" style="padding: .5em;line-height: 1.4em;">
+                <p>上传照片（最多可添加3张）</p>
+                <img src="../image/choosePic.png" onclick="choosepics();" style="width: 6em;margin-top:.5em; " />
+                <div class="ub ub-f1" style="padding-top: 0.4em;">
+                    <ul style="width:100%;"  id="t_img">
+                    </ul>
+                </div> 
+            </div>
+                </div>
+                <div class="ub ub-ac ub-pc" style="height: 4em;padding:.5em;background-color: #F2F2F2">
+           <div id="addg" class="ub ub-ac ub-pc ulev-3" onclick="submit();" style="width:70%;height: 2.5em;border-radius:.2em;color:#00C1F9;background-color:#FFFFFF;border: 1px solid #00C1F9;">
+                                        提交申请
+            </div>
+        </div> 
+    </body>
+    <script src="../js/appcan.js"></script>
+    <script src="../js/appcan.control.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/country.js"></script>
+    </body>
+    <script>
+     //var goodsArr=appcan.locStorage.getVal('goodsArr');
+     // var objStr = eval('(' + goodsArr + ')');
+     // console.log(objStr);
+     var back=appcan.locStorage.getVal("back");
+     var country=appcan.locStorage.getVal("country");
+     var orderId=appcan.locStorage.getVal("orderId");
+     var userId = appcan.locStorage.getVal("userId");
+     console.log(orderId);
+     //567bd491d2e067c767a2c98e
+        appcan.ready(function() {
+            creatSale();
+            showList();
+            
+        });
+        function creatSale(){
+           appcan.request.ajax({
+                url :api+'/api/saleService/createEmpty?orderId='+orderId,
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {
+                    if(data.status==1){
+                        var saleServiceId=data.saleServiceId;
+                        appcan.locStorage.setVal("saleServiceId",saleServiceId);
+                    }
+                },
+                error : function(errMessage) {
+                    //alert("errMessage:"+JSON.stringify(errMessage));                         
+                }
+            }); 
+        }
+        function showList(){
+            appcan.request.ajax({
+                url :api+'/api/order/shoppingInfo?orderId='+orderId,
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {
+                    if(data.status==1){
+                        var address=data.data.address.detail;
+                        var contact=data.data.address.contact;
+                        var tel=data.data.address.tel;
+                        $("#address").html(address);
+                        $("#contact").html(contact);
+                        $("#tel").html(tel);
+                        var len=data.data.items.length;
+                        //alert(len);
+                        var html="";
+                        var totalPrice=0;
+                        for(var i=0;i<len;i++){
+                            var price=data.data.items[i].item.price;
+                            var count=data.data.items[i].count;
+                            var desc=data.data.items[i].item.desc;
+                            var imgSrc=api+data.data.items[i].item.images[0];
+                            console.log(imgSrc);
+                            var price=data.data.items[i].item.price;
+                            var count=data.data.items[i].count;
+                            var code=data.data.items[i].item.priceCode;
+                            var rate=data.data.items[i].item.rate;
+                            var unit=areaList[country].currency;                      
+                            var lastprice=Math.ceil(price*rate*1.15);
+                            var name=data.data.items[i].item.desc;
+                            totalPrice+=Number(count*lastprice);
+                            //totalPrice+=Number(price*count);
+                            $("#total").html(totalPrice);
+                            html+='<li>'
+                            +'<div class="ub ub-f1" style="padding: 0.8em;background-color: #FFFFFF;margin-bottom: .1em;">'
+                            +'<img src="'+imgSrc+'" style="width:7em;margin-right: 0.7em;height:7em"/>'
+                            +'<div class="ub ub-ver ub-f1" >'
+                            +'<div class="" style="color:#3D3D3D;line-height: 2em;">'
+                            +desc
+                            +'<div style="float: right">×'+count+'</div>'
+                            +'</div>'
+                            +'<div class="ub ulev-1" style="color:#808080;line-height: 1.6em;">'
+                            +'<img src="../image/americaFlag.png" style="width:1.2em"/>&nbsp;'
+                            +country
+                            +'&nbsp;&nbsp; '
+                            + '<img src="../image/plane.png" style="width:0.7em"/>&nbsp;'
+                            +back
+                            +'回国'
+                            +'</div>'
+                            +'<div class="" style="color:#3D3D3D;line-height: 1.2em;color:red">'
+                            + '￥ '
+                            +lastprice
+                            +'<span class="ulev-1" style="color:#808080; ">='
+                            +price+unit+'×'+rate+'(汇率)+15%代购费</span>'                      
+                            +'</div>'
+                       +'</div>'
+                       + '</div>'
+                       +'</li>'
+                       $("#List").html(html);
+                        }
+                    }
+                },
+                error : function(errMessage) {
+                    //alert("errMessage:"+JSON.stringify(errMessage));                         
+                }
+            }); 
+            }
+       
+        var img_url=[];
+        var image=[];
+        var length;
+        function choosepicsb(){
+            var saleServiceId=appcan.locStorage.getVal("saleServiceId");
+            // img_url=[];
+            // alert(img_url);
+            // alert("ss");
+            uexImageBrowser.cbPick=function (opCode,dataType,data){
+                img_url=data.split(",");
+                length=img_url.length;
+                var html="";
+                for(var i=0;i<length;i++){
+                    html+='<li style="width:30%;display: inline-block;margin-left: 1.65%;margin-bottom: .3em;">'
+                            +'<img src="'+img_url[i]+'" style="width:100%;"/>'
+                        +'</li>';
+                }
+                $("#t_img").append(html);
+                for(var i=0;i<length;i++){
+                    var s=[];
+                    s=img_url[i].split("/");
+                    var temp=s.length;
+                    image[i]=s[temp-1];      
+                    var uploadHttp = api+"/api/saleService/uploadImage?saleServiceId="+saleServiceId+"&image="+image[i];
+                    //api/saleService/uploadImage?saleServiceId=566fa5de610b0b4559726169
+                    uexUploaderMgr.createUploader(i, encodeURI(uploadHttp));
+                    uexUploaderMgr.uploadFile(i, img_url[i], "image", 0);          
+                    uexUploaderMgr.onStatus = function(opCode, fileSize, percent, serverPath, status) {
+                       switch (status) {
+                            case 1:
+                                uexWindow.toast(0, 5, "发送成功", 3000);
+                                uexUploaderMgr.closeUploader(opCode);                           
+                                break;
+                            case 2:                            
+                                uexWindow.toast(0, 5, "发送失败", 3000);
+                                uexUploaderMgr.closeUploader(opCode);
+                                break;    
+                        }
+                    } 
+                }
+            }
+            uexImageBrowser.pickMulti(3);
+        }
+        function choosepics(){
+            var saleServiceId=appcan.locStorage.getVal("saleServiceId");
+            var data = {
+                min:1,
+                max:3,
+                quality:0.8,
+                detailedInfo:false
+            }
+            var json = JSON.stringify(data);
+            uexImage.openPicker(json);
+            uexImage.onPickerClosed=function(info){
+                img_url=JSON.parse(info).data;
+                length=img_url.length;
+                var html="";
+                for(var i=0;i<length;i++){
+                    html+='<li style="width:22%;display: inline-block;margin-left: 1.65%;margin-bottom: .3em;">'
+                            +'<img src="'+img_url[i]+'" style="width:100%;height:5em;"/>'
+                        +'</li>';
+                }
+                $("#t_img").append(html);
+                for(var i=0;i<length;i++){
+                    var s=[];
+                    s=img_url[i].split("/");
+                    var temp=s.length;
+                    image[i]=s[temp-1];      
+                    var uploadHttp = api+"/api/saleService/uploadImage?saleServiceId="+saleServiceId+"&image="+image[i];
+                    //api/saleService/uploadImage?saleServiceId=566fa5de610b0b4559726169
+                    uexUploaderMgr.createUploader(i, encodeURI(uploadHttp));
+                    uexUploaderMgr.uploadFile(i, img_url[i], "image", 0);          
+                    uexUploaderMgr.onStatus = function(opCode, fileSize, percent, serverPath, status) {
+                       switch (status) {
+                            case 1:
+                                uexWindow.toast(0, 5, "发送成功", 3000);
+                                uexUploaderMgr.closeUploader(opCode);                           
+                                break;
+                            case 2:                            
+                                uexWindow.toast(0, 5, "发送失败", 3000);
+                                uexUploaderMgr.closeUploader(opCode);
+                                break;    
+                        }
+                    } 
+                }
+            }
+        }
+        
+        function submit(){
+            var saleServiceId=appcan.locStorage.getVal("saleServiceId");
+            var content=$('#question').val();
+            appcan.request.ajax({
+                url :api+'/api/saleService/save',
+                type : 'post',
+                dataType : 'json',
+                contentType : 'application/json',
+                data : {
+                    "id":saleServiceId,
+                    "userId":userId,
+                    "desc":content
+                },
+                success : function(data) {
+                      if(data.status == 1){
+                         uexWindow.toast(0, 5, "提交成功", 4000);
+                         uexWindow.evaluateScript("aftersale","0","appcan.window.close(-1)");
+                      }                  
+                },
+                error : function(errMessage) {
+                //alert("errMessage:"+JSON.stringify(errMessage));                         
+                }
+            });
+        } 
+    </script>
+</html>

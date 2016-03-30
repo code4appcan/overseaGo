@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+         <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+         <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+        <script src="../js/main.js"></script>
+        
+    </head>
+    <body class="um-vp" style="background-color: #fff" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m">
+                <div class="nav-btn blue" id="nav-left"><div class="fa fa-angle-left fa-2x"></div> </div>
+                <h1 class="ut  bc-text ub-f1 ulev-3 ut-s tx-c" tabindex="0">积分</h1>
+                <div class="nav-btn blue" id="nav-right"></div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l " style="background-color: #F2F2F2;line-height: 1.6em">
+                <div class="ub ub-ver" style="color:#A2A2A2">                
+                   <div class="ub ub-ac ub-pc ub-ver ub-f1" style="padding: .7em;background: #FFFFFF;margin: .5em">                    
+                        <img src="../image/Coins.png" style="width: 1.8em;" />
+                        <p style="color: #FF2266" id="integarl"></p>
+                        <p>购买商品可以抵现金哦</p>
+                    </div>
+                    <div class="ub ub-ver ub-f1" style="margin: .5em 1em;">  
+                        <p style="color:#333333;margin-top:.5em">如何获取积分：</p>
+                        <p>1、购买商品获得商品价钱等数值的10%的积分，如商品价格100元，返还积分10个积分；</p>
+<p>2、分享未结束的现场购活动或者商品获得10个积分（同一个商品分享只是第一次分享时送积分）；</p>
+<p>3、每天第一次打开APP获得2个积分；</p>
+<p>4、成功发一个现场活动获得100积分。</p>
+<p></p>
+                        <p style="color:#333333;margin-top:.5em">积分用途及规则：</p>
+                        
+
+
+
+
+
+
+<p>1、购买商品积分抵现，100积分=1元；</p>
+<p>2、每单最多使用积分抵扣订单总价的50%；</p>
+<p>3、每次最少使用10个积分。</p>
+
+                    </div>
+                </div>     
+            </div>        
+            <!--content结束-->
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+    </body>
+    <script> 
+      var userId=appcan.locStorage.getVal("userId");  
+      var score=0; 
+        appcan.ready(function() {
+            // var score=0;
+            // appcan.request.ajax({
+                // url :api+'/api/user/pointsChange',
+                // type : 'post',
+                // data:{
+                    // userId: userId,
+                    // score: score
+                // },
+                // dataType : 'json',
+                // success : function(data) {
+                    // $("#integarl").html(data.data);
+                    // appcan.locStorage.setVal("integar",data.data);          
+                // },
+                // error : function(errMessage) {
+                    // alert("errMessage:"+JSON.stringify(errMessage));                         
+                // }
+            // });           
+           score=appcan.locStorage.getVal("score");  
+            $("#integarl").html(score);
+        });
+        appcan.button(".nav-btn", "btn-act", function() {
+            this.id == "nav-left" && appcan.window.close(-1);
+        })
+    </script>
+</html>

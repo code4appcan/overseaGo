@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+         <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+         <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">        
+        <script src="../js/main.js"></script>
+        
+    </head>
+    <body class="um-vp" style="background: #fff" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m">
+                <div class="nav-btn blue" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <h1 class="ut  bc-text ub-f1 ulev-3 ut-s tx-c" tabindex="0">温馨提示</h1>
+                <div class="nav-btn blue" id="nav-right"></div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l " style="background-color: #FFFFFF;padding:1.5em;">  
+                <div class="ub ub-ac ub-pc ub-ver">
+                    <div class="ub ub-ac ub-pc" id="face" style="height: 7em;width:5em;text-align: center; ">
+                        <img id="avatar" src="../image/logo.png" style="width:5em;height:5em;border-radius: 2.5em" >                        
+                    </div> 
+                    <p id="reminder1" style="font-size: 1.1em;line-height: 1.5em;margin-top: .5em;color: #000;font-weight: bolder;text-align: center;">无法认定您的出境游游客身份，到境外才能使用“发布”功能哦！</p>
+                    <p id="reminder2" style="font-size: 1.1em;line-height: 1.5em;margin-top: .5em;color: #000;font-weight: bolder;text-align: center;">无法认定您的出境游游客身份，到境外才能使用“接单”功能哦！</p>
+                    <p id="reminder3" style="font-size: 1.1em;line-height: 1.5em;margin-top: .5em;color: #000;font-weight: bolder;text-align: center;">无法认定您的出境游游客身份，到国内才能“发货”哦！</p>
+                    <p style="font-size:1em;line-height: 1.5em;margin-top: 1.5em;padding: .5em;color: #898989 ">注：海外购平台要求同一手机硬件，在不超过1个月的时间内满足：国内—境外—国内的三个地理位置节点，来认定出境游游客身份。</p>
+                   
+                  
+                    <!-- <div id="submit" class="ub ub-ac ub-pc" style="background: #00C1F9;width:5em;color: #FFFFFF;padding: .5em 1em;border-radius:.23em;margin-top: 5em">
+                        常见问题                     
+                    </div> -->
+                </div>   
+               
+            </div>        
+            <!--content结束-->
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+    </body>
+    <script>
+     appcan.ready(function() {
+            // var titHeight = $('#header').offset().height;
+            // appcan.frame.open("content", "index_content.html", 0, titHeight);
+            // window.onorientationchange = window.onresize = function() {
+                // appcan.frame.resize("content", 0, titHeight);
+            // }
+            var reminder=appcan.locStorage.getVal("reminder");
+            if(reminder==1){
+                $("#reminder2").remove();
+                $("#reminder3").remove();
+            }if(reminder==2){
+                $("#reminder1").remove();
+                $("#reminder3").remove();
+            }if(reminder==3){
+                $("#reminder1").remove();
+                $("#reminder2").remove();
+            }
+        });
+        appcan.button(".nav-btn", "btn-act", function() {
+            appcan.window.close(-1);
+        })
+         appcan.button("#submit","btn-act",function(){  
+            var linkurl='http://mp.weixin.qq.com/s?__biz=MzA5OTc5ODc0Mg==&mid=403164819&idx=1&sn=910e4218da0ee456817eb692d0205dbd&scene=18#wechat_redirect';
+            appcan.locStorage.setVal("linkurl",linkurl);
+            appcan.window.open("link","../link.html",0);
+             // appcan.window.open({
+                    // name:'demo',
+                    // dataType:0,
+                    // data:'http://mp.weixin.qq.com/s?__biz=MzA5OTc5ODc0Mg==&mid=403164819&idx=1&sn=910e4218da0ee456817eb692d0205dbd&scene=18#wechat_redirect'
+                // }); 
+        })
+        
+        
+    </script>
+</html>

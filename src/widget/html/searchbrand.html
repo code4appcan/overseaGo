@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+        
+    </head>
+    <style type="text/css">
+        .uinput2 input{
+            width: 90%;
+            height: 100%;
+            -webkit-appearance: none;
+            padding: .3em 0;
+            line-height: 1em;
+            text-decoration: none;
+            font-size: 1em;
+            display: block;
+            margin: .35em 1.5em;
+            color:#000000;
+        }
+    </style>
+    <body class="um-vp" style="background: #fff" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m uinput2">                
+                <div class="ub ub-f1">                    
+                    <input type="text" class="search uc-a1" style="padding-left: .5em" placeholder="输入品牌名称" id="searching"/>
+                    <img src="../image/icon-search-act.png" style="width: 1.8em;position: relative;right:3.6em;top:.35em;" id="search"/>
+                </div>
+                <div class="nav-btn blue" id="" style="padding:.2em">取消</div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l " style="background-color: #F2F2F2">
+               
+            </div>
+            <!--content结束-->
+
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+    </body>
+    <script>
+        appcan.ready(function() {
+            var titHeight = $('#header').offset().height;
+            appcan.frame.open("content", "searchbrand_content.html", 0, titHeight);
+            window.onorientationchange = window.onresize = function() {
+                appcan.frame.resize("content", 0, titHeight);
+            }
+        });
+        function showList(){
+            
+        }
+        $("#searching").keyup(function(e){
+            if(e.keyCode==13){
+               var str=$("#searching").val();
+              uexWindow.evaluatePopoverScript("","content","showSearch('"+str+"')");
+            }
+        })
+        appcan.button("#search","btn-act",function(){   
+            var str=$("#searching").val();
+            uexWindow.evaluatePopoverScript("","content","showSearch('"+str+"')");
+        })
+        appcan.button(".nav-btn","btn-act",function(){  
+            appcan.locStorage.remove("mark"); 
+            appcan.window.close(-1);
+        })
+    </script>
+</html>

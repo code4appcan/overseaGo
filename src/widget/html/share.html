@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+         <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+         <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+        <script src="../js/main.js"></script>
+        <script src="../js/country.js"></script>
+    </head>
+    <body class="um-vp" style="background: #fff" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m bar bar-nav">
+                <div class="nav-btn blue" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <h1 class="ut  bc-text ub-f1 ulev-3 ut-s tx-c" tabindex="0">添加商品</h1>
+                <div class="nav-btn blue" id="nav-right">完成</div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l " style="background-color: #F2F2F2">
+            </div>        
+            <!--content结束-->
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+    </body>
+    <script>
+        var code;
+        var rate;   
+        var shoplive_id=appcan.locStorage.getVal("scene_id");       
+        appcan.ready(function() {  
+            var titHeight = $('#header').offset().height;
+            appcan.frame.open("content", "share_content.html", 0, titHeight);
+            window.onorientationchange = window.onresize = function() {
+                appcan.frame.resize("content", 0, titHeight);
+            }              
+            
+             appcan.request.ajax({
+                url : api+'/api/shoplive/detail/'+shoplive_id,//56790df826c8b75833ffdbd3
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {                          
+                    if(data.status == 0){
+                        uexWindow.toast("0", "5", data.msg, "2000");
+                    }
+                    if (data.status == 1) {          
+                        rate=data.data.items[0].rate;                   
+                        var country=data.data.country;
+                        code=areaList[country].code;  
+                      }      
+                    }
+                }); 
+            
+        });
+        
+        
+        appcan.button(".nav-btn", "btn-act", function() {
+            this.id == "nav-left" && appcan.window.close(-1);
+            if(this.id == "nav-right"){                    
+                have_img=appcan.locStorage.getVal("have_img");
+                have_item=appcan.locStorage.getVal("have_item");
+                // alert(have_img+","+have_item);
+                var desc = appcan.locStorage.getVal("desc");
+                var brand = appcan.locStorage.getVal("brand");
+                var num = appcan.locStorage.getVal("num");
+                var price = appcan.locStorage.getVal("price");
+                var p_code = code;              
+                var brandId=appcan.locStorage.getVal("brandId");               
+                var category=appcan.locStorage.getVal("category"); 
+                var category_id=appcan.locStorage.getVal("category_id"); 
+                if(have_img=='true'){ 
+                   var thumb=appcan.locStorage.getVal("thumb");
+                   var image_400_300=appcan.locStorage.getVal("image_400_300");
+                   var image=appcan.locStorage.getVal("image");  
+                    // alert("images:"+image+",images_400_300:"+image_400_300+",thumb:"+thumb);  
+                   // alert(thumb);
+                    appcan.request.ajax({
+                        url :api+'/api/item/save',
+                        type : 'POST',
+                        dataType : 'json',
+                        data : {
+                                shopliveId:shoplive_id,
+                                desc: desc,
+                                price:price,
+                                priceCode:p_code,
+                                rate:rate,                             
+                                brand: brand,
+                                brandId: brandId,
+                                category:category,
+                                categoryId:category_id,
+                                leftCount:num,
+                                image:image,
+                                image_400_300:image_400_300,
+                                thumb:thumb
+                            },    
+                        success : function(data) {
+                             if(data.status == 0){
+                                uexWindow.toast("0", "5", data.msg, "2000");
+                            }
+                            if (data.status == 1) { 
+                                uexWindow.toast("0", "5", data.msg, "2000");
+                                appcan.locStorage.setVal("scene_id", shoplive_id);  
+                                uexWindow.evaluateScript('scene',0,'uexWindow.reload();');                              
+                                appcan.window.close(-1); 
+                                uexWindow.evaluatePopoverScript("root", "content", "homeready()");
+                                uexWindow.evaluatePopoverScript("myscene", "content", "show()");  
+                            }             
+                        },
+                        error : function(errMessage) {
+                            //alert("errMessage:"+JSON.stringify(errMessage));                         
+                        }
+                    });
+                }else{
+                    if(have_item=="true"){                       
+                        appcan.locStorage.setVal("scene_id", shoplive_id);
+                        uexWindow.evaluateScript('scene',0,'uexWindow.reload();');                           
+                        appcan.window.close(-1); 
+                        uexWindow.evaluatePopoverScript("root", "content", "homeready()");
+                        uexWindow.evaluatePopoverScript("myscene", "content", "show()");  
+                    }else{                        
+                        uexWindow.toast(0, 5, "请添加商品", 3000);
+                    }
+                }     
+            }
+        });
+        
+    </script>
+</html>

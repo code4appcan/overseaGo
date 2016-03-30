@@ -1,0 +1,402 @@
+﻿<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+         <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+         <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+        <script src="../js/main.js"></script>
+        <script src="../js/moment.js"></script>   
+        <script src="../js/country.js"></script>   
+        
+    </head>
+    <body class="um-vp" ontouchstart>
+        <div class="ub ub-ver" id="myscene" style="background-color: #FFFFFF;">
+                                    
+        </div>     
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+    </body>
+    <script>
+    // var userId="5699dce9a5dc79c35cb89678";
+      var userId=appcan.locStorage.getVal("userId");
+      var num=1;
+        appcan.ready(function() {
+            show();
+            appcan.window.setBounce({
+                bounceType : "1",
+                downEndCall : function(type) {
+                    secondShow();
+                    setTimeout(function() {
+                        appcan.window.resetBounceView(1);
+                    }, 1500);
+                }
+            });             
+        });
+        function show(){
+            $("#myscene").html(" ");
+            appcan.request.ajax({
+                url : api+'/api/shoplive/getByUserId?userId='+userId+'&pageNo=1&pageSize=5',
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {                          
+                    if(data.status == 0){
+                        uexWindow.toast("0", "5", data.msg, "2000");
+                    }
+                    if (data.status == 1) { 
+                        var live_len = data.data.length;
+                        appcan.locStorage.setVal("live_len", live_len);
+                        var over=[];                         
+                        for(var i = 0; i < live_len; i++)   {  
+                            if(!data.data[i].items||data.data[i].items.length<3){                                
+                            }else{
+                                var items_len = data.data[i].items.length;
+                                var url_img1 = data.data[i].seller.avatar;
+                                var seller_url = api + url_img1;                               
+                                var url_img2;
+                                if(data.data[i].thumbs.length>0){                                                
+                                    url_img2 = data.data[i].thumbs[0];
+                                }else{                                                
+                                    url_img2 = data.data[i].images[0];
+                                } 
+                                var shop_url = api + url_img2; 
+                                var back=data.data[i].to_back_day;
+                                over[i]=data.data[i].deadline;   
+                                var sellerId=data.data[i].seller._id;                  
+                                var country=data.data[i].country;                                 
+                                var locationInfo=data.data[i].locationInfo;
+                                var countryf=areaList[country].name;
+                                appcan.locStorage.setVal("over["+i+"]", over[i]);
+                                DownCount();  
+                                var nickname = data.data[i].seller.nickname;
+                                var seller_id = data.data[i]._id;
+                                var desc=data.data[i].desc;
+                                 var count=items_len;
+                                 if(count<4){                                                
+                                    var ulwidth=100;
+                                    var per=30;
+                                    var mper=2.5;  
+                                }else{
+                                    var ulwidth=count*33.3; 
+                                    var per=100/(count*1.11);
+                                    var mper=2.5*4/(count+1);                                                 
+                                }
+                                var html = "";       
+                                var ihtml="";                             
+                                html += '<div class="ub ub-f1 ub-ac hb">'
+                                +'<img src="'+seller_url+'" class="hbi"/>'
+                                +'<div class="ub ub-f1 ub-ver">'
+                                    +'<div class="ub ulev-5" >'
+                                        +nickname
+                                    +'</div>'
+                                    +'<div class="ub ulev-1" style="color:#808080">'
+                                        +'<img src="../image/flag/'+countryf+'.png" style="width:1.2em;height:.8em"/>&nbsp;'+country+'&nbsp;&nbsp;' 
+                                        +'<img src="../image/plane.png" style="width:0.7em"/>&nbsp;'
+                                        +back
+                                        +'回国'
+                                    +'</div>'
+                                +'</div>'
+                                +'<div class="ub" id="setting'+i+'" >'   
+                                +'<div onclick="setting('+"'"+seller_id+"'"+','+"'"+sellerId+"'"+','+items_len+');" class="ub ub-ac ub-pc ulev-3 setting">'
+                                    +'操作'
+                                +'</div>'                                
+                                +'</div>'
+                                +'</div>'                                
+                                + '<div class="ub ub-f1" style="padding:.7em 0;">'
+                                + '<div style="width:100%">'
+                                +'<img onclick="openscene('+"'"+seller_id+"'"+','+"'"+sellerId+"'"+');" src="'+shop_url+'" style="width:30%;height:width;float:left;margin-left:2.5%;margin-right:.7em"/>'
+                                +'<div class="ub ub-ver ub-f1" style="line-height:1.5em">'
+                                    +'<div class="" onclick="openscene('+"'"+seller_id+"'"+','+"'"+sellerId+"'"+');">'
+                                        +desc
+                                    +'</div>'
+                                    +'<div class="" style="color:#8A8A8A;font-size:.8em;">'
+                                        +'<img src="../image/Pin-Assistor.png" style="width:0.7em"/ >&nbsp;'+locationInfo+'&nbsp;&nbsp;'+count+'件商品'
+                                    +'</div>'
+                                    +'<div class="ub" id="time'+i+'" style="color:#323232;margin-top: .5em;font-size: .9em;display: none;line-height:1.5em">'
+                                    +'</div>'       
+                                +'</div>'
+                                +'</div>'
+                                +'</div>'
+                                +'<div class="ub ub-f1" style="width:100%;overflow-x: auto;overflow-y:hidden;">'
+                                +'<ul style="width:'+ulwidth+'%;" id="ul'+i+'">'
+                                // +ihtml
+                                +'</ul>'
+                                +'</div>'                                            
+                                +'<div style="width:100%;height:.5em;background:#F2F2F2;"></div>';  
+                                $("#myscene").append(html); 
+                                for (var j = 0; j < items_len; j++) {
+                                    var url_img3; 
+                                    if(data.data[i].items[j].thumbs.length>0){                                                
+                                        url_img3 = data.data[i].items[j].thumbs[0];
+                                    }else{                                                
+                                        url_img3 = data.data[i].items[j].images[0];
+                                    }
+                                    var items_url = api + url_img3; 
+                                    var price=data.data[i].items[j].price;
+                                    var img_id=data.data[i].items[j]._id; 
+                                    var rate=data.data[i].items[j].rate;                                                  
+                                    var lastprice=Math.ceil(price*rate*1.15);    
+                                    ihtml += '<li class="li" style="width:'+per+'%;margin-left: '+mper+'%;">'
+                                            +'<div onclick="opendetail('+"'"+img_id+"'"+','+"'"+sellerId+"'"+');">'
+                                                +' <img src="'+items_url+'" class="ub ub-f1 g_img" />'
+                                                +'<div class="ub ub-ac ub-pc transparent">'
+                                                    +'￥'+lastprice
+                                                +'</div>'
+                                            +'</div>'
+                                        +'</li>';                          
+                                } 
+                                $("#ul"+i).append(ihtml); 
+                            }
+                        } 
+                    }
+                },
+                error : function(errMessage) {
+                    //alert("errMessage"+errMessage);                 
+                }
+            });
+        }
+        function secondShow(){
+           num++;
+           // alert(num);
+            appcan.request.ajax({
+                url : api+'/api/shoplive/getByUserId?userId='+userId+'&pageNo='+num+'&pageSize=5',
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {                          
+                    if(data.status == 0){
+                        uexWindow.toast("0", "5", data.msg, "2000");
+                    }
+                    if (data.status == 1) { 
+                        var live_len = data.data.length;
+                        appcan.locStorage.setVal("live_len", live_len);
+                        if(live_len==0){
+                            appcan.window.openToast("没有更多数据", 5000, 5);
+                        }
+                        else{
+                            var over=[];                         
+                            for(var i = 0; i < live_len; i++)   {  
+                                if(!data.data[i].items||data.data[i].items.length<3){                                
+                                }else{
+                                    var items_len = data.data[i].items.length;
+                                    var url_img1 = data.data[i].seller.avatar;
+                                    var seller_url = api + url_img1;                               
+                                    var url_img2;
+                                    if(data.data[i].thumbs.length>0){                                                
+                                        url_img2 = data.data[i].thumbs[0];
+                                    }else{                                                
+                                        url_img2 = data.data[i].images[0];
+                                    } 
+                                    var shop_url = api + url_img2; 
+                                    var back=data.data[i].to_back_day;
+                                    over[i]=data.data[i].deadline;   
+                                    var sellerId=data.data[i].seller._id;                  
+                                    var country=data.data[i].country;                                 
+                                    var locationInfo=data.data[i].locationInfo;
+                                    var countryf=areaList[country].name;
+                                    appcan.locStorage.setVal("over["+num+i+"]", over[i]);
+                                    DownCount1(num); 
+                                    var nickname = data.data[i].seller.nickname;
+                                    var seller_id = data.data[i]._id;
+                                    var desc=data.data[i].desc;
+                                     var count=items_len;
+                                     if(count<4){                                                
+                                        var ulwidth=100;
+                                        var per=30;
+                                        var mper=2.5;  
+                                    }else{
+                                        var ulwidth=count*33.3; 
+                                        var per=100/(count*1.11); 
+                                        var mper=2.5*4/(count+1);                                                
+                                    }
+                                    var html = "";       
+                                    var ihtml="";                             
+                                    html += '<div class="ub ub-f1 ub-ac hb">'
+                                    +'<img src="'+seller_url+'" class="hbi"/>'
+                                    +'<div class="ub ub-f1 ub-ver">'
+                                        +'<div class="ub ulev-5" >'
+                                            +nickname
+                                        +'</div>'
+                                        +'<div class="ub ulev-1" style="color:#808080">'
+                                            +'<img src="../image/flag/'+countryf+'.png" style="width:1.2em;height:.8em"/>&nbsp;'+country+'&nbsp;&nbsp;' 
+                                            +'<img src="../image/plane.png" style="width:0.7em"/>&nbsp;'
+                                            +back
+                                            +'回国'
+                                        +'</div>'
+                                    +'</div>'
+                                    +'<div class="ub" id="setting'+num+i+'" >'   
+                                    +'<div onclick="setting('+"'"+seller_id+"'"+','+"'"+sellerId+"'"+','+items_len+');" class="ub ub-ac ub-pc ulev-3 setting">'
+                                        +'操作'
+                                    +'</div>'                                
+                                    +'</div>'
+                                    +'</div>'                                
+                                    + '<div class="ub ub-f1" style="padding:.7em 0;">'
+                                    + '<div style="width:100%">'
+                                    +'<img onclick="openscene('+"'"+seller_id+"'"+','+"'"+sellerId+"'"+');" src="'+shop_url+'" style="width:30%;height:8em;float:left;margin-left:2.5%;margin-right:.7em"/>'
+                                    +'<div class="ub ub-ver ub-f1" style="line-height:1.5em">'
+                                        +'<div class="" onclick="openscene('+"'"+seller_id+"'"+','+"'"+sellerId+"'"+');">'
+                                            +desc
+                                        +'</div>'
+                                        +'<div class="" style="color:#8A8A8A;font-size:.8em;">'
+                                            +'<img src="../image/Pin-Assistor.png" style="width:0.7em"/ >&nbsp;'+locationInfo+'&nbsp;&nbsp;'+count+'件商品'
+                                        +'</div>'
+                                        +'<div class="ub" id="time'+num+i+'" style="color:#323232;margin-top: .5em;font-size: .9em;display: none;line-height:1.5em">'
+                                        +'</div>'       
+                                    +'</div>'
+                                    +'</div>'
+                                    +'</div>'
+                                    +'<div class="ub ub-f1" style="width:100%;overflow-x: auto;overflow-y:hidden;">'
+                                    +'<ul style="width:'+ulwidth+'%;" id="ul'+num+i+'">'
+                                    // +ihtml
+                                    +'</ul>'
+                                    +'</div>'                                            
+                                    +'<div style="width:100%;height:.5em;background:#F2F2F2;"></div>';  
+                                    $("#myscene").append(html); 
+                                    for (var j = 0; j < items_len; j++) {
+                                        var url_img3; 
+                                        if(data.data[i].items[j].thumbs.length>0){                                                
+                                            url_img3 = data.data[i].items[j].thumbs[0];
+                                        }else{                                                
+                                            url_img3 = data.data[i].items[j].images[0];
+                                        }
+                                        var items_url = api + url_img3; 
+                                        var price=data.data[i].items[j].price;
+                                        var img_id=data.data[i].items[j]._id;  
+                                        var rate=data.data[i].items[j].rate;                                                  
+                                        var lastprice=Math.ceil(price*rate*1.15);                           
+                                        ihtml += '<li class="li" style="width:'+per+'%;margin-left: '+mper+'%;">'
+                                                +'<div onclick="opendetail('+"'"+img_id+"'"+','+"'"+sellerId+"'"+');">'
+                                                    +' <img src="'+items_url+'" class="ub ub-f1 g_img" />'
+                                                    +'<div class="ub ub-ac ub-pc transparent">'
+                                                        +'￥'+lastprice
+                                                    +'</div>'
+                                                +'</div>'
+                                            +'</li>';                          
+                                    } 
+                                    $("#ul"+num+i).append(ihtml); 
+                                }
+                            } 
+                        }
+                    }
+                },
+                error : function(errMessage) {
+                    //alert("errMessage"+errMessage);                 
+                }
+            });
+        }
+        
+        function DownCount(){ 
+            var today=new Date();
+            now=parseInt(today.getTime()/1000);
+            var live_len=appcan.locStorage.getVal("live_len");
+            var over=[];
+            for(var i=0;i<live_len;i++){
+                over[i]=appcan.locStorage.getVal("over["+i+"]");
+                var overtime=moment(over[i], 'YYYY-MM-DDTHH:mm:ss.sssZ');
+                var deadline=overtime.unix();  
+                var minus=deadline-now;
+               if(minus>0){ 
+                   $("#time"+i).html('<div style="color:#ADADAD">剩余</div><div class="ub ub-ac ub-pc time" id="hour'+i+'" style="margin-left: 0.5em"></div>：<div class="ub ub-ac ub-pc time" id="minute'+i+'"></div>：<div class="ub ub-ac ub-pc time" id="second'+i+'"></div>');  
+                   timechange(minus,i);            
+               }else{
+                   $("#time"+i).html('<div style="color:#F1F1F1;background-color:#B0B5B6;padding:.3em .7em;border-radius: .3em;font-size: 1em; ">已经结束</div>');
+                   $("#setting"+i).remove();
+               }
+            }
+            window.setTimeout("DownCount()",1000);
+        }        
+        function timechange(minus,i){
+            CSecond=minus%60;
+            CMinute=parseInt(minus%3600/60);
+            CHour=parseInt(minus/3600);
+            if(CMinute<10)
+            {
+                CMinute="0"+CMinute;
+            }
+            if(CHour<10)
+            {
+                CHour="0"+CHour;
+            }
+            if(CSecond<10)
+            {
+                CSecond="0"+CSecond;
+            }  
+            $("#hour"+i).html(CHour);
+            $("#minute"+i).html(CMinute);
+            $("#second"+i).html(CSecond); 
+        }    
+        
+        function DownCount1(num){ 
+            // alert("ss");
+            var today=new Date();
+            now=parseInt(today.getTime()/1000);
+            var live_len=appcan.locStorage.getVal("live_len");
+            // alert(live_len);
+            var over=[];
+            for(var i=0;i<live_len;i++){
+                // alert(i);
+                over[i]=appcan.locStorage.getVal("over["+num+i+"]");
+                // alert("over"+i+" "+over[i]);
+                var overtime=moment(over[i], 'YYYY-MM-DDTHH:mm:ss.sssZ');
+                var deadline=overtime.unix();  
+                // alert(overtime);    
+                var minus=deadline-now;
+               if(minus>0){                    
+                     $("#time"+num+i).html('<div style="color:#ADADAD">剩余</div><div class="ub ub-ac ub-pc time" id="hour'+num+i+'" style="margin-left: 0.5em"></div>：<div class="ub ub-ac ub-pc time" id="minute'+num+i+'"></div>：<div class="ub ub-ac ub-pc time" id="second'+num+i+'"></div>');  
+                     timechange1(minus,i,num);            
+               }else{
+                   $("#time"+num+i).html('<div style="color:#F1F1F1;background-color:#B0B5B6;padding:.3em .7em;border-radius: .3em;font-size: 1em; ">已经结束</div>');
+                   $("#setting"+num+i).remove();
+               }
+            }
+            window.setTimeout("DownCount1("+num+")",1000);
+        }        
+        function timechange1(minus,i,num){
+            CSecond=minus%60;
+            CMinute=parseInt(minus%3600/60);
+            CHour=parseInt(minus/3600);
+            if(CMinute<10)
+            {
+                CMinute="0"+CMinute;
+            }
+            if(CHour<10)
+            {
+                CHour="0"+CHour;
+            }
+            if(CSecond<10)
+            {
+                CSecond="0"+CSecond;
+            }  
+            $("#hour"+num+i).html(CHour);
+            $("#minute"+num+i).html(CMinute);
+            $("#second"+num+i).html(CSecond); 
+        } 
+        
+        function opendetail(id1,id2) {    
+                appcan.locStorage.setVal("detail_id", id1);
+                appcan.locStorage.setVal("sellerId", id2);
+                appcan.window.open("detail", "detail.html",10);                
+            }
+        function openscene(id1,id2){
+             appcan.locStorage.setVal("scene_id", id1);
+             appcan.locStorage.setVal("sellerId", id2);
+             appcan.window.open("scene","scene.html",10);
+        }
+        function setting(id1,id2,i){
+            appcan.locStorage.setVal("scene_id", id1);
+             appcan.locStorage.setVal("sellerId", id2);
+             appcan.locStorage.setVal("itemlen", i);
+             appcan.window.open("scene","scene.html",10);  
+             setTimeout(function(){ 
+                 uexWindow.evaluateScript('scene',0,'appcan.frame.open("scene_share", "scene_share.html", 0);'); 
+             }, 2000);                     
+         }
+        
+    </script>
+</html>

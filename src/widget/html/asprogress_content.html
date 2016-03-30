@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-f1" style="height:3em;padding:0 1em;background-color: #FFFFFF;line-height: 3em;margin-bottom: .5em;">
+                        服务单：<span id="serviceCode"></span>
+                 </div>
+                 <div class="ub ub-f1" style="padding: 0 1em;background-color: #FFFFFF;margin-bottom: .5em;">
+                    <div class="ub ub-ver ub-f1" >
+                        <div class="" style="line-height: 3em;">
+                            问题描述
+                        </div>                        
+                        <div class="ub" style="color:#808080;line-height: 1.5em;height: 5em;" id="desc">
+                          <!-- 商品太差了，跟看到的介绍严重不符，强烈要求退货。  -->                          
+                        </div>
+                    </div>
+                </div>
+                <div class="ub ub-f1" style="height:3em;padding:0 1em;background-color: #FFFFFF;line-height: 3em;border-bottom: 1px solid #DDDDDD">
+                         售后进度
+                 </div>
+                <div class="ub ub-f1" style="padding: 1em;background-color: #FFFFFF;margin-bottom: .5em;">
+                    <div class="ub ub-ver ub-f1"  id="progress">                      
+                        <!-- <div class="ub" style="color: #FF3B77;height: 5em;font-size: .9em">
+                             <img src="../image/proce.png" style="height: 5em"/>   
+                             <div style="margin-left: .5em">
+                                <p> 2015-10-18&nbsp;&nbsp;14:29:50</p>
+                                 <p style="margin-top: .5em;width: 22em;line-height: 1.3em">您的售后申请已处理，再次祝您购物愉快</p>
+                             </div>          
+                        </div>
+                        <div class="ub" style="color:#808080;height: 5em;font-size: .9em">
+                             <img src="../image/proce.png" style="height: 5em"/>   
+                             <div style="margin-left: .5em">
+                                <p> 2015-10-17&nbsp;&nbsp;10:02:30</p>
+                                 <p style="margin-top: .5em;width: 22em;line-height: 1.3em">售后申请已提交，工作人员会尽快与您取得联系，请耐心等候</p>
+                             </div>          
+                        </div> -->
+                    </div>
+                </div>
+    </body>
+    <script src="../js/appcan.js"></script>
+    <script src="../js/appcan.control.js"></script>
+    <script src="../js/moment.js"></script>
+    <script src="../js/main.js"></script>
+    </body>
+    <script>
+    var serviceId=appcan.locStorage.getVal('serviceId');
+        appcan.ready(function() {
+            show();
+        });
+        function show(){
+           appcan.request.ajax({
+                url :api+'/api/saleService/detail/'+serviceId,
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {
+                    if(data.status==1){
+                       var content=data.data.desc;
+                       var serviceCode=data.data.serviceCode;
+                       $("#serviceCode").html(serviceCode);
+                       $("#desc").html(content);
+                       var status=data.data.status;
+                       var createTime=data.data.createTime;
+                       var updateTime=data.data.updateTime;
+                       var createTimeChange=moment(createTime, 'YYYY-MM-DDTHH:mm:ss.sssZ');
+                         var createline=createTimeChange.unix();
+                         var date = new Date(parseInt(createline+"000"));
+                         var Y = date.getFullYear() + '-';
+                         var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+                         var D = date.getDate() + ' ';
+                         var hour=date.getHours();     
+                         var minute=date.getMinutes();     
+                         var second=date.getSeconds();
+                         var nowDate = Y + M + D+"&nbsp"+hour+":"+minute+":"+second;
+                          
+                         var updateTimeChange=moment(updateTime, 'YYYY-MM-DDTHH:mm:ss.sssZ');
+                         var updateline=updateTimeChange.unix();
+                         var updatedate = new Date(parseInt(updateline+"000"));
+                         var YY = updatedate.getFullYear() + '-';
+                         var MM = (updatedate.getMonth() + 1 < 10 ? '0' + (updatedate.getMonth() + 1) : updatedate.getMonth() + 1) + '-';
+                         var DD = updatedate.getDate() + ' ';
+                         var Hhour=updatedate.getHours();     
+                         var Mminute=updatedate.getMinutes();     
+                         var Ssecond=updatedate.getSeconds();
+                         var NnowDate = YY + MM + DD+"&nbsp"+Hhour+":"+Mminute+":"+Ssecond;
+                         var html="";
+                           html+='<div class="ub" style="color:#808080;height: 5em;font-size: .9em">'
+                              +'<img src="../image/proce.png" style="height: 5em"/>'   
+                              +'<div style="margin-left: .5em">'
+                              +'<p>'+nowDate+'</p>'
+                              +'<p style="margin-top: .5em;width: 22em;line-height: 1.3em">售后申请已提交，工作人员会尽快与您取得联系，请耐心等候</p>'
+                              +'</div>'
+                           $("#progress").html(html);
+                          if(createTime!=updateTime&&status==3){
+                               var html2='';
+                                html2+='<div class="ub" style="color: #FF3B77;height: 5em;font-size: .9em">'
+                                     +'<img src="../image/proce.png" style="height: 5em"/> '  
+                                     +'<div style="margin-left: .5em">'
+                                     +'<p> '+NnowDate+'</p>'
+                                     +'<p style="margin-top: .5em;width: 22em;line-height: 1.3em">您的售后申请已处理，再次祝您购物愉快</p>'
+                                     +'</div> '         
+                                     +'</div>'
+                                $("#progress").prepend(html2);
+                             }
+                             else if(createTime!=updateTime&&status==2){
+                                 var html2='';
+                                html2+='<div class="ub" style="color: #FF3B77;height: 5em;font-size: .9em">'
+                                     +'<img src="../image/proce.png" style="height: 5em"/> '  
+                                     +'<div style="margin-left: .5em">'
+                                     +'<p> '+NnowDate+'</p>'
+                                     +'<p style="margin-top: .5em;width: 22em;line-height: 1.3em">用户已取消售后</p>'
+                                     +'</div> '         
+                                     +'</div>'
+                                $("#progress").prepend(html2);
+                             }
+                    }
+                },
+                error : function(errMessage) {
+                    alert("errMessage:"+JSON.stringify(errMessage));                         
+                }
+            });  
+        }
+
+    </script>
+</html>

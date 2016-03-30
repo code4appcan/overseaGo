@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+
+    </head>
+    <body class="um-vp" ontouchstart style="background-color: rgba(0,0,0,0.5);" >
+        <div class="ub ub-ac ub-pc" style="width: 100%;height: 100%">
+            <div class="ub ub-ac ub-pc ub-ver" style="width: 100%;height: 16em;color:#6F6F6F;font-size:.8em;background: #FFFFFF;position: absolute;bottom: 4.5em">
+                <div class="ub ub-f1" style="margin: .5em 0;width:100%">
+                    <div id="weixin" class="ub ub-ac ub-pc ub-ver ub-f1" style="width:20%; padding: .5em 0;">
+                        <img src="../image/weixin1.png" style="width: 90%;margin-left:9%;margin-right:1%;" />
+                        <p>
+                            微信
+                        </p>
+                    </div>
+                    <div id="friends" class="ub ub-ac ub-pc ub-ver ub-f1" style="width:20%; padding: .5em 0;">
+                        <img src="../image/weixin2.png" style="width: 90%;margin-left:7%;margin-right:3%;" />
+                        <p>
+                            朋友圈
+                        </p>
+                    </div>
+                    <div id="QQ" class="ub ub-ac ub-pc ub-ver ub-f1" style="width:20%; padding: .5em 0;">
+                        <img src="../image/QQ.png" style="width: 90%;margin-left:5%;margin-right:5%;" />
+                        <p>
+                            QQ
+                        </p>
+                    </div>
+                    <div id="QQzone" class="ub ub-ac ub-pc ub-ver ub-f1" style="width:20%; padding: .5em 0;">
+                        <img src="../image/QQzone.png" style="width: 90%;margin-left:3%;margin-right:7%;" />
+                        <p>
+                            QQ空间
+                        </p>
+                    </div>
+                    <div id="Sina" class="ub ub-ac ub-pc ub-ver ub-f1" style="width:20%; padding: .5em 0;">
+                        <img src="../image/weibo.png" style="width: 90%;margin-left:1%;margin-right:9%;" />
+                        <p>
+                            新浪微博
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="ub ub-f1" id="isSeller" style="margin: .5em 0;width:100%">
+                    <div class="ub ub-ac ub-pc ub-ver ub-f1" style="width:20%; padding: .5em 0;">
+                        <img src="../image/edit1.png" style="width: 90%;margin-left:9%;margin-right:1%;" id="changescene"/>
+                        <p>
+                            编辑现场
+                        </p>
+                    </div>
+                    <div class="ub ub-ac ub-pc ub-ver ub-f1" style="width:20%; padding: .5em 0;">
+                        <img src="../image/Add.png" style="width: 90%;margin-left:7%;margin-right:3%;" id="additem"/>
+                        <p>
+                            添加商品
+                        </p>
+                    </div>
+                    <div class="ub ub-ac ub-pc ub-ver ub-f1" style="width:20%; padding: .5em 0;">
+                        <img src="../image/stop.png" style="width: 90%;margin-left:5%;margin-right:5%;" id="stop"/>
+                        <p>
+                            停止活动
+                        </p>
+                    </div>                    
+                    <div class="ub ub-ac ub-pc ub-ver ub-f2" style="width:40%; padding: .5em 0;">
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="ub ub-ac ub-pc" style="width: 100%;height: 4.5em;color:#6F6F6F;font-size:.8em;background: #FFFFFF;position: absolute;bottom: 0">
+                <div class="ub ub-ac ub-pc ulev-3" onclick=" appcan.frame.close('scene_share');" style="width:80%;height: 2.4em;border-radius:.5em;color:#00C1F9;background-color:#FFFFFF;border: 1px solid #00C1F9;">
+                    取消
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/main.js"></script>
+    </body>
+    <script>
+        // var userId = "5675551239c3e372278695ae";
+        var userId=appcan.locStorage.getVal("userId");
+        var sellerId=appcan.locStorage.getVal("sellerId");       
+        var scene_id=appcan.locStorage.getVal("scene_id");
+        var share_scene_weixin = 0;
+        var appId_QQ = "****";
+        var appId_weixin = "******";
+        var content = appcan.locStorage.getVal('share_scene_content');
+        var url = appcan.locStorage.getVal('share_scene_thumbs');
+        var targetUrl = api + "/api/sharescene?id=" + scene_id;
+        appcan.ready(function() { 
+            isSeller();
+            uexQQ.cbShareQQ = function(opId, dataType, data) {
+               // alert(data);
+                if(JSON.parse(data).errCode==0){
+                    //addPoints();
+                }
+            }
+            //微信授权回调
+            uexWeiXin.cbRegisterApp = function(opCode, dataType, data) {
+                //alert("cbRegisterApp" + data);
+                if (data == 0) {
+                    var JsonData = {
+                        "thumbImg" : api + url,
+                        "wedpageUrl" : targetUrl,//"www.fetchgou.com",
+                        "scene" : share_scene_weixin,
+                        "title" : "现场购分享",
+                        "description":content
+                    };
+                    //alert(JSON.stringify(JsonData));
+                    uexWeiXin.shareLinkContent(JSON.stringify(JsonData));
+                }
+            };
+            //微信分享回调
+            uexWeiXin.cbShareLinkContent = function (data) {
+                //alert('popover'+data);
+            }
+
+            uexSina.cbShare = function(opId, dataType, data) {
+                //alert("新浪分享-------" + data);
+                if(data == 0) {
+                   // addPoints();
+                   alert('分享成功');                   
+                }
+            }
+            
+            uexSina.cbLogin = function(opCode,dataType,data) {
+                   //alert("新浪登录----"+data);
+                  
+                  if(JSON.parse(data).uid){
+                      sharePic();
+                  }
+            }
+            
+            uexSina.cbRegisterApp = function(opId,dataType,data) {
+                //alert("新浪注册----"+data);
+                if(data==0){
+                    sharePic();
+                }
+            }
+        });
+        
+        function isSeller(){
+            if(userId==sellerId){
+                // $("#notSeller").remove();
+            }else{
+                $("#isSeller").remove();
+            }            
+        }
+        
+        function addPoints(){
+            var url = api + "/api/user/pointsChange";
+            var data = {
+                "userId": userId,
+                "score": 8
+            }
+           appcan.request.ajax({
+            url : url,
+            type : 'POST',
+            data:data,
+            dataType : 'json',
+            success : function(data, status, xhr) {
+                //alert(JSON.stringify(data));
+                console.log(JSON.stringify(data));
+                if (data.status == 1) {
+                    //alert(data.data);
+                } else {
+                    //alert(data.msg);
+                }
+            },
+            error : function() {
+                //alert('查询失败，请稍后重试');
+            }
+        })
+      }
+        
+        
+        
+        function sharePic() {
+            //var realImgPath = "res://1-1.jpg";
+            var realImgPath = api + url;
+            //alert('---->' + realImgPath);
+            uexSina.sendImageContent(realImgPath, content+targetUrl);
+        }
+        appcan.button("#QQzone", "btn-act", function() {
+            var json = {
+                "title":"现场购分享",
+                "summary":content,
+                "targetUrl":targetUrl,
+                "imageUrl":api + url,
+                "appName":"uexQQ", 
+                "cflag":"1"};
+            //alert(JSON.stringify(json));
+            uexQQ.shareWebImgTextToQQ(appId_QQ, JSON.stringify(json));
+        })
+
+        appcan.button("#QQ", "btn-act", function() {
+             var realImgPath = "res://1-1.jpg";
+              var json = {
+                "title":"现场购分享",
+                "summary":content,
+                "targetUrl":targetUrl,
+                "imageUrl":api + url,
+                "appName":"uexQQ", 
+                "cflag":"2"};
+            //alert(JSON.stringify(json));
+            uexQQ.shareWebImgTextToQQ(appId_QQ, JSON.stringify(json));
+        })
+
+        appcan.button("#weixin", "btn-act", function() {
+            share_scene_weixin = 0;
+            uexWeiXin.registerApp(appId_weixin);
+        })
+
+        appcan.button("#friends", "btn-act", function() {
+            share_scene_weixin = 1;
+            uexWeiXin.registerApp(appId_weixin);
+        })
+        appcan.button("#Sina", "btn-act", function() {
+            var appKey = "****";
+            var appSecret = "******";
+            var registerUrl = "https://api.weibo.com/oauth2/default.html";
+            //uexSina.registerApp(appKey,appSecret,registerUrl);
+            uexSina.login(appKey,registerUrl);
+        })
+        
+        
+        //change by wang 
+        appcan.button("#changescene", "btn-act", function() {
+            appcan.window.open("scene_info","scene_info.html",10);
+            appcan.frame.close('scene_share');
+        })
+        appcan.button("#additem", "btn-act", function() {
+            var itemlen=appcan.locStorage.getVal("itemlen");
+            if(itemlen==9){
+                //alert("您已经达到选择商品的最大数量，不能再继续添加商品！");
+                var alertcontent="您已经达到选择商品的最大数量，不能再继续添加商品！";
+                appcan.locStorage.setVal("alertcontent",alertcontent);
+                appcan.frame.open("alertPop","alertPop.html");  
+            }else{                
+                appcan.window.open("share","share.html",10);
+                appcan.frame.close('scene_share');
+            }
+        })
+        appcan.button("#stop", "btn-act", function() {
+             appcan.window.alert({
+                 title : "提示",
+                 content : "您确定要停止活动?",
+                 buttons : ['确定', '取消'],
+                 callback : function(err, data, dataType, optId) {
+                    if(['确定', '取消'][data]=='确定'){
+                        appcan.request.ajax({
+                            url :api+'/api/shoplive/stop?userId='+userId+'&shopLiveId='+scene_id,
+                            type : 'GET',
+                            dataType : 'json',
+                            success : function(data) {
+                                 if(data.status == 0){
+                                    uexWindow.toast("0", "5", data.msg, "2000");
+                                }
+                                if (data.status == 1) { 
+                                    uexWindow.toast("0", "5", data.msg, "2000");                       
+                                    uexWindow.evaluateScript('scene',0,'window.location.reload();');                        
+                                    appcan.frame.close('scene_share');                                    
+                                    uexWindow.evaluatePopoverScript("root", "content", "homeready()");
+                                    uexWindow.evaluatePopoverScript("myscene", "content", "show()");  
+                                }             
+                            },
+                            error : function(errMessage) {
+                                //alert("errMessage:"+JSON.stringify(errMessage));                         
+                            }
+                        });
+                    }
+                 }
+             });            
+        })
+
+    </script>
+</html>

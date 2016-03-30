@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/common.css">
+    </head>
+    <style type="text/css">
+        .blue {
+            background-color: #00C1F9;
+            color: white;
+        }
+
+    </style>
+    <body class="um-vp bc-bg" ontouchstart bgcolor="red">
+
+        <div class="ub ub-ver">
+            <ul style="width:100%;" id="goodsList">
+
+            </ul>
+        </div>
+    </body>
+    <script src="../js/appcan.js"></script>
+    <script src="../js/appcan.control.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/moment.js"></script>
+    <script src="../js/country.js"></script>
+    </body>
+    <script>
+        var changeHtml;
+        var k = 1;
+        //var arr=[];
+        var brand_id = appcan.locStorage.getVal("brand_id");
+        var brand_name=appcan.locStorage.getVal("brand_name");
+        var brand_img=appcan.locStorage.getVal("brand_img");
+        var userId = appcan.locStorage.getVal("userId");
+        // var mark = appcan.locStorage.getVal("mark");
+        //alert(good_id+"-----"+mark);
+        var isCared;
+        appcan.ready(function() {
+            appcan.initBounce();
+            showbrands();
+            if(userId!=null){                
+                setTimeout(function() {
+                    IsCared();
+                }, 100);
+            }
+            appcan.window.setBounce({
+                bounceType : "1",
+                downEndCall : function(type) {
+                    secondshowBrands();
+                    setTimeout(function() {
+                        appcan.window.resetBounceView(1);
+                    }, 1500);
+                }
+            });
+        });
+        function showSearch(str){
+            var url=api+"/api/item/search?pageNo=1&pageSize=10&keywords="+str;
+             appcan.request.ajax({
+                url : encodeURI(url),
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {
+                    if(data.status==1){
+                       //showData(data.data);
+                       var len=data.data.length;
+                       if(len==0){
+                            appcan.window.openToast("抱歉，暂时没有该类商品", 3000, 5);
+                       }
+                       appcan.locStorage.setVal("live_len", len);
+                       var imgSrc=api+data.data[0].thumbs[0];
+                       $('#goodsList').html(''); 
+                       var html='';
+                       var over=[];
+                       for(var i=0;i<data.data.length;i++){
+                           over[i]=data.data[i].shoplive.deadline;
+                          appcan.locStorage.setVal("over["+i+"]", over[i]);
+                           var price=data.data[i].price;
+                           var desc=data.data[i].desc;
+                          var country=data.data[i].shoplive.country;
+                            var countryf=areaList[country].name; 
+                          var back=data.data[i].shoplive.to_back_day;
+                          var code=data.data[i].priceCode;
+                          var rate=data.data[i].rate;
+                          var unit=areaList[country].currency;                      
+                          var lastprice=Math.ceil(price*rate*1.15);
+                          var id=data.data[i]._id;
+                          console.log(id);
+                            html+= '<li style="display: inline;width:100%">'
+                                +'<div class="ub ub-f1" style="padding: 0.8em;background-color: #FFFFFF;margin-bottom: .5em;" onclick="opendetail(\'' + id + '\')">'
+                                +'<img src="'+imgSrc+'" style="width:6em;margin-right: 0.7em;height:6em"/>'
+                                +'<div class="ub ub-ver ub-f1" >'
+                                +'<div class="" style="color:#3D3D3D;line-height: 2em;">'+desc
+                                +'</div>'
+                                +'<div class="ub ulev-1" style="color:#808080;line-height: 1.6em;">'
+                                +'<img src="../image/flag/'+countryf+'.png" style="width:1.2em"/>&nbsp;'
+                                +country
+                                +'&nbsp;&nbsp;'
+                                +'<img src="../image/plane.png" style="width:0.7em"/>&nbsp;'
+                                +back
+                                +'回国'
+                                +'</div>'
+                                +'<div class="" style="color:#3D3D3D;line-height: 1em;color:red">'
+                                + '￥ '
+                                +lastprice
+                                +'<span class="ulev-1" style="color:#808080; ">='
+                                +price+unit+'×'+rate+'(汇率)+15%代购费</span>'                      
+                                +'</div>'                   
+                                +'<div class="ub" id="time'+i+'" style="color:#323232;margin-top: .5em;font-size: .9em;display: none;line-height:1.5em">'
+                                +'</div>'
+                                +'</div>'
+                                +'</div>'                   
+                                +'</li>'
+                                $("#goodsList").html(html);
+                       }
+                    }
+                   
+                },
+                error : function(errMessage) {
+                    //alert("errMessage:"+JSON.stringify(errMessage));                         
+                }
+            });
+            DownCount();            
+        }
+
+        function showData(data) {
+            //alert(JSON.stringify(data));
+            $('#goodsList').html('');
+
+        }
+
+        function IsCared() {
+            appcan.request.ajax({
+                url : api + '/api/user/isCared',
+                type : 'post',
+                dataType : 'json',
+                data : {
+                    "userId" : userId,
+                    "brandId" : brand_id
+                },
+                success : function(data) {
+                    if (data.status == 1) {
+                        isCared = data.message;
+                        $("#blue").removeClass('uhide');
+                        $("#attention").html('已关注');
+                        $("#blue").addClass("blue");
+                    } else if (data.status == 2) {
+                        //alert(data.message);
+                        isCared = data.message;
+                        $("#blue").removeClass('uhide');
+                    }
+                },
+                error : function(errMessage) {
+                    //alert("errMessage:" + JSON.stringify(errMessage));
+                }
+            });
+        }
+
+        function showbrands() {
+            appcan.request.ajax({
+                //56669ad4115915b41181c9aa 
+                //url:api+'/api/item/getByBrand?brandId=56669ad4115915b41181c9aa&PageSize=5&PageNum=' + k,
+                 url:api+'/api/item/getByBrand?brandId=' + brand_id + '&PageSize=5&PageNum=1',
+                type:'get',
+                dataType : 'json',
+                success : function(data) {
+                    if (data.status == 1) {
+                        console.log(data);
+                        var over = [];
+                        var html = '';
+                        html += '<li style="display: inline;width:100%">' 
+                        + '<div class="ub ub-f1 ub-ac hb" style="background-color: #FFFFFF;">' 
+                        + '<img src="'+brand_img+'" class="logo"/>' + '<div class="ub ub-f1 ub-ver">' 
+                        + '<div class="ub ulev-5" >' + brand_name + '</div>' 
+                        // + '<div class="ub ulev-1" style="color:#808080">' 
+                        // + '国际包包大品牌' 
+                        // + ' </div>' 
+                        + ' </div>' 
+                        + '<div class="ub ub-ac ub-pc ulev-3 concern uhide" id="blue">' 
+                        + '<div class="" onclick="attention()" id="attention">+关注</di>' + ' </div>' + '</div>' + '</li>';
+                        $("#goodsList").append(html);
+                        var len = data.data.length;
+                        if(len==0){
+                            appcan.window.openToast("抱歉，暂时没有此品牌商品", 3000, 5);
+                        }
+                        appcan.locStorage.setVal("live_len", len);    
+                        html="";                    
+                        for (var i = 0; i < len; i++) {
+                            var country=data.data[i].shoplive.country;
+                            var countryf=areaList[country].name; 
+                            var back=data.data[i].shoplive.to_back_day;
+                            var price=data.data[i].price;
+                            var code=data.data[i].priceCode;
+                            var rate=data.data[i].rate;
+                            var unit=areaList[country].currency;                      
+                            var lastprice=Math.ceil(price*rate*1.15);
+                            var name=data.data[i].desc;
+                            var id=data.data[i]._id;
+                            var imgSrc=api + data.data[i].thumbs[0];
+                            over[i]=data.data[i].shoplive.deadline;
+                            appcan.locStorage.setVal("over[" + i + "]", over[i]);
+                            html += '<li style="display: inline;width:100%">' 
+                            + '<div class="ub ub-f1" style="padding: 0.8em;background-color: #FFFFFF;margin-bottom: .5em;" onclick="opendetail(\'' + id + '\')">' 
+                            + '<img src="' + imgSrc + '" style="width:6em;margin-right: 0.7em;height:6em"/>' 
+                            + '<div class="ub ub-ver ub-f1" >' 
+                            + '<div class="" style="color:#3D3D3D;line-height: 2em;">' 
+                            + name 
+                            + '</div>' 
+                            + '<div class="ub ulev-1" style="color:#808080;line-height: 1.6em;">' 
+                            + '<img src="../image/flag/'+countryf+'.png" style="width:1.2em"/>&nbsp;'
+                            +country
+                            +'&nbsp;&nbsp;' 
+                            + '<img src="../image/plane.png" style="width:0.7em"/>&nbsp;'
+                            +back
+                            +'回国' 
+                            + '</div>' 
+                            +'<div class="" style="color:#3D3D3D;line-height: 1em;color:red">'
+                            + '￥ '
+                            +lastprice
+                            +'<span class="ulev-1" style="color:#808080; ">='
+                            +price+unit+'×'+rate+'(汇率)+15%代购费</span>'                      
+                            +'</div>' 
+                            + '<div class="ub" id="time' + i + '" style="color:#323232;margin-top: .5em;font-size: .9em;display: none;line-height:1.5em">' 
+                            + '</div>' 
+                            + '</div>' 
+                            + '</div>' 
+                            + '</li>'
+                        }
+                        $("#goodsList").append(html);
+                    }
+                },
+                error : function(errMessage) {
+                    //alert("errMessage:" + JSON.stringify(errMessage));
+                }
+            });
+            DownCount();
+        }
+
+        function secondshowBrands() {
+            k++;
+            appcan.request.ajax({
+                //5657f61726b717d42e208e88
+                url : api + '/api/item/getByBrand?brandId=' + brand_id + '&PageSize=5&PageNum=' + k,
+                type : 'get',
+                dataType : 'json',
+                success : function(data) {
+                    if (data.status == 1) {
+                        var len = data.data.length;
+                        appcan.locStorage.setVal("live_len", len);
+                        if (len == 0) {
+                            appcan.window.openToast("没有更多数据", 3000, 5);
+                        } else {
+                            var html = '';
+                            var over = [];
+                            for (var i = 0; i < len; i++) {
+                                 var country=data.data[i].shoplive.country;
+                                var countryf=areaList[country].name; 
+                                var back=data.data[i].shoplive.to_back_day;
+                                var price=data.data[i].price;
+                                var code=data.data[i].priceCode;
+                                var rate=data.data[i].rate;
+                                var unit=areaList[country].currency;                      
+                                var lastprice=Math.ceil(price*rate*1.15);
+                                var name=data.data[i].desc;
+                                var id=data.data[i]._id;
+                                var imgSrc=api + data.data[i].thumbs[0];
+                                over[i] = data.data[i].shoplive.deadline;
+                                appcan.locStorage.setVal("over[" + k+i + "]", over[i]);
+                                html += '<li style="display: inline;width:100%">' 
+                                + '<div class="ub ub-f1" style="padding: 0.8em;background-color: #FFFFFF;margin-bottom: .5em;" onclick="opendetail(\'' + id + '\')">' 
+                                + '<img src="' + imgSrc + '" style="width:6em;margin-right: 0.7em;height:6em"/>' 
+                                + '<div class="ub ub-ver ub-f1" >' 
+                                + '<div class="" style="color:#3D3D3D;line-height: 2em;">' + name + '</div>' 
+                                + '<div class="ub ulev-1" style="color:#808080;line-height: 1.6em;">' 
+                                + '<img src="../image/flag/'+countryf+'.png" style="width:1.2em"/>&nbsp;'
+                                +country
+                                +'&nbsp;&nbsp;' 
+                                + '<img src="../image/plane.png" style="width:0.7em"/>&nbsp;'
+                                +back
+                                +'回国' 
+                                + '</div>' 
+                                +'<div class="" style="color:#3D3D3D;line-height: 1em;color:red">'
+                                + '￥ '
+                                +lastprice
+                                +'<span class="ulev-1" style="color:#808080; ">='
+                                +price+unit+'×'+rate+'(汇率)+15%代购费</span>'                      
+                                +'</div>' 
+                                + '<div class="ub" id="time' + k+i + '" style="color:#323232;margin-top: .5em;font-size: .9em;display: none;line-height:1.5em">' + '</div>' + '</div>' + '</div>' + '</li>'
+                            }
+                             $("#goodsList").append(html);
+                        }
+
+                    }
+                },
+                error : function(errMessage) {
+                    //alert("errMessage:" + JSON.stringify(errMessage));
+                }
+            });
+            DownCount2(k);
+        }
+        
+        function DownCount() {
+            var today = new Date();
+            // alert(today);
+            now = parseInt(today.getTime() / 1000);
+            var over = [];
+            var live_len = appcan.locStorage.getVal("live_len");
+
+            for (var i = 0; i < live_len; i++) {
+                over[i] = appcan.locStorage.getVal("over[" +i + "]");
+                var overtime = moment(over[i], 'YYYY-MM-DDTHH:mm:ss.sssZ');
+                var deadline = overtime.unix();
+                minus = deadline - now;
+                if (minus > 0) {
+                    $("#time" +i).html('<div style="color:#ADADAD">剩余</div><div class="ub ub-ac ub-pc time" id="hour' + i + '" style="margin-left: 0.5em"></div>：<div class="ub ub-ac ub-pc time" id="minute' +i + '"></div>：<div class="ub ub-ac ub-pc time" id="second' +i + '"></div>');
+                    timechange(minus, i);
+                    //$('#changeHtml').html('<div class="ub ub-ac ub-pc ulev-3 concern" >取消订单 </div>');
+                } else {
+                    $("#time"+i).html('<div style="color:#F1F1F1;background-color:#B0B5B6;padding:.3em .7em;border-radius: .3em;font-size: 1em; ">已经结束</div>');
+                    //$('#changeHtml').html('<div class="ub ub-ac ub-pc ulev-3 concern" style="border:1px solid #cdcdcd;color:#cdcdcd">取消订单 </div>');
+                }
+            }
+            window.setTimeout("DownCount()", 1000);
+        }
+
+        function timechange(minus, i) {
+            CSecond = minus % 60;
+            CMinute = parseInt(minus % 3600 / 60);
+            CHour = parseInt(minus / 3600);
+            if (CMinute < 10) {
+                CMinute = "0" + CMinute;
+            }
+            if (CHour < 10) {
+                CHour = "0" + CHour;
+            }
+            if (CSecond < 10) {
+                CSecond = "0" + CSecond;
+            }
+            $("#hour" + i).html(CHour);
+            $("#minute" + i).html(CMinute);
+            $("#second" + i).html(CSecond);
+        }
+
+        function DownCount2(num) {
+            //alert(num);
+            var today = new Date();
+            // alert(today);
+            now = parseInt(today.getTime() / 1000);
+            var over = [];
+            var live_len = appcan.locStorage.getVal("live_len");
+
+            for (var i = 0; i < live_len; i++) {
+                over[i] = appcan.locStorage.getVal("over[" +num+i + "]");
+                var overtime = moment(over[i], 'YYYY-MM-DDTHH:mm:ss.sssZ');
+                var deadline = overtime.unix();
+                minus = deadline - now;
+                if (minus > 0) {
+                    $("#time" + num+i).html('<div style="color:#ADADAD">剩余</div><div class="ub ub-ac ub-pc time" id="hour' + num+i + '" style="margin-left: 0.5em"></div>：<div class="ub ub-ac ub-pc time" id="minute' + num+i + '"></div>：<div class="ub ub-ac ub-pc time" id="second' +num+i + '"></div>');
+                    timechange2(minus, i,num);
+                    //$('#changeHtml').html('<div class="ub ub-ac ub-pc ulev-3 concern" >取消订单 </div>');
+                } else {
+                    $("#time" + num+i).html('<div style="color:#F1F1F1;background-color:#B0B5B6;padding:.3em .7em;border-radius: .3em;font-size: 1em; ">已经结束</div>');
+                    //$('#changeHtml').html('<div class="ub ub-ac ub-pc ulev-3 concern" style="border:1px solid #cdcdcd;color:#cdcdcd">取消订单 </div>');
+                }
+            }
+            window.setTimeout("DownCount2('"+num+"')", 1000);
+        }
+
+        function timechange2(minus, i,num) {
+            CSecond = minus % 60;
+            CMinute = parseInt(minus % 3600 / 60);
+            CHour = parseInt(minus / 3600);
+            if (CMinute < 10) {
+                CMinute = "0" + CMinute;
+            }
+            if (CHour < 10) {
+                CHour = "0" + CHour;
+            }
+            if (CSecond < 10) {
+                CSecond = "0" + CSecond;
+            }
+            $("#hour" + i+num).html(CHour);
+            $("#minute" + i+num).html(CMinute);
+            $("#second" + i+num).html(CSecond);
+        }
+
+        function attention() {
+            if(userId==null){                
+                appcan.window.open("login","login.html",16);
+            }else{
+                setTimeout(function() {
+                IsCared();
+                }, 100);
+                var letter = $("#attention").html();
+                if (letter == "已关注" || isCared == "已关注") {
+                    appcan.request.ajax({
+                        url : api + '/api/user/brandCancel',
+                        type : 'post',
+                        dataType : 'json',
+                        data : {
+                            "userId" : userId,
+                            "brandId" : brand_id
+                        },
+                        success : function(data) {
+                            if (data.status == 1) {
+                                //alert("取消关注");
+                                $("#attention").html('+关注');
+                                 uexWindow.evaluatePopoverScript("my", "content", "showMyData()");
+                                $("#blue").removeClass("blue");
+                               
+                            }
+                        },
+                        error : function(errMessage) {
+                            //alert("errMessage:" + JSON.stringify(errMessage));
+                        }
+                    });
+    
+                } else if (letter == "+关注" || isCared == "未关注") {
+                    appcan.request.ajax({
+                        url : api + '/api/user/brandAdd',
+                        type : 'post',
+                        dataType : 'json',
+                        data : {
+                            "userId" : userId,
+                            "brandId" : brand_id
+                        },
+                        success : function(data) {
+                            if (data.status == 1) {
+                                //alert('已关注');
+                                $("#attention").html('已关注');
+                                 uexWindow.evaluatePopoverScript("my", "content", "showMyData()");
+                                $("#blue").addClass("blue");
+                               
+                            }
+                        },
+                        error : function(errMessage) {
+                            //alert("errMessage:" + JSON.stringify(errMessage));
+                        }
+                    });
+                }
+            }
+        }
+
+        function opendetail(id) {
+            console.log("-------" + id);
+            appcan.locStorage.setVal("detail_id", id);
+            appcan.window.open("detail", "detail.html", 10);
+        }
+
+    </script>
+</html>

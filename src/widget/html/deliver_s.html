@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+         <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+         <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+        <script src="../js/main.js"></script>   
+        
+    </head>
+    <body class="um-vp" style="background:#fff;" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m">
+                <div class="nav-btn blue" id="nav-left"><div class="fa fa-angle-left fa-2x"></div> </div>
+                <h1 class="ut  bc-text ub-f1 ulev-3 ut-s tx-c" tabindex="0">发货信息</h1>
+                <div class="nav-btn blue" id="nav-right">发货</div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l " style="background-color:  #FFFFFF">
+                <div class="ub ub-ver" style="line-height: 1.5em;color: #7A7A7A"> 
+                    <div class="ub" style="padding: .5em">
+                        <div class="ub ub-ac ub-pc ub-ver ub-f1"  >
+                            <p>包裹图片</p>
+                            <div id="package" style="width: 8em;" >
+                                <img src="../image/choosePic.png" id="packageimg" style="width: 8em;height: 8em;margin-top:.5em; " />
+                            </div>
+                            <!-- <img src="../image/choosePic.png" id="package" style="width: 8em;height: 8em;margin-top:.5em; " /> -->
+                        </div>
+                        <div class="ub ub-ac ub-pc ub-ver ub-f1">
+                            <p>物流单图片</p>
+                            <div id="logistics" style="width: 8em;" >
+                                <img src="../image/choosePic.png" id="logisticsimg" style="width: 8em;height: 8em;margin-top:.5em; " />
+                            </div>
+                            <!-- <img src="../image/choosePic.png" id="logistics" style="width: 8em;height: 8em;margin-top:.5em; " /> -->
+                        </div>
+                    </div>
+                    <div class="ub" style="padding: .5em">
+                        <div class="ub ub-ac ub-pc ub-ver ub-f1" >
+                            <p>其他（可添加3张）</p>
+                            <div id="other0" style="width: 8em;" >
+                                <img src="../image/choosePic.png" id="other" style="width: 8em;height: 8em;margin-top:.5em; " />
+                            </div>
+                        </div>
+                        <div class="ub ub-ac ub-pc ub-ver ub-f1">
+                            <p>&nbsp;</p>
+                            <div id="other1" style="width: 8em;" >
+                                <!-- <img src="../image/choosePic.png" id="other" style="width: 8em;height: 8em;margin-top:.5em; " /> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ub" style="padding: .5em">
+                        <div class="ub ub-ac ub-pc ub-ver ub-f1" >                            
+                            <div id="other2" style="width: 8em;" >
+                                <!-- <img src="../image/choosePic.png" id="other" style="width: 8em;height: 8em;margin-top:.5em; " /> -->
+                            </div>
+                        </div>
+                        <div class="ub ub-ac ub-pc ub-ver ub-f1">
+                            <div style="width: 8em;"></div>
+                        </div>
+                    </div>
+                </div>                 
+            </div>        
+            <!--content结束-->
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+    </body>
+    <script>
+      var userId=appcan.locStorage.getVal("userId");
+      var orderId=appcan.locStorage.getVal("orderid");
+      var deviceInfo=appcan.locStorage.getVal("deviceInfo");
+      var countryCode=appcan.locStorage.getVal("countryCode");
+      var deliver=0;
+       appcan.ready(function() {
+           appcan.request.ajax({
+                url : api+'/api/order/shoppingInfo?orderId='+orderId,
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {                          
+                    if(data.status == 0){
+                        // uexWindow.toast("0", "5", data.msg, "2000");                            
+                    }
+                    if (data.status == 1) {
+                        // uexWindow.toast("0", "5", data.msg, "2000");    
+                        // console.log(JSON.stringify(data.data[0]));
+                        if(data.data.packageThumb){
+                            deliver++;
+                            var package_url= api+data.data.packageThumb;
+                            $("#packageimg").attr("src",package_url);
+                            $("#packageimg").click(function(){
+                                appcan.locStorage.setVal("myimg",data.data.package);
+                                appcan.frame.open("bigimage","bigimage.html");  
+                            })                        
+                        }else{
+                            $("#packageimg").click(function(){                                           
+                                appcan.locStorage.setVal("iteminfo","package");
+                                appcan.frame.open("choosepic","choosepic.html"); 
+                            })
+                        }
+                        if(data.data.logisticsThumb){
+                            deliver++;
+                            var logistics_url= api+data.data.logisticsThumb;
+                            $("#logisticsimg").attr("src",logistics_url);
+                            $("#logisticsimg").click(function(){
+                                appcan.locStorage.setVal("myimg",data.data.logistics);
+                                appcan.frame.open("bigimage","bigimage.html");  
+                            })
+                        }else{
+                            $("#logisticsimg").click(function(){                                                      
+                                appcan.locStorage.setVal("iteminfo","logistics");
+                                appcan.frame.open("choosepic","choosepic.html");
+                            })
+                        }
+                        if(data.data.otherThumb){
+                            var len=data.data.otherThumb.length;                             
+                            var other=[];
+                            for(var i=0;i<len;i++){ 
+                                (function(j) {
+                                    other[j]=api+data.data.otherThumb[j]; 
+                                    var html='<img src="'+ other[j]+'" id="otherimg'+j+'" style="width: 8em;height: 8em;margin-top:.5em; " />';                               
+                                    $("#other"+j).html(html);
+                                    $("#otherimg"+j).click(function(){ 
+                                        // alert(data.data.other[j]);                                                     
+                                        appcan.locStorage.setVal("myimg",data.data.other[j]);
+                                        appcan.frame.open("bigimage","bigimage.html");  
+                                    })  
+                                })(i);  
+                            }
+                            if(len<3){
+                                var html='<img src="../image/choosePic.png" id="other" style="width: 8em;height: 8em;margin-top:.5em; " />';
+                                $("#other"+len).html(html);
+                                $("#other").click(function(){                                                      
+                                    appcan.locStorage.setVal("iteminfo","other");
+                                    appcan.locStorage.setVal("olen",len);
+                                    appcan.frame.open("choosepic","choosepic.html");
+                                }) 
+                            } 
+                        }
+                    }  
+                },
+                error : function(errMessage) {
+                    //alert("errMessage"+errMessage);                 
+                }
+            });   
+            
+        });
+        appcan.button(".nav-btn", "btn-act", function() {
+            this.id == "nav-left" && appcan.window.close(-1);
+            if(this.id == "nav-right"){
+                if(deliver==2){
+                    appcan.request.ajax({
+                        url : api+'/api/order/sendOutGoods?userId='+userId+'&orderId='+orderId+'&deviceInfo='+deviceInfo+'&countryCode='+countryCode,
+                        type : 'GET',
+                        dataType : 'json',
+                        success : function(data) { 
+                            //alert(JSON.stringify(data));                         
+                            if(data.status == 0){
+                                uexWindow.toast("0", "5", data.msg, "2000");                            
+                            }
+                            if (data.status == 1) {
+                                uexWindow.toast("0", "5", data.msg, "2000");
+                                uexWindow.evaluateScript('s_waitdeliver',0,'uexWindow.reload();'); 
+                                uexWindow.evaluateScript('s_waitpay',0,'uexWindow.reload();'); 
+                                uexWindow.evaluatePopoverScript("s_order", "content", "uexWindow.reload();");                         
+                                setTimeout(function() {
+                                    appcan.window.close(-1); 
+                                }, 2000);
+                                uexWindow.evaluatePopoverScript("my", "content", "showMyData()");
+                            } 
+                             if(data.status==2){
+                                uexWindow.toast("0", "5", data.msg, "2000");
+                                setTimeout(function() {
+                                    appcan.window.open("apply","apply.html"); 
+                                }, 2000); 
+                            }   
+                        },
+                        error : function(errMessage) {
+                            //alert("errMessage"+errMessage);                 
+                        }
+                    }); 
+                }else{
+                    alert("请完善发货信息！");
+                } 
+            };
+        });
+        
+        
+        var img_url='';
+        var image;
+        var thumb; 
+        function choosepic(){
+            var data = {
+                min:1,
+                max:1,
+                quality:0.5,
+                detailedInfo:false
+            }
+            var json = JSON.stringify(data);
+            uexImage.openPicker(json);
+            uexImage.onPickerClosed=function(info){
+                img_url = JSON.parse(info).data[0];
+                uploadimg();
+            }        
+        }         
+        function takephoto(){  
+            if(uexWidgetOne.platformName == "iOS" || uexWidgetOne.platformName == "ios"){
+                 uexCamera.cbOpen=function (opCode, dataType, data){
+                    img_url=data;
+                    uploadimg();
+                }
+                uexCamera.open(0,50);   
+            }else{
+                uexCamera.cbOpenInternal=function (opCode, dataType, data){//仅android    
+                    img_url=data;
+                    uploadimg();
+                }
+                uexCamera.openInternal(0,50);     
+            }       
+        }          
+         function uploadimg() {    
+            var iteminfo=appcan.locStorage.getVal("iteminfo");         
+            appcan.request.ajax({
+                url : api+'/api/util/uploadImage?type=2',
+                type : 'POST',
+                dataType : 'json',
+                data : {
+                    image : {
+                        path : img_url
+                    }
+                },
+                success : function(data, status) {
+                    if (data.status == 1) {
+                       //alert(JSON.stringify(data));                                              
+                       appcan.window.openToast('上传成功', 1500, 5, 0); 
+                       thumb=data.url[0];
+                       image=data.url[1]; 
+                       if(iteminfo=="package"){
+                           uploadp();
+                       }else if(iteminfo=="logistics"){
+                           uploadl();
+                       }else if(iteminfo=="other"){
+                           var olen=appcan.locStorage.getVal("olen");
+                           uploado(olen);
+                       }
+                    } else {
+                        appcan.window.openToast('上传失败', 1500, 5, 0);         
+                    }
+                },
+                error : function(err) {
+                    appcan.window.openToast('上传失败', 1500, 5, 0);
+                 }   
+            })
+        }   
+        function uploadp(){
+            appcan.request.ajax({
+                url :api+'/api/order/uploadForOrder',                        
+                type : 'post',
+                dataType : 'json',
+                data:{
+                    orderId:orderId,
+                    imageType:"package",
+                    image:image,
+                    thumb:thumb
+                },
+                success : function(data) {
+                    if(data.status==1){
+                        // uexWindow.toast("0", "5", data.msg, "2000");
+                       // $("#package").attr("src",api+thumb); 
+                       var html='<img src="'+api+thumb+'" id="packageimg1" style="width: 8em;height: 8em;margin-top:.5em; " />';                               
+                       $("#package").html(html); 
+                       deliver++;
+                       $("#packageimg1").click(function(){
+                            appcan.locStorage.setVal("myimg",image);
+                            appcan.frame.open("bigimage","bigimage.html");  
+                        })
+                    }if(data.status==0){
+                        uexWindow.toast("0", "5", data.msg, "2000");
+                    }
+                },
+                error : function(errMessage) {
+                    //alert("errMessage:"+JSON.stringify(errMessage));                         
+                }
+            });    
+        }
+        function uploadl(){
+            appcan.request.ajax({
+                url :api+'/api/order/uploadForOrder',                        
+                type : 'post',
+                dataType : 'json',
+                data:{
+                    orderId:orderId,
+                    imageType:"logistics",
+                    image:image,
+                    thumb:thumb
+                },
+                success : function(data) {
+                    if(data.status==1){
+                        // uexWindow.toast("0", "5", data.msg, "2000");
+                       // $("#logistics").attr("src",api+thumb); 
+                        var html='<img src="'+api+thumb+'" id="logisticsimg1" style="width: 8em;height: 8em;margin-top:.5em; " />';                               
+                       $("#logistics").html(html); 
+                       deliver++;
+                       $("#logisticsimg1").click(function(){
+                            appcan.locStorage.setVal("myimg",image);
+                            appcan.frame.open("bigimage","bigimage.html");  
+                        })
+                    }if(data.status==0){
+                        uexWindow.toast("0", "5", data.msg, "2000");
+                    }
+                },
+                error : function(errMessage) {
+                    //alert("errMessage:"+JSON.stringify(errMessage));                         
+                }
+            });    
+        }
+        function uploado(olen){
+            appcan.request.ajax({
+                url :api+'/api/order/uploadForOrder',                        
+                type : 'post',
+                dataType : 'json',
+                data:{
+                    orderId:orderId,
+                    imageType:"other",
+                    image:image,
+                    thumb:thumb
+                },
+                success : function(data) {
+                    if(data.status==1){
+                        // uexWindow.toast("0", "5", data.msg, "2000");
+                        var html='<img src="'+ api+thumb+'" id="otherimg'+olen+'" style="width: 8em;height: 8em;margin-top:.5em; " />';                               
+                        $("#other"+olen).html(html); 
+                        $("#otherimg"+olen).click(function(){                                                      
+                            appcan.locStorage.setVal("myimg",image);
+                            appcan.frame.open("bigimage","bigimage.html");  
+                        })
+                        var htmln='<img src="../image/choosePic.png" id="other" style="width: 8em;height: 8em;margin-top:.5em; " />';
+                        var next=Number(olen)+1;
+                        if(next<3){
+                            $("#other"+next).html(htmln);      
+                            $("#other").click(function(){                                                      
+                                appcan.locStorage.setVal("iteminfo","other");
+                                appcan.locStorage.setVal("olen",next);
+                                appcan.frame.open("choosepic","choosepic.html");
+                            })                            
+                        } 
+                    }if(data.status==0){
+                        uexWindow.toast("0", "5", data.msg, "2000");
+                    }
+                },
+                error : function(errMessage) {
+                    alert("errMessage:"+JSON.stringify(errMessage));                         
+                }
+            });    
+        }
+    </script>
+</html>

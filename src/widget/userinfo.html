@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+         <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+         <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <link rel="stylesheet" href="css/content.css">
+        <link rel="stylesheet" href="css/common.css">        
+        <script src="js/main.js"></script>
+        
+    </head>
+    <body class="um-vp" style="background: #fff" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m">
+                <div class="nav-btn blue" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <h1 class="ut  bc-text ub-f1 ulev-3 ut-s tx-c" tabindex="0">个人信息</h1>
+                <div class="nav-btn blue" id="nav-right"></div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l " style="background-color: #FFFFFF;padding:1.5em;">  
+                <div class="ub ub-ver" style="font-size: 1.1em;">
+                     <div class="ub ub-ac ub-pc">
+                        <div class="ub ub-ac ub-pc" id="face" style="height: 7em;width:5em;text-align: center; ">
+                            <img id="avatar" src="image/profile.png" style="width:5em;height:5em;border-radius: 2.5em" >                        
+                            <span style="font-size:.8em;color: #898989;">上传头像</span>
+                        </div> 
+                    </div>                    
+                    <div class="ub uinput5" style="color: #898989;height: 2.5em;border: 1px solid #DFDFDF;margin-top: 1.5em">
+                        <input type="text" id="nickname" placeholder="请输入昵称" />
+                    </div>
+                    <div class="ub uinput5" style="color: #898989;height: 4.5em;margin-top: .8em;padding-left: 1em">
+                        <div style="line-height: 4em">性别</div>
+                        <div class="ub" style="width:12em;margin:0 0.5em;padding:.25em;">  
+                            <div id="male" class="ub ub-ver ub-ac ub-pc ub-f1">
+                                <img id="m_img" src="image/maleActive.png" style="width:3em;">
+                                <div>男</div>
+                            </div>                                                              
+                            <div id="female" class="ub ub-ver ub-ac ub-pc ub-f1">
+                                <img id="fm_img" src="image/female.png" style="width:3em;">
+                                <div>女</div>    
+                            </div>                                                            
+                        </div>                        
+                    </div>
+                    <div class="ub uinput5" id="birth" style="color: #898989;height: 2.5em;border: 1px solid #DFDFDF;margin-top: 1em">
+                        <!-- 生日<input type="text" id="birthday" placeholder="1991-12-10" onblur="checkBDate(this)"/> -->
+                        <!-- <input type="date" id="birthday" min="1970-01-01" max="2015-12-25" /> -->
+                   </div>
+                    <div id="submit" class="ub ub-ac ub-pc" style="background: #00C1F9;color: #FFFFFF;padding: .6em 2.5em;margin-top: 1.5em">
+                        完成                     
+                    </div>
+                </div>   
+               
+            </div>        
+            <!--content结束-->
+        </div>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+    </body>
+    <script>
+    //gender:1男，2女
+        var gender = 1;                     
+        var userId=appcan.locStorage.val("userId");
+        // var userId="568e07d56dd2a053769d93f7";
+        appcan.ready(function() { 
+            var date = new Date();
+            var dateString = date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
+            var html="";
+            html+='<input type="date" id="birthday" min="1970-01-01" placeholder="请选择出生日期" style="width:10em;" max="'+dateString+'" />';
+            $("#birth").append(html);   
+        });
+        
+                            
+        $("#male").click(function() {
+            $("#m_img").attr("src", "image/maleActive.png");
+            $("#fm_img").attr("src", "image/female.png");
+            gender=1;
+        })
+        $("#female").click(function() {
+            $("#m_img").attr("src", "image/male.png");
+            $("#fm_img").attr("src", "image/femaleActive.png");
+            gender=0;
+        })
+        appcan.button(".nav-btn", "btn-act", function() {
+            appcan.window.close(-1);
+        })
+       
+        var img_url='';
+        var avatar="";   
+        $("#face").click(function() {     
+              appcan.frame.open("choosepic","html/choosepic.html");     
+        })  
+        function choosepic(){  
+            var data = {
+                min:1,
+                max:1,
+                quality:0.5,
+                detailedInfo:false
+            }
+            var json = JSON.stringify(data);
+            uexImage.openPicker(json);
+            uexImage.onPickerClosed=function(info){
+                img_url = JSON.parse(info).data[0];
+                uploadimg();
+            }     
+        }         
+        function takephoto(){  
+            if(uexWidgetOne.platformName == "iOS" || uexWidgetOne.platformName == "ios"){
+                 uexCamera.cbOpen=function (opCode, dataType, data){
+                    img_url=data;
+                    uploadimg();
+                }
+                uexCamera.open(0,50);   
+            }else{
+                uexCamera.cbOpenInternal=function (opCode, dataType, data){//仅android    
+                    img_url=data;
+                    uploadimg();
+                }
+                uexCamera.openInternal(0,50);     
+            }       
+        }
+        
+        
+          //上传头像
+        function uploadimg() {
+            //appcan.window.openToast('图片上传中', 120000, 5, 1);
+            appcan.request.ajax({
+                url : api+"/api/util/uploadImage?type=2",
+                type : 'POST',
+                dataType : 'json',
+                data : {
+                    image : {
+                        path : img_url
+                    }
+                },
+                success : function(data, status) {
+                    if (data.status == '1') {
+                        // alert(JSON.stringify(data));
+                       avatar =data.url[0];
+                       $("#avatar").attr("src",api+avatar); 
+                       appcan.window.openToast('上传成功', 1500, 5, 0);  
+                      
+                    } else {
+                        appcan.window.openToast('上传失败', 1500, 5, 0);         
+                    }
+                },
+                error : function(err) {
+                    appcan.window.openToast('上传失败', 1500, 5, 0);
+                 }   
+            })
+        }
+        
+         appcan.button("#submit","btn-act",function(){   
+            var nickname = $("#nickname").val();
+            var birthday = $("#birthday").val();
+            var userinfo={                
+                "birthday": birthday,
+                "gender": gender,
+                "nickname": nickname,
+                "avatar": avatar
+            };
+            // alert(JSON.stringify(userinfo));
+             if(avatar==""){         
+                uexWindow.toast(0, 5, "请上传图片", 3000);
+             }else if((nickname=='')||(birthday=='')){
+                uexWindow.toast(0, 5, "信息不完整", 3000);
+             }else{
+                 appcan.request.ajax({
+                    url : api+'/api/user/updateUserInfo',
+                    type : 'POST',
+                    dataType : 'json',
+                    data : {
+                        userId:userId,
+                        nickname:nickname,
+                        gender:gender,
+                        birthday:birthday,
+                        avatar:avatar
+                    },
+                    success : function(data, status) {
+                        if (data.status == '1') {
+                           //alert(JSON.stringify(data));
+                           appcan.window.openToast('成功', 1500, 5, 0);
+                           appcan.locStorage.setVal("userinfo", userinfo);                                
+                            appcan.locStorage.setVal("userId", userId);
+                            appcan.window.open("root","index.html",10,4);  
+                        } else {
+                             appcan.window.openToast('失败', 1500, 5, 0);
+                        }
+                    },
+                    error : function(err) {
+                     }   
+                })
+             }            
+        })
+        
+        
+         //验证手机号
+        function checkBDate(object) {
+            //alert("birth");
+            var birthday = object.value;
+            var nows=new Date(); 
+            var year=nows.getFullYear();//获取现在的年份       
+            var reg=/^(\d{4})-(\d{2})-(\d{2})$/;            
+            var s=[];
+            s=birthday.split("-");
+            //alert(s);
+            if (birthday.length == 0) {
+                //alert(birthday);
+                object.value = '';
+                object.placeholder = "生日不能为空！";
+                return false;
+            } else if (!reg.test(birthday)||(s[0]<1900)||(s[0]>year)||(s[1]>12)||(s[2]>31)) {                
+                object.value = '';
+                object.placeholder = "请输入正确的生日日期！";
+                return false;
+            } else {
+                object.placeholder = '';
+                return true
+            }
+        } 
+        
+        
+    </script>
+</html>

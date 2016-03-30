@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+         <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+         <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+        <script src="../js/main.js"></script>
+        
+    </head>
+    <body class="um-vp" style="background:#fff;" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m">
+                <div class="nav-btn blue" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <h1 class="ut  bc-text ub-f1 ulev-3 ut-s tx-c" tabindex="0">收款账号</h1>
+                <div class="nav-btn blue" id="nav-right"></div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l " style="background-color: #FFFFFF;padding: 4em 1em;">  
+                <div class="ub ub-ver" style="font-size: 1.1em;">
+                    <div class="ub uinput14" id="count" style="color: #898989;height: 2em;margin-top: 1em">
+                        支付宝账户：<input type="text" id="phone" />
+                    </div>
+                    <div class="ub uinput14" id="countname" style="color: #898989;height: 2em;margin-top: 1em">
+                                                                支付宝认证姓名：<input type="text" id="name" />                        
+                    </div>
+                     <div class="ub ub-ac ub-pc ub-ver ub-f1" style="background: #FFFFFF;margin: .7em; ">                    
+                        <p style="color: #898989;font-size:.9em;line-height: 1.5em;margin-top: 2em;">提示：收款账号一旦设置将不能修改，如需修改请联系客服进行修改。目前仅支持支付宝账号收款。</p>
+                    </div>
+                    <div id="submit" class="ub ub-ac ub-pc uhide" style="background: #00C1F9;color: #FFFFFF;padding: .6em 2.5em;border-radius: .2em;margin:3em 5em" onclick="submit()">
+                        保存                
+                    </div>
+                </div>   
+            </div>        
+            <!--content结束-->
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/main.js"></script>
+        <script src="../js/appcan.control.js"></script>
+    </body>
+    <script>
+    var userId=appcan.locStorage.getVal("userId");
+        appcan.ready(function() {
+            appcan.request.ajax({//564f05aa88eb79982c4bf2ae
+                url :api+'/api/user/me/'+userId,
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {
+                    if(data.status==1){
+                       if(data.data.user.account) { 
+                           var chtml='';
+                           var nhtml='';
+                           chtml+=' 支付宝账户：<span style="color: #3D3D3D">'+data.data.user.account+'</span>';
+                           nhtml+=' 支付宝认证姓名：<span style="color: #3D3D3D">'+data.data.user.accountname+'</span>';
+                            $("#count").html(chtml);
+                            $("#countname").html(nhtml);
+                       }else{
+                          $("#submit").removeClass('uhide');                           
+                       }                  
+                    }if(data.status == 0){
+                     uexWindow.toast("1","5",data.msg,-1);
+                    }         
+                },
+                error : function(errMessage) {
+                    //alert("errMessage:"+JSON.stringify(errMessage));                         
+                }
+            }); 
+
+        });
+        appcan.button(".nav-btn", "btn-act", function() {
+            appcan.window.close(-1);
+        })
+        function submit(){
+            var account=$("#phone").val();
+            var name=$("#name").val();
+            // alert(account+","+name+","+userId);
+             appcan.request.ajax({
+                url :api+'/api/user/addAccount',
+                type : 'post',
+                dataType : 'json',
+                data :{
+                    "userId":userId,
+                    "account":account,
+                    "accountname":name
+                },
+                success : function(data) {
+                  if(data.status == 1){ 
+                     uexWindow.toast("1","5",data.msg,-1);
+                     appcan.locStorage.setVal("myalinum",1);
+                     appcan.window.close(-1);
+                  }if(data.status == 0){
+                     uexWindow.toast("1","5",data.msg,-1);
+                  }  
+                },
+                error : function(errMessage) {
+                    //alert("errMessage:"+JSON.stringify(errMessage));                         
+                }
+            });
+        }
+        
+    </script>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+
+    </head>
+    <body class="um-vp" ontouchstart>
+        <div class="ub ub-f1 ub-ver" style="background-color: #FFFFFF;line-height: 3em;margin-bottom: .5em;">
+            <div class="ub" style="height:3em;border-bottom: 1px solid #DBDBDB;padding:0 1em;color: #7A7A7A">
+                订单号：<span id="orderNo"></span>
+            </div>
+            <div class="ub" style="height:3em;padding:0 1em;color: #FF3B77" id="isConfirm">
+                <!-- 等待确认收货，15日后自动确认收货 -->
+            </div>
+            <div class="ub" style="height:3em;border-top: 1px solid #DBDBDB;padding:0 1em;color: red">
+                联系卖家：<span id="contactseller"></span>
+            </div>
+        </div>
+        <div class="ub ub-f1" style="padding: 0.8em;background-color: #FFFFFF;margin-bottom: .5em;">
+            <div class="ub ub-ver ub-f1" >
+                <div class="" style="color:#3D3D3D;line-height: 2em;margin:0 1em;">
+                    收货人：<span id="contact"> </span>
+                    <div style="float: right" id="tel"></div>
+                </div>
+
+                <div class="ub ulev-1" style="color:#808080;line-height: 1.4em;margin-top: .5em;padding: 0 1em;">
+                    <img class="" src="../image/Pin-Assistor.png" style="width:1.2em"/>
+                    <div style="width:85%;margin: 0 1em;">
+                        收货地址：<span id="address"> <!-- 湖北省武汉市洪山区关山街道光谷街一号光谷资本大厦一楼B303 --> </span>
+                    </div>
+                    <!-- <div class="fa fa-angle-right fa-2x"></div> -->
+
+                </div>
+            </div>
+        </div>
+        <div class="ub ub-ver" >
+            <ul id="List">
+
+            </ul>
+        </div>
+
+        <div class="ub ub-f1" style="padding: 0.8em;background-color: #FFFFFF;margin-bottom: .5em;">
+            <div class="ub ub-f1" style="line-height: 2em;">
+                <div class="" style="color:#3D3D3D;margin: 0 .5em;">
+                    配送
+                </div>
+                <img class="" src="../image/Question2.png" style="width:1.5em;margin-top: .2em;" id="peisong"/>
+                <div style="color:#808080;margin-left: 30%;">
+                    卖家回国后发货，到付
+                </div>
+            </div>
+        </div>
+        <div class="ub ub-f1" style="padding: 0.8em;background-color: #FFFFFF;margin-bottom: 1px;">
+            <div class="ub ub-f1" style="line-height: 2em;">
+                <div class="ub ub-f1" style="color:#3D3D3D;margin: 0 .5em;">
+                    商品总额
+                </div>
+                <div style="color:#FF0D57;margin-right: 1em;">
+                    ￥<span id="total"></span>
+                </div>
+            </div>
+        </div>
+        <div class="ub ub-f1" style="padding: 0.8em;background-color: #FFFFFF;margin-bottom:1px;">
+            <div class="ub ub-f1" style="line-height: 2em;">
+                <div class="ub ub-f1" style="color:#3D3D3D;margin: 0 .5em;">
+                    补税金额
+                </div>
+                <div style="color:#FF0D57;margin-right: 1em;" id="tax"></div>
+            </div>
+        </div>
+      <div class="ub ub-ac ub-pc  ub-f1" style="color:#D7DADA;float: right;margin-right: 0.8em;margin-top: 0.4em;margin-bottom: 0.4em">
+               <div class="ub ub-ac ub-pc ulev-3 receive" onclick="buied()">
+                    已购信息
+                </div>
+            </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/main.js"></script>
+        <script src="../js/country.js"></script>
+        <script src="../js/moment.js"></script>
+    </body>
+    <script>
+        var orderStatus = appcan.locStorage.getVal("orderStatus");
+        var orderId = appcan.locStorage.getVal("orderId");
+        var userId = appcan.locStorage.getVal("userId");
+        var country = appcan.locStorage.getVal("country");
+        var countryf=areaList[country].name; 
+        console.log("orderId" + orderId);
+        console.log("userId" + userId)
+        var back = appcan.locStorage.getVal("back");
+        appcan.ready(function() {
+            $("#isConfirm").html("已付款，等待卖家发货");
+            show();
+        });
+        appcan.button("#peisong", "btn-act", function() {
+            appcan.frame.open("questionPop", "questionPop.html",0,0);
+        });
+        function show() {
+            appcan.request.ajax({//56a1f572aecea674052db863
+                url : api + '/api/order/shoppingInfo?orderId=' + orderId,
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {
+                    if (data.status == 1) {
+                        var address = data.data.address.detail;
+                        var contact = data.data.address.contact;
+                        var tel = data.data.address.tel;
+                        var orderNo = data.data.orderNo;
+                        var sellerphone=data.data.shoplive.seller.phone;
+                        var sellername=data.data.shoplive.seller.nickname;
+                        $("#orderNo").html(orderNo);
+                        $("#contactseller").html(sellername+"&nbsp;&nbsp;"+sellerphone); 
+                        $("#address").html(address);
+                        $("#contact").html(contact);
+                        $("#tel").html(tel);
+                        var len = data.data.items.length;
+                        var score = (data.data.scoreUsed) * 0.01;
+                        //获取积分
+                        var money = data.data.moneyUsed;
+                        //获取余额
+                        var amountPayed = data.data.amountPayed;
+                        //实付金额
+                        var couponUsed = data.data.couponUsed;
+                        //优惠券金额
+                        if(data.data.tax){
+                            var tax = data.data.tax.taxAmount;
+                        }
+                        
+                        //获取补税金额
+                        if (couponUsed == undefined) {
+                            $("#couponUsed").html("￥" + 0);
+                        } else {
+                            $("#couponUsed").html("￥" + couponUsed);
+                        }
+                        if (score == undefined) {
+                            $("#score").html("￥" + 0);
+                        } else {
+                            $("#score").html("￥" + score);
+                        }
+                        if (money == undefined) {
+                            $("#money").html("￥" + 0);
+                        } else {
+                            $("#money").html("￥" + money);
+                        }
+                        if (money == undefined) {
+                            $("#money").html("￥" + 0);
+                        } else {
+                            $("#money").html("￥" + money);
+                        }
+                        if (tax == undefined || tax == "") {
+                            $("#tax").html("￥" + 0);
+                        } else {
+                            $("#tax").html("￥" + tax);
+                        }
+
+                        //alert(len);
+                        $("#amountPayed").html("￥" + amountPayed);
+                        //显示实付款
+                        $("#score").html("￥" + score);
+                        //显示积分抵扣
+                        $("#money").html("￥" + money);
+                        //显示余额抵扣
+                        var html = "";
+                        var totalPrice = 0;
+                        appcan.locStorage.setVal('detail_id',data.data.items[0].item._id);
+                         appcan.locStorage.setVal('share_item_img',data.data.items[0].item.images[0]);
+                         appcan.locStorage.setVal('share_item_content',"我在海外购淘到了一款爆品，快来看看吧");
+                         appcan.locStorage.setVal('share_item_thumbs',data.data.items[0].item.thumbs[0]);
+                        for (var i = 0; i < len; i++) {
+                            var price = data.data.items[i].item.price;
+                            var code = data.data.items[i].item.priceCode;
+                            var rate = data.data.items[i].item.rate;
+                            var unit = areaList[country].currency;
+                            var lastprice = Math.ceil(price*rate*1.15);
+                            var count = data.data.items[i].count;
+                            var desc = data.data.items[i].item.desc;
+                            totalPrice += Number(lastprice * count);
+                            $("#total").html(totalPrice);
+                            var imgSrc = api + data.data.items[i].item.images[0];
+                            var createTime = data.data.items[i].item.createTime;
+                            var createTimeChange = moment(createTime, 'YYYY-MM-DDTHH:mm:ss.sssZ');
+                            var createline = createTimeChange.unix();
+                            var date = new Date(parseInt(createline + "000"));
+                            var Y = date.getFullYear() + '-';
+                            var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+                            var D = date.getDate() + ' ';
+                            var hour = date.getHours();
+                            var minute = date.getMinutes();
+                            var second = date.getSeconds();
+                            var nowDate = Y + M + D + " " + hour + ":" + minute + ":" + second;
+                            $("#time").html(nowDate);
+                            html += '<li>' + '<div class="ub ub-f1" style="padding: 0.8em;background-color: #FFFFFF;margin-bottom: .1em;">' + '<img src="' + imgSrc + '" style="width:7em;margin-right: 0.7em;height:7em"/>' + '<div class="ub ub-ver ub-f1" >' + '<div class="" style="color:#3D3D3D;line-height: 2em;">' + desc + '<div style="float: right">×' + count + '</div>' + '</div>' + '<div class="ub ulev-1" style="color:#808080;line-height: 1.6em;">' + '<img src="../image/flag/'+countryf+'.png" style="width:1.2em"/>&nbsp;' + country + '&nbsp;&nbsp; ' + '<img src="../image/plane.png" style="width:0.7em"/>&nbsp;' + back + '回国' + '</div>' + '<div class="" style="color:#3D3D3D;line-height:1.2em;color:red">' + '￥ ' + lastprice + '<span class="ulev-1" style="color:#808080; ">=' + price + unit + '×' + rate + '(汇率)+15%代购费</span>' + '</div>' + '</div>' + '</div>' + '</li>'
+                            if(data.data.finalAmount){
+                            // var finalprice=Math.ceil(data.data.finalAmount*rate*1.15);                            
+                            var finalprice=Math.ceil(data.data.finalAmount);
+                            html+='<div class="ub" style="padding:0 1em;padding-bottom:.5em;color: #FF3B77;background-color: #FFFFFF;">'
+                                +'<div class="ulev-1" style="line-height: 1.6em;color:#808080;margin-left:1em;">'
+                                +'调价后总计：￥'+finalprice
+                                +'</div>'
+                            +'<div class="ub ulev-1" style="line-height: 1.6em;color:#808080;padding-bottom:.5em;padding-left:1em;background-color: #FFFFFF;">'
+                                +'调价说明：'+data.data.changeAmountReason                                    
+                            +'</div>'                                
+                              
+                        }
+                            $("#List").html(html);
+                        }
+                    }
+                },
+                error : function(errMessage) {
+                    //alert("errMessage:" + JSON.stringify(errMessage));
+                }
+            });
+        }
+
+        //要走正常流程，必须卖家发货了才可以延长收货，数据库中改状态是不行的
+        appcan.button("#overTime", "btn-act", function() {
+            appcan.window.alert({
+                title : "提示",
+                content : "每个订单有一次延长收货机会，开启订单收货日期将自动延长15天，是否确认？",
+                buttons : ['确定', '取消'],
+                callback : function(err, data, dataType, optId) {
+                    if (['确定', '取消'][data] == '确定') {
+                        //$('#'+orderId).remove();
+                        appcan.request.ajax({
+                            url : api + '/api/order/overtime?userId=' + userId + '&orderId=' + orderId,
+                            type : 'GET',
+                            dataType : 'json',
+                            success : function(data) {
+                                if (data.status == 1) {
+                                    uexWindow.toast("1", "5", data.msg, 1000);
+                                } else if (data.status == 2) {
+                                    uexWindow.toast("1", "5", data.msg, 2000);
+                                }
+                            },
+                            error : function(errMessage) {
+                                //alert("errMessage:" + JSON.stringify(errMessage));
+                            }
+                        });
+                    }
+                }
+            });
+        });
+        appcan.button("#confirmOrder", "btn-act", function() {
+            appcan.window.alert({
+                title : "提示",
+                content : "确认收货后会系统会自动付款给卖家，是否确认？",
+                buttons : ['确定', '取消'],
+                callback : function(err, data, dataType, optId) {
+                    if (['确定', '取消'][data] == '确定') {
+                        //$('#'+orderId).remove();
+                        appcan.request.ajax({
+                            url : api + '/api/order/confirmReceipt?userId=' + userId + '&orderId=' + orderId,
+                            type : 'GET',
+                            dataType : 'json',
+                            success : function(data) {
+                                if (data.status == 1) {
+                                    //alert(data.msg);
+                                    uexWindow.toast("1", "5", data.msg, 500);
+                                     uexWindow.evaluateScript('confirm', '0', 'openShare()');
+                                     
+                                }
+                            },
+                            error : function(errMessage) {
+                                //alert("errMessage:" + JSON.stringify(errMessage));
+                            }
+                        });
+                    }
+                }
+            });
+        })
+        function buied(orderId) {
+            // appcan.locStorage.setVal("orderId",orderId);
+            appcan.window.open('buied', 'buied.html', 10);
+        }
+
+    </script>
+</html>

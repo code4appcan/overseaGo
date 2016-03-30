@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+
+    </head>
+    <body class="um-vp" style="background:#fff;" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m">
+                <div class="nav-btn blue" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <h1 class="ut  bc-text ub-f1 ulev-3 ut-s tx-c" tabindex="0">关注动态</h1>
+                <div class="nav-btn blue" id="nav-right"></div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l " style="background-color: #F2F2F2;">
+                <div class="ub ub-ver" id="sysnew"></div>                 
+            </div> 
+            <!--content结束-->
+
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/main.js"></script>
+        <script src="../js/moment.js"></script>
+    </body>
+    <script>
+      var userId=appcan.locStorage.getVal("userId");
+      // var userId = "569c446fee5a7d392390719c";
+        appcan.ready(function() {
+              appcan.request.ajax({
+                url : api + '/api/message/list?' + 'userId='+userId+'&type=5',
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {
+                    console.log(JSON.stringify(data));
+                    if(data.status==1){
+                       var read = [];
+                       if(data.data.length>0){
+                           for(i=0;i<data.data.length;i++){
+                           // if(!data.data[i].hasRead){
+                               // addMsg(data.data[i]); 
+                               // read.push(data.data[i]._id);                            
+                           // }
+                           
+                           if(!data.data[i].hasRead){
+                               addMsg(data.data[i],false);                           
+                           }else{
+                               addMsg(data.data[i],true);  
+                           }
+                           
+                         }
+                       }  else {
+                           uexWindow.toast("0", "5", "无新消息！", "1000");
+                       }                    
+                       // console.log(read);
+                       // if(read.length>100){
+                            // appcan.request.ajax({
+                            // url : api + '/api/message/setToRead',
+                            // type : 'POST',
+                            // data:{
+                                 // userId:userId,
+                                 // messageIds:read
+                            // },
+                            // dataType : 'json',
+                            // success : function(data) {
+                                // //alert(data.status);
+                            // }
+                         // })
+                       // }
+                   }                        
+                },
+                error : function() {
+                    //alert("error");
+                }
+            });
+        })       
+        
+        appcan.button(".nav-btn", "btn-act", function() {
+            appcan.window.close(-1);
+        })        
+        function addMsg(param,hasRead){
+            var rhtml="";
+            if(hasRead==false){
+                rhtml='<div class="ub ub-ac ub-pc" style="color:#fff;width: 0.5em;height: 0.5em;line-height: 1em;border-radius: .5em;background-color: #FF0000;position: relative;top: -1.2em;left:-1em"></div>';
+            }
+            var html ='<div class="ub ub-f1" style="margin: .5em;padding-top:1em;padding-right:1em;padding-bottom:1em;padding-left:1.5em;background-color: #FFFFFF;" onclick="toDetail(\''+param.extra.shopLiveId+'\','+"'"+param._id+"'"+')">'
+                        +' <div class="ub ub-ver ub-f1" >'
+                             +'<div class="" style="color:#3D3D3D;line-height: 2em;">'
+                                +param.title
+                                 +'<div style="float: right;color: #AEAEAE">'
+                                 + judgetime(param.createTime)
+                                 +'</div>'
+                             +'</div>'
+                             +rhtml
+                            +' <div class="">'
+                              +'  <span class="ulev-1" style="color:#808080; ">'
+                              +param.content
+                              +'</span>'
+                            +' </div>'
+                         +'</div>'
+                     +'</div>';
+              $('#sysnew').append(html);   
+        }   
+        
+        function toDetail(id1,id2){
+            //alert(id);
+            appcan.locStorage.setVal('scene_id',id1);
+            appcan.window.open('scene','scene.html',10);
+             appcan.request.ajax({
+                url : api + '/api/message/setToRead',
+                type : 'POST',
+                data:{
+                     userId:userId,
+                     messageIds:id2
+                },
+                dataType : 'json',
+                success : function(data) {
+                    if(data.status==1){
+                        uexWindow.evaluateScript('message',0,'uexWindow.reload();');
+                        uexWindow.reload();                         
+                    }
+                }
+             })
+        }    
+        
+         function judgetime(time){
+            var today=new Date();
+            var nowtime=parseInt(today.getTime()/1000);       
+            var overtime=moment(time, 'YYYY-MM-DDTHH:mm:ss.sssZ');
+            var deadline=overtime.unix();
+            var minus=nowtime-deadline;
+           if((minus/86400)>1){   
+               // var d="2015-12-16T06:27:19.189Z";
+               var ctime=new Date(time);   
+               var yy=ctime.getFullYear();
+               var MM=ctime.getMonth()+1;
+               var dd=ctime.getDate();  
+               return yy+"-"+MM+"-"+dd;          
+               // alert(ztime);
+           }else if((minus/3600)>1){
+               var hh=parseInt(minus/3600);
+               return hh+"小时前";
+               // alert(ztime);               
+           }else if((minus/60)>1){
+               var mm=parseInt(minus/60);
+               return mm+"分钟前";
+               // alert(ztime);               
+           }else{
+               return "0分钟前";
+           }             
+        } 
+
+    </script>
+</html>

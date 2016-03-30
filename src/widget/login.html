@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi,width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+         <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+         <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <link rel="stylesheet" href="css/content.css">
+        <link rel="stylesheet" href="css/common.css">
+        <script src="js/main.js"></script>
+        
+    </head>
+    <body class="um-vp" style="background: #fff" ontouchstart>
+
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m">
+                <div class="nav-btn blue" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div><!-- fa-remove-->
+                </div>
+                <h1 class="ut  bc-text ub-f1 ulev-3 ut-s tx-c" tabindex="0">登录</h1>
+                <div class="nav-btn blue" id="nav-right"></div>
+            </div>
+            <!--header结束--><!--content开始-->  
+            <div id="content" class="ub-f1 tx-l " style="background-color: #FFFFFF;padding: 1.5em;">  
+                <div class="ub ub-ver" style="font-size: 1.1em;">
+                    <div class="ub uinput5" style="color: #DFDFDF;height: 2.5em;border: 1px solid #DFDFDF;border-bottom: none;">
+                         <input type="tel" id="phone" placeholder="请输入手机号" onblur="checkTel(this)" />
+                    </div>
+                    <div class="ub uinput5" style="color: #DFDFDF;height: 2.5em;border: 1px solid #DFDFDF">
+                        <input type="password" placeholder="请输入密码" id="psd" onblur="checkPsd(this)" />
+                    </div>
+                    <div id="login" class="ub ub-pc ub-ac" style="background: #00C1F9;color: #FFFFFF;padding: .6em 2.5em;margin-top: 1.5em">
+                        登录                     
+                    </div>
+                    
+                    <div class="ub ub-pc ub-ac" style="height: 2em;padding:0 3em;margin-top: 60%;">
+                         <div id="fgpsd" class="ub ub-f1 ub-pc ub-ac" style="width: 50%;font-size: .8em;color: #898989;padding:.7em;">
+                            忘记密码                    
+                        </div>
+                        <div id="register" class="ub ub-f1 ub-pc ub-ac" style="width: 50%;font-size: .8em;color: #898989;padding:.7em;">
+                            注册用户                 
+                        </div>
+                    </div>
+                </div>                 
+            </div>        
+            <!--content结束-->
+        </div>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+    </body>
+    <script>  
+        appcan.ready(function() {
+            uexWindow.setReportKey(0, 1);
+            uexWindow.onKeyPressed = function(keyCode) {
+                if (keyCode == 0) {                     
+                    appcan.window.close(-1);   
+                }
+            }
+        });
+        appcan.button(".nav-btn", "btn-act", function() {     
+            this.id == "nav-left" &&appcan.window.close(-1);                
+        })
+        appcan.button("#fgpsd","btn-act",function(){   
+            appcan.window.open("getpsd","getpsd.html",10); 
+        })
+        appcan.button("#login","btn-act",function(){  
+            var phone = $("#phone").val();
+            var psd = $("#psd").val();
+             appcan.request.ajax({
+                url : api+'/api/user/login',
+                type : 'POST',
+                dataType : 'json',
+                data : {
+                    phone: phone,
+                    password: psd  
+                },
+                success : function(data) {                            
+                    if(data.status == 0){
+                        uexWindow.toast("0", "5", data.msg, "2000");
+                    }
+                    if (data.status == 1) {
+                        console.log(JSON.stringify(data));
+                        uexWindow.toast("0", "5", data.msg, "2000");
+                        appcan.locStorage.setVal("userinfo",data.user);                                
+                        appcan.locStorage.setVal("userId", data.user._id);
+                        appcan.locStorage.setVal("inviteCode", data.user.inviteCode);
+                        var params = {
+                            alias:data.user._id
+                        };
+                        var data = JSON.stringify(params);
+                        uexJPush.setAlias(data);
+                        appcan.window.open("root","index.html",10,4);
+                        // uexWindow.evaluateScript('root',0,'reload();');
+                        window.setTimeout("appcan.window.close(-1);",2000); 
+                    }
+                },
+                error : function(errMessage) {
+                    // alert("errMessage"+errMessage);
+                 
+                }
+            });
+        })
+        appcan.button("#register","btn-act",function(){   
+            appcan.window.open("register","register.html",10); 
+        })
+        //验证手机号
+        function checkTel(object) {
+            var phone = object.value;
+            var patrn = /^(\+?0?86\-?)?1[345789]\d{9}$/;
+            if (phone.length == 0) {
+                object.value = '';
+                object.placeholder = "手机号不能为空！";
+                return false;
+            } else if (0 <= phone.indexOf(' ')) {
+                object.value = '';
+                object.placeholder = "手机号不能有空格！";
+                return false;
+            } else if (!patrn.exec(phone)) {
+                object.value = '';
+                object.placeholder = "请输入正确的手机号！";
+                return false;
+            } else {
+                object.placeholder = '';
+                return true
+            }
+        }
+
+        //验证密码
+        function checkPsd(object) {
+            var psd = object.value;
+            var patrn =/^(?=.{6,16}$)[0-9a-zA-Z_]+$/;
+            if (psd.length == 0) {
+                object.value = '';
+                object.placeholder = "密码不能为空!";
+                return false;
+            } else if (0 <= psd.indexOf(' ')) {
+                object.value = '';
+                object.placeholder = "密码不能有空格!";
+                return false;
+            } else if (!patrn.exec(psd)) {
+                object.value = '';
+                object.placeholder = "6-16位数字、字母、下划线！";
+                return false;
+            } else {
+                object.placeholder = '';
+                return true
+            }
+        }
+        
+    </script>
+</html>

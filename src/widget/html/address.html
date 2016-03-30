@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+        <link rel="stylesheet" href="../css/mystyle.css">
+
+    </head>
+    <body class="um-vp" style="background:#fff;" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m">
+                <div class="nav-btn blue" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <h1 class="ut  bc-text ub-f1 ulev-3 ut-s tx-c" tabindex="0">地址管理</h1>
+                <div class="nav-btn blue" id="nav-right"></div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="tx-l bgcolor1" >
+
+            </div>
+            <!--content结束-->
+            <div id="footer">
+                <div class="ub ub-ac ub-pc" style="height: 2.5em;padding:.5em;background-color: #FFFFFF;">
+                    <div class="ub ub-ac ub-pc ulev-3" id="newadr" style="width:75%;height: 2.2em;border-radius:.2em;color:#fff;background-color:#00C1F9;">
+                        新建地址
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/main.js"></script>
+    </body>
+    <script>
+        var userId = appcan.locStorage.getVal("userId");
+        //var userId = "5699d882a5dc79c35cb8966c";
+        appcan.ready(function() {
+            var url = api + '/api/user/getAddress?userId=' + userId;
+            appcan.request.ajax({
+                url : url,
+                type : 'get',
+                dataType : 'json',
+                success : function(data, status, xhr) {
+                    //alert(JSON.stringify(data));
+                    console.log(JSON.stringify(data));
+                    if (data.status == 1) {
+                        for ( i = 0; i < data.data.length; i++) {
+                            if (data.data[i].isDefault == true) {
+                                addAddress(data.data[i]);
+                                data.data.splice(i, 1);
+                            }
+
+                        }
+                        for ( i = 0; i < data.data.length; i++) {
+                            addAddress(data.data[i]);
+                        }
+                    } else {
+                       uexWindow.toast("0", "5", data.msg, "2000");
+                    }
+                },
+                error : function() {
+                   uexWindow.toast("0", "5", "网络异常，请稍后重试", "2000");
+                }
+            })
+        });
+        function isDefault(id, detail, tel, contact) {
+            var url = api + '/api/user/setDefaultAddress?userId=' + userId + '&addressId=' + id
+            appcan.request.ajax({
+                url : url,
+                type : 'get',
+                dataType : 'json',
+                success : function(data, status, xhr) {
+                    if (data.status == 1) {
+                        uexWindow.toast("0", "5", data.msg, "2000");
+                        $(".fa-check").removeClass("cbgb");
+                        $('#' + id + '_1').addClass("cbgb");
+                        
+                    } else {
+                        uexWindow.toast("0", "5", data.msg, "2000");
+                    }
+                },
+                error : function() {
+                    //alert('修改失败，请稍后重试');
+                }
+            })
+        }
+
+
+        appcan.button(".nav-btn", "btn-act", function() {
+            appcan.window.close(-1);
+        })
+        appcan.button("#newadr", "btn-act", function() {
+            //$('#aa').remove();
+            appcan.window.open("newadr", "newadr.html", 10);
+            // var address = {"desc":"test", "detail":"detail","tel":"tel","contact":"contact", "isDefault": false};
+            // addAddress(address);
+        })
+        function addAddress(address) {
+            var isDefault = address._id + '_1';
+            var contact = address._id + '_cont';
+            var tel = address._id + '_tel';
+            var addr = address._id + '_addr';
+            var flag = address.isDefault;
+            var styleStr = "";
+            if (flag) {
+                styleStr = " cbgb";
+            }
+            var html = '<div id=' + address._id + ' class="ub ub-f1 ub-ver cbgw" style="margin-bottom: .8em;">'
+             + '<div class="ub ub-ver padding1" onclick="select(\'' + address._id + '\', \'' + address.detail + '\', \'' + address.tel + '\', \'' + address.contact + '\')">' 
+             + '<div  class="contact">' 
+             + '<div class="uinl"> 收货人：</div>'
+              + '<div id=' + contact + ' class="uinl">' 
+              + address.contact + '</div>'
+               + ' <div id=' + tel + ' class="ufr">' 
+               + address.tel + '</div>' 
+               + '</div>' 
+               + '<div id=' + addr + ' class="ub ulev-1 detail_a" >' 
+               + '收货地址：' + address.detail + '</div>' 
+               + '</div>' 
+               + '<div class="ub" style="border-top: 1px solid #F5F5F5;color:#808080;">' 
+               + '<div class="ub padding1">' 
+               + '<div class="fa fa-check' + styleStr + '" id=' + isDefault + ' onclick="isDefault(\'' + address._id + '\', \'' + address.detail + '\', \'' + address.tel + '\', \'' + address.contact + '\')" style="color:#fff;width: 1em;height: 1em;border-radius: .5em;border: 1px solid #00C1F9;margin:0 .35em; "></div>' 
+               + '设为默认' + '</div>'
+                + '<div class="ub ulev-1 ub-ac" style="padding: 1em;margin-left: 22%;">' 
+                + '<div class="ub ub-ac" style="margin-right: 1.5em;" onclick="edit(' + "'" + address._id + "'" + ')">'
+                +'<img src="../image/Edit.png" style="height:1em;margin-right: .3em;"/>编辑</div> ' + '<div class="ub ub-ac" onclick="Delete(' + "'" + address._id + "'" + ')"><img src="../image/Delete.png" style="height:1em;margin-right: .3em;"/>删除</div>' + '</div>' + '</div>' + '</div>'
+            $('#content').append(html);
+        }
+
+        function updateAddress(address) {
+            var contact = address._id + '_cont';
+            var tel = address._id + '_tel';
+            var addr = address._id + '_addr';
+            $('#' + contact).html(address.contact);
+            $('#' + tel).html(address.tel);
+            $('#' + addr).html('收货地址：' + address.detail);
+        }
+        function select(id, detail, tel, contact){
+            uexWindow.evaluatePopoverScript('order', 'content', "showAdr('" + detail + "', '" + tel + "','" + contact + "')");
+            appcan.window.close(-1);
+        }
+
+        function edit(addressId) {
+            var contact = $('#' + addressId + '_cont').html();
+            var tel = $('#' + addressId + '_tel').html();
+            var addr = $('#' + addressId + '_addr').html().substring(5);
+            var address = {
+                addressId : addressId,
+                tel : tel,
+                contact : contact,
+                addr : addr,
+                isDefault : false
+            }
+            if ($('#' + addressId + '_1').hasClass("cbgb")) {
+                address.isDefault = true;
+            }
+            appcan.locStorage.setVal('address', address);
+            appcan.window.open("edit_address", "edit_address.html", 10);
+        }
+
+        function Delete(addressId) {
+            var data = {
+                "userId" : userId,
+                "addressId" : addressId
+            }
+            var url = api + '/api/user/deleteAddress';
+            appcan.request.ajax({
+                url : url,
+                type : 'post',
+                data : data,
+                dataType : 'json',
+                success : function(data, status, xhr) {
+                    if (data.status == 1) {
+                        uexWindow.toast("0", "5", data.msg, "2000");
+                        $('#' + addressId).remove();
+                    } else {
+                        uexWindow.toast("0", "5", data.msg, "2000");
+                    }
+                },
+                error : function() {
+               //alert('添加失败，请稍后重试');
+                }
+            })
+        }
+    </script>
+</html>

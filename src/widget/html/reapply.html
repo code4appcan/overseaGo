@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+         <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+         <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+        <script src="../js/main.js"></script>
+        
+    </head>
+    <body class="um-vp" style="background: #fff" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m">
+                <div class="nav-btn blue" id="nav-left"><div class="fa fa-angle-left fa-2x"></div> </div>
+                <h1 class="ut  bc-text ub-f1 ulev-3 ut-s tx-c" tabindex="0">资质申请</h1>
+                <div class="nav-btn blue" id="nav-right">提交</div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l " style="background-color: #F2F2F2">
+                <div class="ub ub-ver">
+                    <div class="ub ub-f1 ub-ac ub-pc" style="padding: .5em;background: url(../image/line.png) no-repeat 50% 37%">                        
+                        <div class="ub ub-ver ub-ac ub-pc" style="color:#00C1F9;">
+                            <div class="ub ub-ac ub-pc" style="margin:.5em 1.8em;color:#fff;width: 1.4em;height: 1.4em;border-radius: .7em;background-color: #00C1F9;">1</div>
+                            <p>提交申请</p>
+                        </div>
+                        <div class="ub ub-ver ub-ac ub-pc" style="color:#B8B8B8;">
+                             <div class="ub ub-ac ub-pc" style="margin:.5em 1.8em;width: 1.4em;height: 1.4em;border-radius: .7em;background-color: #FFFFFF;">2</div>
+                             <p>审批</p>
+                        </div>
+                         <div class="ub ub-ver ub-ac ub-pc" style="color:#B8B8B8;">
+                             <div class="ub ub-ac ub-pc" style="margin:.5em 1.8em; width: 1.4em;height: 1.4em;border-radius: .7em;background-color: #FFFFFF;">3</div>
+                             <p>完成</p>
+                        </div>
+                    </div>
+                    <div class="ub ub-pc ub-ac" style="padding: .5em;line-height: 1.4em;">                        
+                        <img src="../image/choosePic.png" id="applypic" style="width: 6em;height:6em;margin-top:.5em; " onclick="choose();"/>
+                        <p style="margin:0 1em;width: 68%;font-size:.9em;">请添加您的签证照片，以证明您是近期出境的游客，审核通过后即可发布现场购物。<br />
+                            (我们会对您的个人信息严格保密)</p>
+                    </div>
+                </div>
+                 <div class="ub ub-f1 ub-ver" style="background-color: #FFFFFF;padding: .8em 0;margin-bottom: .8em;height: 8em;">
+                    <div class="ub uinput3" style="height: 6em;">
+                        <textarea id="desc">填写申请缘由... </textarea>
+                    </div>                  
+                </div>
+            </div>        
+            <!--content结束-->
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+    </body>
+    <script>
+      var userId=appcan.locStorage.getVal("userId");
+      var deviceInfo;
+      var qualificationId;
+      var image;
+      var img_url="";
+      var desc;       
+        appcan.ready(function() {
+            var i=appcan.locStorage.getVal("applyi");            
+            var applydata=JSON.parse(appcan.locStorage.getVal("applydata"+i));
+            console.log(JSON.stringify(applydata));
+            qualificationId=applydata._id; 
+            // image=applydata.images[0];
+            // img_url=api+image;
+            desc=applydata.desc;
+            deviceInfo=applydata.deviceInfo;            
+            // $("#applypic").attr("src",img_url);
+            $("#desc").val(desc);
+        });
+         appcan.button(".nav-btn", "btn-act", function() {
+            this.id == "nav-left" && appcan.window.close(-1);
+            if(this.id == "nav-right"){
+                var desc = $("#desc").val();
+                appcan.request.ajax({
+                    url :api+'/api/qualification/createApply',                        
+                    type : 'post',
+                    dataType : 'json',
+                    data:{
+                        applyerId:userId,
+                        deviceInfo:deviceInfo,
+                        desc:desc,
+                        qualificationId:qualificationId,
+                        image:image,
+                        thumb:thumb
+                    },
+                    success : function(data) {
+                        if(data.status==1){
+                            uexWindow.toast("0", "5", data.msg, "2000");
+                            uexWindow.evaluateScript('',0,'uexWindow.reload();'); 
+                            window.setTimeout("appcan.window.close(-1);",1000); 
+                        }if(data.status==0){
+                            uexWindow.toast("0", "5", data.msg, "2000");
+                        }
+                    },
+                    error : function(errMessage) {
+                        alert("errMessage:"+JSON.stringify(errMessage));                         
+                    }
+                });    
+            }
+        })
+         function choose(){  
+             appcan.frame.open("choosepic","choosepic.html");                                
+        } 
+       
+        function choosepic(){             
+            var data = {
+                min:1,
+                max:1,
+                quality:0.5,
+                detailedInfo:false
+            }
+            var json = JSON.stringify(data);
+            uexImage.openPicker(json);
+            uexImage.onPickerClosed=function(info){
+                img_url = JSON.parse(info).data[0]; 
+                uploadimg();
+            }
+        } 
+        function takephoto(){  
+            if(uexWidgetOne.platformName == "iOS" || uexWidgetOne.platformName == "ios"){
+                 uexCamera.cbOpen=function (opCode, dataType, data){
+                    img_url=data;
+                    uploadimg();
+                }
+                uexCamera.open(0,50);   
+            }else{
+                uexCamera.cbOpenInternal=function (opCode, dataType, data){//仅android    
+                    img_url=data;
+                    uploadimg();
+                }
+                uexCamera.openInternal(0,50);     
+            }       
+        }
+        function uploadimg() {             
+            appcan.request.ajax({
+                url : api+'/api/util/uploadImage?type=2',
+                type : 'POST',
+                dataType : 'json',
+                data : {
+                    image : {
+                        path : img_url
+                    }
+                },
+                success : function(data, status) {
+                    if (data.status == 1) {
+                       //alert(JSON.stringify(data));                                              
+                       appcan.window.openToast('上传成功', 1500, 5, 0); 
+                       thumb=data.url[0];
+                       image=data.url[1]; 
+                       $("#applypic").attr("src",api+thumb);
+                    } else {
+                        appcan.window.openToast('上传失败', 1500, 5, 0);         
+                    }
+                },
+                error : function(err) {
+                    appcan.window.openToast('上传失败', 1500, 5, 0);
+                 }   
+            })
+        }     
+        
+    </script>
+</html>

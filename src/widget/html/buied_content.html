@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart style="background-color:  #FFFFFF">
+        <div class="ub ub-ver" style="line-height: 1.5em;color: #7A7A7A" id="list">
+        </div>
+        <div class="ub ub-hor">
+            <ul style="width:100%" id="otherList"></ul>
+        </div>
+                
+    </body>
+    <script src="../js/appcan.js"></script>
+    <script src="../js/appcan.control.js"></script>
+    <script src="../js/main.js"></script>
+    </body>
+    <script>
+    var orderId=appcan.locStorage.getVal("orderId");
+    console.log(orderId);
+        appcan.ready(function() {
+           show();
+        });
+         var other=[];
+         var otherList;
+        function show(){
+            //alert('进来了');
+           appcan.request.ajax({//56a048a3a34e63333636a704 
+                url :api+'/api/order/shoppingInfo?orderId='+orderId,
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {
+                    if(data.status==1){
+                        //alert("进来了");
+                        var receiptImg=api+data.data.receiptThumb;//小票图片
+                        var itemImage=api+data.data.itemImageThumb;//商品图片
+                        var packageImg=api+data.data.packageThumb;//包裹图片
+                        var logisticsImg=api+data.data.logisticsThumb;//物流图片
+                        //alert(packageImg+"--"+logisticsImg);
+                         other=data.data.other;//其他图片
+                         if(data.data.receipt!=undefined&&data.data.itemImage!=undefined){
+                             var html='';
+                         html+='<div class="ub">'
+                            +'<div class="ub ub-ac ub-pc ub-ver ub-f1" style="padding: .5em;">'
+                            +'<p>小票信息</p>'
+                            +'<img src="'+receiptImg+'" style="width: 8em;margin-top:.5em; height:8em"  onclick="openBig(\''+data.data.receipt+'\')"/>'
+                            +'</div>'
+                            +'<div class="ub ub-ac ub-pc ub-ver ub-f1">'
+                            + '<p>商品图片</p>'
+                            +'<img src="'+itemImage+'" style="width: 8em;margin-top:.5em; height:8em" onclick="openBig(\''+data.data.itemImage+'\')"/>'
+                            +'</div>'
+                            +'</div>'
+                            $("#list").html(html);
+                         }
+              if(data.data.package!=undefined&&data.data.logistics!=undefined){
+                  var html='';
+                  html+='<div class="ub ub-ac ub-pc" style="height: 3em;background:url(../image/line.png) no-repeat;background-position: center ">'
+                    +'<span style="padding: .5em;background: #FFFFFF;color: #B5B5B5;font-size: .9em">发货信息</span>'
+                    +'</div>'
+                    +' <div class="ub">'
+                    +'<div class="ub ub-ac ub-pc ub-ver ub-f1" style="padding: .5em;">'
+                    +'<p>包裹图片</p>'
+                    +'<img src="'+packageImg+'" style="width: 8em;margin-top:.5em;height:8em " onclick="openBig(\''+data.data.package+'\')"/>'
+                    +'</div>'
+                    +'<div class="ub ub-ac ub-pc ub-ver ub-f1">'
+                    +'<p>物流单图片</p>'
+                    +'<img src="'+logisticsImg+'" style="width: 8em;margin-top:.5em;height:8em " onclick="openBig(\''+data.data.logistics+'\')"/>'
+                    +'</div>'
+                    +'</div>'
+                    $("#list").append(html);
+              }
+              if(data.data.other!=""){
+                  var length=data.data.other.length;
+                  var html="";
+                  html+='<p style="padding-left: 2em;">其他</p>';
+                  $("#list").append(html);
+                  var html2="";
+                  for(var i=0;i<length;i++){
+                    html2+='<li style="width:49%;display: inline-block;"> '
+                    +'<div class="ub">'
+                    +'<div class="ub ub-ac ub-pc ub-ver ub-f1" style="padding: .5em;">'
+                    +'<img src="'+api+data.data.other[i]+'" style="width: 8em;margin-top:.5em; height:8em" onclick="openBig(\''+data.data.other[i]+'\')"/>'
+                    +'</div>'
+                    +'</div>'
+                    +'</li>'
+                 }
+              $("#list").append(html2);
+               } 
+               if($.trim($("#list").html())==''){
+                  var html='';
+                   html+='<div class="ub ub-ac ub-pc ub-ver" >'
+                   +'<img src="../image/noon.png" style="margin-top:10em"/>'
+                   +'<div class="ub" style="color:red;margin-top:0.8em">'
+                   +'暂时还没有相关发票信息哦!'
+                   +'</div>'
+                   +'</div>'                           
+                  $("#list").html(html); 
+               }
+               }       
+             },
+                error : function(errMessage) {
+                    alert("errMessage:"+JSON.stringify(errMessage));                         
+                }
+            });
+        }
+        
+        function openBig(img){
+             appcan.locStorage.setVal("myimg",img);
+             appcan.frame.open("bigimage","bigimage.html"); 
+        }
+        
+   
+    </script>
+</html>

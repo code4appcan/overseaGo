@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+         <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+         <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+        <script src="../js/main.js"></script>
+        
+    </head>
+    <body class="um-vp" style="background: #fff" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m">
+                <div class="nav-btn blue" id="nav-left"><div class="fa fa-angle-left fa-2x"></div> </div>
+                <h1 class="ut  bc-text ub-f1 ulev-3 ut-s tx-c" tabindex="0">VIP</h1>
+                <div class="nav-btn blue" id="nav-right"></div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l " style="background-color: #F2F2F2;line-height: 1.6em">
+                <div class="ub ub-ver" style="color:#7A7A7A;">                
+                    <div class="ub ub-ver" style="padding: 1em;background-color: #FFFFFF;margin: .5em" >                        
+                        <div class="ub ub-pc ub-ac">                        
+                            <img src="../image/profile.png" id="avatar" style="width: 5em;height:5em;border-radius: 2.5em;margin:.5em 0; " />
+                            <div class="ub ub-ver ub-f1" style="margin: .5em 1em;">  
+                                <p id="nickname"></p>
+                                <p id="vip" style="line-height: 1.4em;font-size:.9em;"></p>
+                            </div>
+                        </div>
+                        <div style="width: 100%;height: 1em;background: #F2F2F2" id="schedule">
+                            <!-- <div style="width: 60%;height:1em;background: #00C1F9;"></div> -->
+                        </div>
+                        <p style="color: #ADADAD;margin-top:.3em;" id="short"></p>
+                    </div>
+                    <div class="ub ub-ver ub-f1" style="margin: .5em 1em;color:#A2A2A2">  
+                        <p style="color:#333333;margin-top:.5em">如何获取经验值：</p>
+                        <p>1、购买商品获得商品价钱等数值的10%的经验，如商品价格100元，增长10个经验；</p>
+                        <p>2、分享未结束的现场购活动或者商品增加10个经验（同一个商品分享只是第一次分享时获取经验）；</p>
+                        <p>3、每天第一次打开APP增加2个经验；</p>
+                        <p>4、成功发一个现场活动增加100个经验。</p>
+                    </div>
+                </div>     
+            </div>        
+            <!--content结束-->
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+    </body>
+    <script>
+      var userId=appcan.locStorage.getVal("userId");
+        appcan.ready(function() {
+            appcan.request.ajax({
+                    url : api+'/api/user/me/'+userId,
+                    type : 'GET',
+                    dataType : 'json',
+                    success : function(data) {                            
+                        if(data.status == 0){
+                            uexWindow.toast("0", "5", "网络异常", "2000");
+                        }
+                        if (data.status == 1) {
+                            var exp=data.data.user.exp;
+                            var level= parseInt(Math.pow(exp/100,1/3)); 
+                            var level1=level+1;
+                            var exp_c=Math.pow(level1,3)*100-exp;
+                            var all=Math.pow(level1,3)*100-Math.pow(level,3)*100;
+                            // alert(all);
+                            var now=exp-Math.pow(level,3)*100;
+                            // alert(now);
+                            var percent=parseInt(now/all*100);
+                            // alert(percent);
+                            $("#vip").html("VIP&nbsp;"+level+"级");
+                            var html="";
+                            html+='<div style="width: '+percent+'%;height:1em;background: #00C1F9;"></div>';
+                            $("#schedule").append(html);
+                            $("#short").html("还差"+exp_c+"经验点升级到VIP&nbsp;"+level1+"级");
+                            if(data.data.user.nickname){
+                                 nickname = data.data.user.nickname;
+                                 img_url= api+data.data.user.avatar;                                    
+                                 $("#avatar").attr("src",img_url);
+                                 $('#nickname').html(nickname);
+                            }else{
+                               nickname = data.data.user.phone;
+                               $('#nickname').html(nickname);
+                            }
+                        }                            
+                    },
+                    error : function(errMessage) {
+                        uexWindow.toast("0", "5", "网络异常", "2000");
+                     
+                    }   
+             });
+            // var exp=0;
+            // appcan.request.ajax({
+                // url :api+'/api/user/exp',
+                // type : 'post',
+                // data:{
+                    // userId: userId,
+                    // exp: exp,
+                // },
+                // dataType : 'json',
+                // success : function(data) {
+                    // var exp=data.exp;
+                    // var level= parseInt(Math.pow(exp/100,1/3)); 
+                    // var level1=level+1;
+                    // var exp_c=Math.pow(level1,3)*100-exp;
+                    // var all=Math.pow(level1,3)*100-Math.pow(level,3)*100;
+                    // // alert(all);
+                    // var now=exp-Math.pow(level,3)*100;
+                    // // alert(now);
+                    // var percent=parseInt(now/all*100);
+                    // // alert(percent);
+                    // $("#vip").html("VIP&nbsp;"+level+"级");
+                    // var html="";
+                    // html+='<div style="width: '+percent+'%;height:1em;background: #00C1F9;"></div>';
+                    // $("#schedule").append(html);
+                    // $("#short").html("还差"+exp_c+"经验点升级到VIP&nbsp;"+level1+"级");
+                    // // alert(level);
+                // },
+                // error : function(errMessage) {
+                    // alert("errMessage:"+JSON.stringify(errMessage));                         
+                // }
+            // });
+        });
+        appcan.button(".nav-btn", "btn-act", function() {
+            appcan.window.close(-1);
+            
+        })
+    </script>
+</html>

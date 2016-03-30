@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+         <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+         <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+        <script src="../js/main.js"></script>
+    <script src="../js/country.js"></script>  
+    <script src="../js/moment.js"></script>  
+        <style type="text/css">
+            input{
+                height :2em;
+                border: 0px;
+                font-size:1em !important;
+                width:8em;
+                background-color: white;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body class="um-vp" style="background: #fff"  ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m">
+                <div class="nav-btn blue" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <h1 class="ut  bc-text ub-f1 ulev-3 ut-s tx-c" tabindex="0">现场购信息</h1>
+                <div class="nav-btn blue" id="nav-right">保存</div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l uma" >
+                <div class="ub ub-ver" id="t_img" >                    
+                    <div class="ub ub-pc ub-ac" style="padding: .5em;line-height: 1.4em;"> 
+                        <p style="margin:0 1em;width: 10em;font-size:.9em;">现场购物的店面照片</p> 
+                        <img src="../image/choosePic.png" id="scene_img" onclick="choose();" style="width: 6em;height: 6em;margin:.5em; " />                          
+                    </div>    
+             </div>
+             <div class="ub ub-ver" >
+                <form method="POST" name="card" action>     
+                     <div class="ub ub-f1 ub-ver" style="background-color: #FFFFFF;padding: .8em 0;margin-bottom: .8em;height: 8em;">
+                        <div class="ub uinput3" style="height: 6em;">
+                            <textarea id="desc" placeholder="填写店面名称、品牌、优惠等"></textarea>
+                        </div>                  
+                    </div>
+                       <div class="ub ub-ac" style="background-color: #FFFFFF;margin-bottom: .8em;">
+                            <div class="ub ub-f1" style="padding:1em 1.5em;width:4em;">
+                                                        活动时间
+                            </div>
+                            <div class="ub ub-ac ub-pc" style="color: #BCBCBC;">
+                                <div class="ub ub-ac ub-pc uinput4" id="deadtime" style="width:12em;">
+                                    <input id="hour" name="T1" type="number" min="0" max="99" onkeyup="value=value.replace(/\D/g,'');return T1_onkeyup()"/>小时 
+                                    <!-- <input id="minute" name="T2" type="text" maxlength="2" onkeyup="this.value=this.value.replace(/\D/g,'');"/>分钟 -->
+                                    <input id="minute" name="T2" type="number"  onkeyup="if(event.keyCode !=37 && event.keyCode != 39){if (! /^[0-5]{0,1}[0-9]{1}$/ig.test(this.value)){this.value='';}}"/>分钟
+                                </div>
+                            </div>
+                        </div>
+                       <div class="ub ub-ac" style="background-color: #FFFFFF;margin-bottom: .8em;">
+                            <div class="ub ub-f1" style="padding:1em 1.5em;width:4em;">
+                                                        回国日期
+                            </div>
+                            <div class="ub ub-ac ub-pc" style="color: #BCBCBC;">
+                                    <div class="ub ub-ac ub-pc uinput1" id="backtime" style="width:10em;padding-right: .5em">
+                                    </div>
+                            </div>
+                        </div>
+                        <div class="ub ub-ac" style="background-color: #FFFFFF;margin-bottom: .8em;">
+                            <div class="ub ub-f1" style="padding:1em 1.5em;width:4em;">
+                                                    所在位置                                  
+                            </div>
+                            <div class="ub ub-ac ub-pc" style="color: #BCBCBC;">
+                                    <div class="ub ub-ac ub-pc" id="location" style="width:13em;padding-right: .5em">                                       
+                                    </div>
+                            </div>
+                        </div>
+                        </form>
+                  </div>
+            </div>      
+            <!--content结束-->
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/main.js"></script>
+    </body>
+    <script>  
+      var userId=appcan.locStorage.getVal("userId");
+      var scene_id=appcan.locStorage.getVal("scene_id");
+     // var userId = "5675551239c3e372278695ae";
+     var over;
+     var back;
+     var country;
+     var locationInfo;
+     var lat;
+     var log;
+     var area; 
+     var img_url='';
+     var img;
+     appcan.ready(function() { 
+         appcan.request.ajax({
+            url : api+'/api/shoplive/detail/'+scene_id,//56790df826c8b75833ffdbd3
+            type : 'GET',
+            dataType : 'json',
+            success : function(data) {                          
+                if(data.status == 0){
+                    uexWindow.toast("0", "5", data.msg, "2000");
+                }
+                if (data.status == 1) {
+                    // alert(JSON.stringify(data));
+                    // if(data.data.thumbs.length>0){                                                
+                    img_url =api +  data.data.thumbs[0];
+                    thumb=data.data.thumbs[0];
+                    image=data.data.images[0];
+                    // }else{                                                
+                        // url_img =api +  data.data.images[0];
+                    // }                    
+                    over=data.data.deadline;
+                    var desc=data.data.desc;    
+                    var backtime=data.data.backTime; 
+                    var s=[];
+                    s=backtime.split("T");
+                    back=s[0];              
+                    country=data.data.country;
+                    locationInfo=data.data.locationInfo;
+                    var location=data.data.location;
+                    lat=location[0];
+                    log=location[1];
+                    area = areaList[country].area;
+                      $("#scene_img").attr("src",img_url);
+                      $('#desc').val(desc);
+                      $("#location").html(country+locationInfo);
+                      DownCount();
+                  }      
+                }
+            }); 
+            getbacktime();
+       });
+        function DownCount(){ 
+            // alert(over);
+            var today=new Date();
+            now=parseInt(today.getTime()/1000);
+            var overtime=moment(over, 'YYYY-MM-DDTHH:mm:ss.sssZ');
+            var deadline=overtime.unix();  
+            var minus=deadline-now;
+            CMinute=parseInt(minus%3600/60);
+            CHour=parseInt(minus/3600); 
+            // alert(minus);
+            $("#hour").val(CHour);
+            $("#minute").val(CMinute);
+        }  
+       appcan.button("#nav-left", "btn-act", function() {
+            appcan.window.close(-1);
+        })
+        appcan.button("#nav-right", "btn-act", function() {
+          change();
+          
+        })
+     
+     
+      function getbacktime(){
+            setTimeout(function() {
+                var date = new Date();
+                //  date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate(); 
+                var begintime = back;
+                if(date.getMonth()<11){
+                    var endtime=date.getFullYear()+"-"+(date.getMonth()+2)+"-"+date.getDate();
+                }else{
+                    var endtime=(date.getFullYear()+1)+"-01-"+date.getDate();
+                }
+                //alert(begintime+","+endtime);
+                var html="";
+                html+='<input type="date" id="backdate" min="'+begintime+'" max="'+endtime+'" />';
+                $("#backtime").html(html);
+                $('#backdate').val(back);
+            }, 500);
+        }
+                   
+         function uploadimg() {
+             // alert("ss");
+             // alert(img_url);
+            appcan.request.ajax({
+                url : api+'/api/util/uploadImage?type=2',
+                type : 'POST',
+                dataType : 'json',
+                data : {
+                    image : {
+                        path : img_url
+                    }
+                },
+                success : function(data, status) {
+                    if (data.status == 1) {
+                       //alert(JSON.stringify(data));                                              
+                       appcan.window.openToast('上传成功', 1500, 5, 0); 
+                       thumb=data.url[0];
+                       image=data.url[1]; 
+                      
+                    } else {
+                        appcan.window.openToast('上传失败', 1500, 5, 0);         
+                    }
+                },
+                error : function(err) {
+                    appcan.window.openToast('上传失败', 1500, 5, 0);
+                 }   
+            })
+        }
+        function choosepicb(){                
+                uexImageBrowser.cbPick=function (opCode,dataType,data){  
+                    // alert(data);               
+                    img_url = data;    
+                    $("#scene_img").attr("src",img_url);
+                    uploadimg();
+                }
+                uexImageBrowser.pick();
+            
+        } 
+        function choose(){             
+            appcan.locStorage.setVal("name",'scene_info');          
+            appcan.frame.open("choosepic","choosepic.html");
+            // takephoto();
+        } 
+        
+        
+        function choosepic(){                        
+                var data = {
+                    min:1,
+                    max:1,
+                    quality:0.5,
+                    detailedInfo:false
+                }
+                var json = JSON.stringify(data);
+                uexImage.openPicker(json);
+                uexImage.onPickerClosed=function(info){
+                    img_url = JSON.parse(info).data[0];    
+                    // alert(img_url);
+                    $("#scene_img").attr("src",img_url);
+                    uploadimg();
+                }
+        } 
+        
+         function takephoto(){            
+            if(uexWidgetOne.platformName == "iOS" || uexWidgetOne.platformName == "ios"){
+               uexCamera.cbOpen=function (opCode, dataType, data){
+                    img_url=data;
+                    $("#scene_img").attr("src",img_url);
+                    uploadimg();
+                }
+                uexCamera.open(0,50);
+            }else{
+                uexCamera.cbOpenInternal=function (opCode, dataType, data){//仅android    
+                    img_url=data;
+                    $("#scene_img").attr("src",img_url);
+                    uploadimg();
+                }
+                uexCamera.openInternal(0,50);     
+            }     
+        }
+        
+        function T1_onkeyup() { 
+            if(document.card.T1.value.length==2){ 
+                document.card.T2.focus(); 
+            } 
+            if(document.card.T1.value.length>2){ 
+                document.card.T1.value=""; 
+            } 
+        } 
+            
+        function change(){
+            // alert("change");
+            var desc = $("#desc").val();
+            var h = $("#hour").val();
+            var ms = $("#minute").val();
+            var backdate=$("#backdate").val();
+            // alert(desc+h+ms+backdate);
+            // alert('&latlng='+lat+','+log);
+            // alert('&location_info='+locationInfo);
+            // alert('&country='+country+'&area='+area+'&shopLiveId='+scene_id);
+            // alert('&image='+image);
+            // alert('&thumb='+thumb);
+            if((img_url==' ')||(backdate==' ')||(desc==' ')||(h==' ')||(ms==' ')){
+                uexWindow.toast(0, 5, "信息不完整", 3000);
+            }else{
+                 var uploadHttp = api + '/api/shoplive/add?userId='+userId+'&desc='
+                           +desc+'&endTime='+h+'-'+ms+'&backTime='+backdate+'&latlng='
+                           +lat+','+log+'&location_info='+locationInfo+'&country='+country
+                           +'&area='+area+'&shopliveId='+scene_id+'&image='+image+'&thumb='+thumb;
+                // alert(uploadHttp);
+                 appcan.request.ajax({
+                    url :encodeURI(uploadHttp),
+                    type : 'get',
+                    dataType : 'json',
+                    success : function(data, status) {
+                        if (data.status == 1) {
+                           // alert(JSON.stringify(data));                                              
+                           appcan.window.openToast('创建成功', 1500, 5, 0); 
+                            // uexWindow.evaluateScript('scene',0,'window.location.reload();');
+                            uexWindow.evaluateScript('scene',0,'uexWindow.reload();');
+                            appcan.window.close(-1);
+                            uexWindow.evaluatePopoverScript("root", "content", "homeready()");
+                            uexWindow.evaluatePopoverScript("myscene", "content", "show()");                
+                          
+                        } else {
+                            appcan.window.openToast('创建失败', 1500, 5, 0);         
+                        }
+                    },
+                    error : function(err) {
+                        appcan.window.openToast('创建失败', 1500, 5, 0);
+                     }   
+                })
+                // var uploadHttp = api + '/api/shoplive/add?userId='+userId+'&desc='
+                           // +desc+'&endTime='+h+'-'+ms+'&backTime='+backdate+'&latlng='
+                           // +lat+','+log+'&location_info='+locationInfo+'&country='+country
+                           //+'&area='+area+'&shopliveId='+scene_id+'&image='+image;
+               // //alert(uploadHttp);
+                // uexUploaderMgr.createUploader(1, encodeURI(uploadHttp));
+                // uexUploaderMgr.uploadFile(1, img_url, "image", 0);          
+                // uexUploaderMgr.onStatus = function(opCode, fileSize, percent, serverPath, status) {
+                   // switch (status) {
+                        // case 1:
+                            // uexWindow.toast(0, 5, "修改成功", 3000);
+                            // uexUploaderMgr.closeUploader(opCode);  
+                            // uexWindow.evaluateScript('scene',0,'window.location.reload();');
+                            // appcan.window.close(-1);              
+                            // break;
+                        // case 2:                            
+                            // uexWindow.toast(0, 5, "修改失败", 3000);
+                            // uexUploaderMgr.closeUploader(opCode);
+                            // break;    
+                    // }
+                // } 
+            }
+        }   
+        
+        
+    </script>
+</html>

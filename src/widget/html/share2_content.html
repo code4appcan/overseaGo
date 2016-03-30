@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+         <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+         <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+        <script src="../js/main.js"></script>
+        
+        
+    </head>
+    <body class="um-vp" ontouchstart>
+        <div class="ub ub-ver" style="z-index: 100;">
+            <div class="ub ub-f1 ub-ac ub-pc" style="padding: .5em;background: url(../image/line.png) no-repeat 50% 37%">
+                <div class="ub ub-ver ub-ac ub-pc" style="color:#B8B8B8;">
+                     <div class="ub ub-ac ub-pc" style="margin:.5em 1.8em;width: 1.4em;height: 1.4em;border-radius: .7em;background-color: #FFFFFF;">1</div>
+                     <p>创建现场</p>
+                </div>
+                <div class="ub ub-ver ub-ac ub-pc" style="color:#00C1F9;">
+                    <div class="ub ub-ac ub-pc" style="margin:.5em 1.8em;color:#fff;width: 1.4em;height: 1.4em;border-radius: .7em;background-color: #00C1F9;">2</div>
+                    <p>添加商品</p>
+                </div>
+                 <div class="ub ub-ver ub-ac ub-pc" style="color:#B8B8B8;">
+                     <div class="ub ub-ac ub-pc" style="margin:.5em 1.8em; width: 1.4em;height: 1.4em;border-radius: .7em;background-color: #FFFFFF;">3</div>
+                     <p>完成</p>
+                </div>
+            </div>
+            <div id="added" class="hide">                
+                 <div class="ub ub-f1 ub-ac ub-pc" style="height:1.5em;color:#ADADAD;font-size: 1.1em;">
+                    下一个商品
+                </div>
+            </div>                        
+        </div>
+        <div class="ub ub-ver" id="input" style="height:auto;">
+            <!-- <div id="shade" style="height:100%;width:100%;position: absolute;bottom:0;z-index: 10;background:#FC7800;"></div> -->
+            <div class="ub ub-ver" style="padding: .5em;line-height: 1.4em;">
+                <p>商品图片（最多可添加9张）</p>
+                <img src="../image/choosePic.png" onclick="choose();" style="width: 6em;margin-top:.5em; " />
+                <div class="ub ub-f1" style="padding-top: 0.4em;">
+                    <ul style="width:100%;"  id="t_img">
+                    </ul>
+                </div> 
+            </div>
+             <div class="ub ub-f1 ub-ver" style="background-color: #FFFFFF;padding: .8em 0;margin-bottom: .8em;height: 8em;">
+                <div class="ub uinput3" style="height: 6em;">
+                    <textarea id="desc" placeholder="填写商品亮点等" ></textarea>
+                </div>                  
+            </div>
+             <div class="ub ub-f1 ub-ver" style="background-color: #F2F2F2">
+                   <div class="ub ub-ac" style="background-color: #FFFFFF;margin-bottom: .8em;">
+                        <div class="ub ub-f1" style="padding:1em 1.5em;width:4em;">
+                                                    品牌
+                        </div>
+                        <div class="ub ub-ac ub-pc" style="color: #BCBCBC;">
+                            <div class="ub ub-ac ub-pc uinput11" style="width:10em;padding-right: .5em">
+                                <input id="brand"/>
+                                <div onclick="quicksearch();" style="font-size:.9em; padding:.3em;border-radius:.2em;color:#fff;background-color:#00C1F9;">
+                                快速查找
+                                </div> 
+                            </div> 
+                        </div> 
+                    </div>
+                   <div class="ub ub-ac" style="background-color: #FFFFFF;margin-bottom: .8em;">
+                        <div class="ub ub-f1" style="padding:1em 1.5em;width:4em;">
+                                                    类别
+                        </div>
+                        <div class="ub ub-ac ub-pc" style="color: #BCBCBC;">
+                            <div class="ub ub-ac ub-pc uinput11 selects" style="width:10em;padding-right: .5em">
+                                <select id="types">  
+                                </select>  
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ub ub-ac"style="background-color: #FFFFFF;margin-bottom: .8em;">
+                       <div class="ub ub-ac ub-f1" style="padding:1em 1.5em;">                      
+                                                    数量
+                        
+                       </div>                            
+                        <div class="ub ub-ac ub-pc" style="color: #BCBCBC;">
+                            <div class="ub ub-ac ub-pc uinput11" style="width:10em;padding-right: .5em">
+                                <!-- <input type="number" id="num" min="1" max="10"/> -->
+                                <input id="num" style="IME-MODE: disabled;" onkeyup="value=value.replace(/\D/g,'')" type="number" />
+                                    
+                            </div>
+                        </div>
+                    </div>
+                   <div class="ub ub-ac"style="background-color: #FFFFFF;margin-bottom: .8em;">
+                       <div class="ub ub-ac ub-f1" style="padding:1em 1.5em;">
+                           <div class="ub" >
+                                                    真实售价
+                        </div>
+                        <img class="" src="../image/Question2.png" id="pricepop" style="width:1.5em;margin-left: .2em;"/>
+                        
+                       </div>                            
+                        <div class="ub ub-ac ub-pc" style="color: #BCBCBC;">
+                            <div class="ub ub-ac ub-pc uinput11" style="width:10em;padding-right: .5em">
+                                <input type="number" id="price" onkeyup="value=value.replace(/[^\d.]/g,'')"/>
+                                <!-- <input id="price" type="number" onkeyup="value=value.replace(/\D/g,'')" /> -->
+                                <div id="unit"></div>
+                            </div>
+                        </div>
+                    </div>
+              </div>
+              <div class="ub ub-ac ub-pc" style="background-color: #F2F2F2">                        
+                 <div style="padding:0 1.5em;color:#898989;font-size:.9em;line-height: 1.5em">
+                    海外购平台上的价格会加15%的代购费，其中平台收取5%的服务费，卖家最终收取10%的代购费
+                 </div>
+                
+              </div>
+              <div class="ub ub-ac ub-pc" style="height: 4em;padding:.5em;background-color: #F2F2F2">
+                 <div id="addg" class="ub ub-ac ub-pc ulev-3" onclick="nextshare();" style="width:70%;height: 2.5em;border-radius:.2em;color:#00C1F9;background-color:#FFFFFF;border: 1px solid #00C1F9;">
+                                                继续添加商品
+                  </div>
+              </div> 
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+    </body>
+    <script>      
+        var code=appcan.locStorage.getVal("code");
+        var unit=appcan.locStorage.getVal("unit");       
+        var category;
+        var rate; 
+        var have_img=false;
+        var itemlen=0;
+        appcan.ready(function() {
+            $("#unit").html(unit+"("+code+")");                  
+            appcan.button("#pricepop", "btn-act", function() {    
+                appcan.frame.open('pricePop', 'pricePop.html', 0);
+            })            
+            
+            var categories=JSON.parse(appcan.locStorage.getVal("categories"));
+            var categories_len=categories.length;
+            var html="";
+            for(var i=0;i<categories_len;i++){
+                html+="<option value='"+categories[i]._id+"'>"
+                    +categories[i].name
+                    +"</option>";
+            }
+            $("#types").append(html);
+            category = $('#types option[value='+"'"+categories[0]._id+"'"+']').html();
+            // alert(category);
+            appcan.locStorage.setVal("category",category); 
+            appcan.locStorage.setVal("category_id",categories[0]._id);
+            appcan.select(".selects",function(ele,value){
+                appcan.locStorage.setVal("category_id",value);
+                category = $('#types option[value='+"'"+value+"'"+']').html();
+                appcan.locStorage.setVal("category",category); 
+            }); 
+            appcan.locStorage.setVal("have_img",have_img);
+            appcan.locStorage.setVal("itemlen",itemlen);            
+        });
+        
+        var img_url="";
+        var thumb=[]; 
+        var image_400_300=[]; 
+        var image=[];
+        var left_len=9;
+        var have_len=0; 
+        var img_len=0;
+        var deli=[];
+        function choose(){    
+            if(left_len>0){                 
+               appcan.frame.open("choosepic_content","choosepic_content.html");
+            }
+        }       
+        function openimg(img,i){
+             var dlen=deli.length;
+             var lens=i;
+             for(var j=0;j<dlen;j++){
+                 if(i>deli[j]){                     
+                     lens--;
+                 }
+             } 
+             appcan.locStorage.setVal("myimg",img);
+             appcan.locStorage.setVal("imgid",i);
+             appcan.locStorage.setVal("imgi",lens);
+             appcan.frame.open('image_content', 'image_content.html', 0);  
+        }
+        function removeimg(){            
+            var imgi=appcan.locStorage.getVal("imgi"); 
+            var imgid=appcan.locStorage.getVal("imgid");            
+            $("#img"+imgid).remove(); 
+            deli.push(imgi); 
+            thumb.splice(imgi,1);
+            image_400_300.splice(imgi,1);
+            image.splice(imgi,1);            
+           appcan.locStorage.setVal("thumb",thumb);
+           appcan.locStorage.setVal("image_400_300",image_400_300);
+           appcan.locStorage.setVal("image",image); 
+           have_len--;
+           left_len=9-have_len;
+            if(have_len>0){
+                have_img=true;
+            }else{
+                have_img=false;
+            }
+            appcan.locStorage.setVal("have_img",have_img);
+        }
+         function choosepic(){
+            var data = {
+                min:1,
+                max:left_len,
+                quality:0.5,
+                detailedInfo:false
+            }
+            var json = JSON.stringify(data);
+            uexImage.openPicker(json);
+            uexImage.onPickerClosed=function(info){                
+                var len=JSON.parse(info).data.length;
+                for(var i=0;i<len;i++){
+                   img_url=JSON.parse(info).data[i];
+                   uploadimg();
+                }
+            }  
+        } 
+        function takephoto(){  
+            if(uexWidgetOne.platformName == "iOS" || uexWidgetOne.platformName == "ios"){
+                 uexCamera.cbOpen=function (opCode, dataType, data){
+                    img_url=data;
+                    uploadimg();
+                }
+                uexCamera.open(0,50);   
+            }else{
+                uexCamera.cbOpenInternal=function (opCode, dataType, data){//仅android    
+                    img_url=data;
+                    uploadimg();
+                }
+                uexCamera.openInternal(0,50);     
+            }       
+        }
+        function uploadimg(){
+            appcan.request.ajax({
+                url : api+'/api/util/uploadImage?type=3',
+                type : 'POST',
+                dataType : 'json',
+                data : {
+                    image : {
+                        path : img_url
+                    }
+                },
+                success : function(data, status) {
+                    if (data.status == 1) {
+                       //alert(JSON.stringify(data));                                              
+                       appcan.window.openToast('上传成功', 1500, 5, 0); 
+                       var img=data.url[2];
+                       var imgthumb=api+data.url[0];                          
+                       var html="";
+                       html+='<li id="img'+img_len+'" style="width:22%;display: inline-block;margin-left: .5em;margin-bottom: .3em;">'
+                                +'<img src="'+imgthumb+'" style="width:100%;height:5em;" onclick="openimg('+"'"+img+"'"+','+img_len+');"/>'
+                            +'</li>';
+                       $("#t_img").append(html);
+                       have_len+=1;
+                       img_len+=1;
+                       left_len=9-have_len;
+                       thumb.push(data.url[0]);
+                       image_400_300.push(data.url[1]); 
+                       image.push(data.url[2]); 
+                       have_img=true;
+                       appcan.locStorage.setVal("have_img",have_img);
+                       appcan.locStorage.setVal("thumb",thumb);
+                       appcan.locStorage.setVal("image_400_300",image_400_300);
+                       appcan.locStorage.setVal("image",image);
+                       
+                    } else {
+                        appcan.window.openToast('上传失败', 1500, 5, 0);         
+                    }
+                },
+                error : function(err) {
+                    appcan.window.openToast('上传失败', 1500, 5, 0);
+                 }   
+            })
+        }
+        
+        $("#desc").blur(function(){
+            var desc = $("#desc").val();
+            appcan.locStorage.setVal("desc",desc);
+        });
+        $("#brand").blur(function(){
+            var brand = $("#brand").val();  
+            var brandId="";
+            appcan.request.ajax({
+                url : api+'/api/brand/list?page=1&rows=100',
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {                          
+                    if(data.status == 0){
+                        uexWindow.toast("0", "5", data.msg, "2000");
+                    }
+                    if (data.status == 1) { 
+                        var len=data.rows.length;    
+                        for(var j=0;j<len;j++){
+                            if(data.rows[j].name.toLowerCase()==brand.toLowerCase()){
+                                brandId=data.rows[j]._id;
+                                appcan.locStorage.setVal("brandId",brandId); 
+                                return;
+                             }else{                                 
+                                appcan.locStorage.setVal("brandId",brandId);
+                             }
+                        } 
+                    }
+                },
+                error : function(errMessage) {
+                    //alert("errMessage"+errMessage);                 
+                }
+            });
+            appcan.locStorage.setVal("brand",brand); 
+            setTimeout(function() {
+                var brandid=appcan.locStorage.getVal("brandId");
+                if(brandid==""){
+                    appcan.request.ajax({
+                        url : api+'/saveOrUpdateCustomerBrand',
+                        type : 'post',
+                        dataType : 'json',
+                        data : {
+                                name:brand.toLowerCase()
+                            },
+                        success : function(data) {                          
+                            if(data.status == 0){
+                                uexWindow.toast("0", "5", data.msg, "2000");
+                            }
+                            if (data.status == 1) { 
+                                uexWindow.toast("0", "5", data.msg, "2000");
+                            }
+                        },
+                        error : function(errMessage) {
+                            //alert("errMessage"+errMessage);                 
+                        }
+                    });   
+                }
+            }, 2000);
+             
+             // var brands=JSON.parse(appcan.locStorage.getVal("brands"));
+             // var len=brands.length;
+             // var brand = $("#brand").val();
+             // for(var i=0;i<len;i++){
+                 // if(brands[i].name==brand){
+                     // appcan.locStorage.setVal("brandId",brands[i]._id);
+                     // return;
+                 // }else{
+                     // appcan.locStorage.setVal("brandId","");
+                 // }
+             // }
+             // appcan.locStorage.setVal("brand",brand);   
+        });
+        
+        function getbrand(){
+           var brandId=appcan.locStorage.getVal("brand_id");
+           var brand=appcan.locStorage.getVal("brand_name");
+           $("#brand").val(brand); 
+           appcan.locStorage.setVal("brand",brand); 
+           appcan.locStorage.setVal("brandId",brandId); 
+           // alert(brand+","+brandId);
+        }
+        
+        $("#num").blur(function(){   
+             var num = $("#num").val();        
+             appcan.locStorage.setVal("num",num);  
+        }); 
+        $("#price").blur(function(){   
+             var price = $("#price").val();        
+             appcan.locStorage.setVal("price",price);  
+        });  
+        
+        var flag=true;
+        function nextshare(){  
+            if(flag){
+                flag=false;
+                var desc = $("#desc").val();
+                // var brand = $("#brand").val();
+                var price = $("#price").val();
+                var num=$("#num").val();
+                var p_code = code; 
+                var category_id=appcan.locStorage.getVal("category_id");            
+                rate=appcan.locStorage.getVal("rate");  
+                var brand=appcan.locStorage.getVal("brand");
+                var brandId=appcan.locStorage.getVal("brandId");
+                var shoplive_id=appcan.locStorage.getVal("shoplive_id");
+                 if(have_img){  
+                     var thumbs=appcan.locStorage.getVal("thumb");
+                     var images_400_300=appcan.locStorage.getVal("image_400_300");
+                     var images=appcan.locStorage.getVal("image");  
+                     appcan.request.ajax({
+                        url :api+'/api/item/save',
+                        type : 'POST',
+                        dataType : 'json',
+                        data : {
+                                shopliveId:shoplive_id,
+                                desc: desc,
+                                price:price,
+                                priceCode:p_code,
+                                rate:rate,                            
+                                brand: brand,                                                       
+                                brandId: brandId,
+                                category:category,
+                                categoryId:category_id,
+                                leftCount:num,
+                                image:images,
+                                image_400_300:images_400_300,
+                                thumb:thumbs
+                            },
+                        success : function(data) {
+                            if(data.status == 0){
+                                uexWindow.toast("0", "5", data.msg, "2000");
+                            }
+                            if (data.status == 1) { 
+                                uexWindow.toast("0", "5", data.msg, "2000");                         
+                                $("#added").removeClass("hide").addClass("display"); 
+                                showItem(data.itemId);
+                                $("#t_img").empty();
+                                $("#desc").val('');
+                                $("#price").val('');
+                                $("#num").val(''); 
+                                appcan.locStorage.remove('price'); 
+                                appcan.locStorage.remove('num'); 
+                                appcan.locStorage.remove('desc');
+                                image=[]; 
+                                image_400_300=[]; 
+                                thumb=[]; 
+                                have_img=false; 
+                                appcan.locStorage.setVal("have_img",have_img);                              
+                                itemlen++; 
+                                appcan.locStorage.setVal("itemlen",itemlen); 
+                                if(itemlen==9){
+                                    var bhtml='<div id="shade" style="height:100%;width:100%;position: absolute;bottom:0;z-index: 10;"></div>';
+                                    $("#input").prepend(bhtml);
+                                }
+                                left_len=9;
+                                have_len=0;
+                                img_len=0;
+                                deli=[];                            
+                            }  
+                            flag=true;           
+                        },
+                        error : function(errMessage) {
+                            //alert("errMessage:"+JSON.stringify(errMessage));     
+                            uexWindow.toast("0", "5", "网络信号差", "2000"); 
+                            flag=true;                     
+                        }
+                    });   
+                }
+                else{
+                    uexWindow.toast(0, 5, "商品没有添加图片", 3000);
+                    flag=true;
+                }
+            }
+        }
+        $("#shade").live('click',function(){                 
+             //alert("您已经达到选择商品的最大数量，不能再继续添加商品！");   
+            var alertcontent="您已经达到选择商品的最大数量，不能再继续添加商品！";
+            appcan.locStorage.setVal("alertcontent",alertcontent);
+            appcan.frame.open("alertPop","alertPop.html");              
+        });
+        function showItem(id){          
+            var desc = appcan.locStorage.getVal("desc");
+            var price = appcan.locStorage.getVal("price");                        
+            var lastprice=Math.ceil(price*Number(rate)*1.15);  
+            var html=""; 
+              html+='<div class="ub ub-f1 item" style="padding: 0.8em;background-color: #FFFFFF;margin: .8em 0;">'
+                    +'<img src="'+api+thumb[0]+'" style="width:6em;height:6em;margin-right: 0.7em;"/>'
+                    +'<div class="ub ub-ver ub-f1" >'
+                        +'<div class="" style="color:#3D3D3D;line-height: 2.5em;">'
+                            +desc
+                            +'<div style="float: right;color: #AEAEAE" id="del'+id+'" onclick="delItem('+"'"+id+"'"+');" class="fa fa-remove del"></div>'
+                        +'</div>'
+                        +'<div class="" style="color:#FF0D57;margin-top: 1em;">'
+                           +'￥'+lastprice+'<span class="ulev-1" style="color:#808080; ">='+price+unit+'×'+rate+'(汇率)+15%代购费</span>'
+                        +'</div>'                        
+                    +'</div>'
+                +'</div>';
+            $("#added").prepend(html);   
+        }
+        
+       function delItem(id){
+            $('#del'+id).parents('.item').remove();               
+            var shoplive_id=appcan.locStorage.getVal("shoplive_id");
+            appcan.request.ajax({
+                url : api+'/api/shoplive/deleteItem?shopliveId='+shoplive_id+'&itemId='+id,
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {                          
+                    if(data.status == 0){
+                        uexWindow.toast("0", "5", data.message, "2000");                            
+                    }
+                    if (data.status == 1) {
+                        uexWindow.toast("0", "5", data.message, "2000");
+                        // have_item=$("#added").children().is(".item");
+                        itemlen--;
+                        appcan.locStorage.setVal("itemlen",itemlen);
+                        $("#shade").remove();                 
+                    }  
+                },
+                error : function(errMessage) {
+                    //alert("errMessage"+errMessage);                 
+                }
+            });           
+       }
+       
+       function quicksearch(){
+            appcan.locStorage.setVal("flag",'share2');
+            appcan.window.open('list', 'list.html', 10); 
+       }
+    </script>
+</html>

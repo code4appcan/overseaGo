@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+       <!-- <link rel="stylesheet" href="../css/searching.css">  -->
+       
+        
+    </head>
+    <body class="um-vp" style="background: #fff" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m uinput2">
+                <div class="ub ub-f1">                    
+                    <input type="text" id="searching" class="search uc-a1" style="padding-left: .5em;color:#808080" placeholder="输入品牌名称" ></input>
+                    <img src="../image/icon-search-act.png" id="search" style="width: 1.8em;position: absolute;right:.9em;top:.6em;"/>
+                </div>
+                <div class="nav-btn blue" id="nav-right">取消</div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l " style="background-color: #F2F2F2">
+                <!-- <div class="ub ub-f1 ub-ver" style="background-color: #FFFFFF;margin-bottom: .5em;" id="append">
+                    <div class="ub" style="border-bottom: 1px solid #F5F5F5;padding:1em 1.5em;">
+                                                    迪奥
+                    </div>
+                    <div class="ub" style="border-bottom: 1px solid #F5F5F5;padding:1em 1.5em;">
+                                                    欧莱雅 
+                    </div>
+                    <div class="ub" style="border-bottom: 1px solid #F5F5F5;padding:1em 1.5em;">
+                                                    古驰 
+                    </div> 
+                 </div>  -->  
+              
+            </div>
+            <!--content结束-->
+
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/main.js"></script>
+    </body>
+    <script>
+  
+        appcan.ready(function() {
+            $('#searching').focus();
+            var titHeight = $('#header').offset().height;
+            appcan.frame.open("content", "searching_content.html", 0, titHeight);
+            window.onorientationchange = window.onresize = function() {
+                appcan.frame.resize("content", 0, titHeight);
+            }
+            
+        });
+        appcan.button(".nav-btn", "btn-act", function() {
+            appcan.window.close(-1);
+        })
+        appcan.button("#search", "btn-act", function() {
+            var str=$("#searching").val();
+            uexWindow.evaluatePopoverScript("","content","show('"+str+"')");
+        });
+    </script>
+</html>

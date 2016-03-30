@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <link rel="stylesheet" href="css/common.css">
+        <link rel="stylesheet" href="css/content.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+    </head>                       
+    <body class="um-vp bc-bg" ontouchstart>       
+            <div class="ub ub-ver bc-bg" id="t_img" style="background-color:#EEEEEE">
+                <div class="ub ub-f1 ub-ac ub-pc" style="padding: .5em;background: url(image/line.png) no-repeat 50% 30%">                        
+                    <div class="ub ub-ver ub-ac ub-pc" style="color:#00C1F9;">
+                        <div class="ub ub-ac ub-pc"  style="margin:.5em 1.8em;color:#fff;width: 1.4em;height: 1.4em;border-radius: .7em;background-color: #00C1F9;">1</div>
+                        <p>创建现场</p>
+                    </div>
+                    <div class="ub ub-ver ub-ac ub-pc" style="color:#B8B8B8;">
+                         <div class="ub ub-ac ub-pc" style="margin:.5em 1.8em;width: 1.4em;height: 1.4em;border-radius: .7em;background-color: #FFFFFF;">2</div>
+                         <p>添加商品</p>
+                    </div>
+                     <div class="ub ub-ver ub-ac ub-pc" style="color:#B8B8B8;">
+                         <div class="ub ub-ac ub-pc" style="margin:.5em 1.8em; width: 1.4em;height: 1.4em;border-radius: .7em;background-color: #FFFFFF;">3</div>
+                         <p>完成</p>
+                    </div>
+                </div>
+                <div class="ub ub-ac" style="padding: .5em;line-height: 1.4em;"> 
+                    <div id="scenepic"> 
+                        <img src="image/choosePic.png" onclick="choose();" style="width: 6em;margin-top:.5em;margin-left:.5em; " />
+                    </div>                                                  
+                    <p class="ub ub-f1" style="margin:0 1em;font-size:.9em;">为确保真实性，请添加现场购物的店面照片</p>
+                </div>                               
+             </div>
+             <div class="ub ub-ver" >
+                <form method="POST" name="card" action>     
+                     <div class="ub ub-f1 ub-ver" style="background-color: #FFFFFF;padding: .8em 0;margin-bottom: .8em;height: 8em;">
+                        <div class="ub uinput3" style="height: 6em;">
+                            <textarea id="desc" placeholder="填写店面名称、品牌、优惠等"></textarea>
+                        </div>                  
+                    </div>
+                       <div class="ub ub-ac" style="background-color: #FFFFFF;margin-bottom: .8em;">
+                            <div class="ub ub-f1" style="padding:1em 1.5em;width:4em;">
+                                                        活动时间
+                            </div>
+                            <div class="ub ub-ac ub-pc" style="color: #BCBCBC;">
+                                <div class="ub ub-ac ub-pc uinput4" id="deadtime" style="width:12em;">
+                                    <input id="hour" name="T1" type="number" min="0" max="99" onkeyup="value=value.replace(/\D/g,'');return T1_onkeyup()"/>小时 
+                                    <input id="minute" name="T2" type="number"  onkeyup="if(event.keyCode !=37 && event.keyCode != 39){if (! /^[0-5]{0,1}[0-9]{1}$/ig.test(this.value)){this.value='';}}"/>分钟
+                                </div>
+                            </div>
+                        </div>
+                       <div class="ub ub-ac" style="background-color: #FFFFFF;margin-bottom: .8em;">
+                            <div class="ub ub-f1" style="padding:1em 1.5em;width:4em;">
+                                                        回国日期
+                            </div>
+                            <div class="ub ub-ac ub-pc" style="color: #BCBCBC;">
+                                    <div class="ub ub-ac ub-pc uinput1" id="backtime" style="width:10em;padding-right: .5em">
+                                    </div>
+                            </div>
+                        </div>
+                        <div class="ub ub-ac" style="background-color: #FFFFFF;margin-bottom: .8em;">
+                            <div class="ub ub-f1" style="padding:1em 1.5em;width:4em;">
+                                                    所在位置                                  
+                            </div>
+                            <div class="ub ub-ac ub-pc" style="color: #BCBCBC;">
+                                    <div class="ub ub-ac ub-pc" id="location" style="width:13em;padding-right: .5em">                                       
+                                    </div>
+                            </div>
+                        </div>
+                        </form>
+                  </div>
+            </div>
+    </body>
+    <script src="js/appcan.js"></script>
+    <script src="js/appcan.control.js"></script>
+    <script src="js/main.js"></script>
+    </body>
+    <script>
+       var img_url='';
+       var have_img=false;
+       var thumb; 
+        appcan.ready(function() {
+            shareScene();            
+            appcan.locStorage.setVal("have_img",have_img);
+        });
+       
+       function shareScene(){           
+            setTimeout(function() {
+                var date = new Date();
+                var begintime = date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate(); 
+                if(date.getMonth()<11){
+                    var endtime=date.getFullYear()+"-"+(date.getMonth()+2)+"-"+date.getDate();
+                }else{
+                    var endtime=(date.getFullYear()+1)+"-01-"+date.getDate();
+                }
+                var html="";
+                html+='<input type="date" class="ub ub-ac ub-pc" id="backdate" onblur="setbacktime();" onchange="setbacktime();" min="'+begintime+'" max="'+endtime+'" />';
+                $("#backtime").html(html);
+                var location=appcan.locStorage.getVal("location");
+                $('#location').html(location); 
+            }, 500);                  
+        }
+
+        function choose(){            
+            if(!have_img){   
+               appcan.frame.open("choosepic_content","html/choosepic_content.html");              
+            }
+        } 
+        function openimg(){
+             appcan.locStorage.setVal("myimg",image);
+             appcan.frame.open('image_content', 'html/image_content.html', 0);
+        }
+        function removeimg(){
+            var html='<img src="image/choosePic.png" onclick="choose();" style="width: 6em;margin-top:.5em;margin-left:.5em; " />';
+            $("#scenepic").html(html);
+            have_img=false;
+            appcan.locStorage.setVal("have_img",have_img);
+            image="";
+            thumb=""; 
+        }
+        function choosepic(){                       
+            var data = {
+                min:1,
+                max:1,
+                quality:0.5,
+                detailedInfo:false
+            }
+            var json = JSON.stringify(data);
+            uexImage.openPicker(json);
+            uexImage.onPickerClosed=function(info){
+                img_url = JSON.parse(info).data[0]; 
+                uploadimg();
+            }
+        } 
+        function takephoto(){  
+            if(uexWidgetOne.platformName == "iOS" || uexWidgetOne.platformName == "ios"){
+                 uexCamera.cbOpen=function (opCode, dataType, data){
+                    img_url=data;
+                    uploadimg();
+                }
+                uexCamera.open(0,50);
+            }else{
+                uexCamera.cbOpenInternal=function (opCode, dataType, data){//仅android    
+                    img_url=data;
+                    uploadimg();
+                }
+                uexCamera.openInternal(0,50);      
+            }       
+        }
+         function uploadimg() {             
+            appcan.request.ajax({
+                url : api+'/api/util/uploadImage?type=2',
+                type : 'POST',
+                dataType : 'json',
+                data : {
+                    image : {
+                        path : img_url
+                    }
+                },
+                success : function(data, status) {
+                    if (data.status == 1) {
+                        appcan.window.openToast('上传成功', 1500, 5, 0); 
+                        thumb=data.url[0];
+                        image=data.url[1]; 
+                        have_img=true;                         
+                        appcan.locStorage.setVal("have_img",have_img); 
+                        appcan.locStorage.setVal("thumb",thumb);
+                        appcan.locStorage.setVal("image",image);
+                        var html='<img src="'+api+thumb+'" class="shoplive_image" style="width:6em;height:6em;margin: .5em 1em;" onclick="openimg();"/>';
+                        $("#scenepic").html(html);
+                    } else {
+                        appcan.window.openToast('上传失败', 1500, 5, 0);         
+                    }
+                },
+                error : function(err) {
+                    appcan.window.openToast('上传失败', 1500, 5, 0);
+                 }   
+            })
+        }
+        
+        function T1_onkeyup() { 
+            if(document.card.T1.value.length==2){ 
+                document.card.T2.focus(); 
+            } 
+            if(document.card.T1.value.length>2){ 
+                document.card.T1.value=""; 
+            } 
+        } 
+        
+        $("#desc").blur(function(){
+            var desc = $("#desc").val();
+            appcan.locStorage.setVal("desc",desc);
+        });
+           $("#hour").blur(function(){
+            var hour = $("#hour").val();
+            appcan.locStorage.setVal("hour",hour);
+        });
+           $("#minute").blur(function(){
+            var minute = $("#minute").val();
+            appcan.locStorage.setVal("minute",minute);
+        });
+        function setbacktime(){
+            var backdate = $("#backdate").val();
+            appcan.locStorage.setVal("backdate",backdate);
+        }
+        function remove(){
+            $("#desc").val('');
+            $("#hour").val('');
+            $("#minute").val('');
+            $("#backdate").val(''); 
+            removeimg();
+        }
+    </script>
+</html>

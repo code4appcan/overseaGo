@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+         <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+         <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+        <script src="../js/main.js"></script>
+        
+    </head>
+    <body class="um-vp" style="background:#fff;" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m">
+                <div class="nav-btn blue" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <h1 class="ut  bc-text ub-f1 ulev-3 ut-s tx-c" tabindex="0">优惠券</h1>
+                <div class="nav-btn blue ulev-1" id="nav-right">不使用</div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l " style="background-color: #F2F2F2;padding: .5em">
+                <div class="ub ub-ver" id="coupon">
+                </div>
+                
+            </div>        
+            <!--content结束-->
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/main.js"></script>
+        <script src="../js/moment.js"></script>
+    </body>
+    <script>
+      var userId=appcan.locStorage.getVal("userId");
+       var html="";
+        appcan.ready(function() {
+            appcan.request.ajax({
+                url :api+'/api/user/findCoupons?userId='+userId,
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {
+                    console.log(data);
+                    if(data.status == 0){
+                        uexWindow.toast("0", "5", data.msg, "2000");
+                    }
+                    if (data.status == 1) { 
+                        var len=data.data.length;
+                        if(len==0){
+                             html+='<div class="ub ub-ac ub-pc ub-ver" >'
+                             +'<img src="../image/noon.png" style="margin-top:8em"/>'
+                             +'<div class="ub" style="color:red;margin-top:1.8em">'
+                             +'您还没有优惠券哦!'
+                             +'</div>'
+                             +'</div>';                           
+                             $("#coupon").append(html); 
+                        }else{
+                            for(i=0;i<len;i++){
+                                add(data);
+                            }
+                           $("#coupon").append(html); 
+                        } 
+                  }          
+                },
+                error : function(errMessage) {
+                    alert("errMessage:"+JSON.stringify(errMessage));                         
+                }
+            });
+            
+            
+        });
+        
+        function add(data){
+            var price = data.data[i].coupons.value;
+            var coupons = data.data[i]._id;
+            var deadline = data.data[i].deadline;
+            var ctime=new Date(deadline);   
+            var  couponId=data.data[i]._id;
+            //alert(ctime-Date.now());
+           var yy=ctime.getFullYear();
+           var MM=ctime.getMonth()+1;
+           var dd=ctime.getDate();  
+           var time = yy+"-"+MM+"-"+dd+" "+ctime.getHours()+':'+ctime.getMinutes()+':'+ctime.getSeconds(); 
+            var isOutofdate ='<div id='+coupons+' >' +time+'到期'+'</div>'
+            if(ctime-Date.now()<0){
+                isOutofdate = '<div style="color:red;" id='+coupons+' >已过期</div>'
+            }
+            html+='<div class="ub ub-f1 ub-ver" onclick="returnprice(\''+price+'\',\''+couponId+'\');" style="background-color: #FFFFFF;color:#3D3D3D;margin-bottom: .3em">'
+                +'<div class="ub" style="padding: 2em;height: 2em">'
+                    +'<div class="ub ub-ac ub-f1" style="font-size: 1.2em;color: #FF3B77">￥'
+                            +price
+                    +'</div>'
+                     +'<div class="ub ub-ac ub-pc" style="font-size: 1em">'
+                            +'全场通用'
+                    +'</div>'                        
+                +'</div>'
+                +'<div class="ub ub-ac ub-pe" style="border-top: 1px solid #F5F5F5;height: 2em;background-color: #FFFFFF;padding:.5em 2.4em;font-size: .9em">'
+                +isOutofdate
+                +'</div>'                
+            +'</div>';
+        }
+        appcan.button("#nav-left", "btn-act", function() {
+            appcan.window.close(-1);
+        })
+        appcan.button("#nav-right", "btn-act", function() {
+            var price=0;
+            var id="";
+           uexWindow.evaluatePopoverScript('waitpay', 'content', "couponlist('"+price+"','"+id+"')"); 
+            appcan.window.close(-1);
+        })
+        function returnprice(price,id){
+            //appcan.locStorage.setVal("couponprice",price);
+            uexWindow.evaluatePopoverScript('waitpay', 'content', "couponlist('"+price+"','"+id+"')");
+            appcan.window.close(-1);
+        }
+    </script>
+</html>

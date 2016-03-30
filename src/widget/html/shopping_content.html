@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/common.css">
+        <link rel="stylesheet" href="../css/content.css">
+    </head>
+    <style type="text/css">
+        
+    </style>
+    <body class="um-vp bc-bg" ontouchstart>
+       <div class="ub ub-ver" id="shoppingTrolleyList"></div>
+       <div class="ub" style="height:3em"></div>
+       <div class="ub" id="shopFooter" style="position: fixed;bottom:0;background-color: white;width:100%;height:2.8em;border-top:.5px solid #DDDDDD"></div>
+    </body>
+  
+    <script src="../js/appcan.js"></script>
+    <script src="../js/appcan.control.js"></script>
+    <script src="../js/moment.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/country.js"></script>
+    </body>
+    <script>
+    var strObj=[];
+    var selectGoodsArr=[];
+    var item_number=[];
+    var IdArr=[];
+    var arrMy=[];
+    var userId=appcan.locStorage.getVal("userId");
+     // var userId='5699dce9a5dc79c35cb89678';
+    // if(userId==null){
+        // alert("请您先登录");
+    // }
+        appcan.ready(function() {
+            // if(userId==null){
+            // setTimeout('uexWindow.evaluateScript("shopping","0","appcan.window.close(-1)")', 300 );
+                // appcan.window.open("login","../login.html",10);
+            // }
+            // else{
+                shoppingTrolley();
+           // }
+            
+        });
+
+   function shoppingTrolley(){
+            strObj.length=0;
+            selectGoodsArr.length=0;
+            $("#shoppingTrolleyList").html("");
+            appcan.request.ajax({//5675551239c3e372278695ae
+                url :api+'/api/cart/getAll?userId='+userId,
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {
+                   if(data.status == 1){
+                       var len=data.data[0].items.length;
+                       if(data.data.length==0||!data.data[0].items[0]){
+                           uexWindow.evaluateScript('shopping',0,'$("#changeEdit").html("");'); 
+                           // $('#changeEdit').html("");
+
+                           var html='';
+                           html+='<div class="ub ub-ac ub-pc ub-ver" >'
+                           +'<img src="../image/noon.png" style="margin-top:10em"/>'
+                           +'<div class="ub" style="color:red;margin-top:0.8em">'
+                           +'您的购物车中还没有商品哦，马上去选购吧!'
+                           +'</div>'
+                           +'</div>'                           
+                          $("#shoppingTrolleyList").html(html);
+                          $("#shopFooter").html("");
+                          $("#shopFooter").css("background","#F2F2F2");
+                      }
+                      else{
+                       appcan.locStorage.setVal("Mylen",len);
+                       var html='';
+                       var localPrice=0;
+                       var overMy=[];
+                       for(var i=0;i<len;i++){
+                           //alert(JSON.parse(itemId).desc);
+                           //var itemId=data.data[0].items[i].itemsId;
+                            $("#shoppingTrolleyList").html('');
+                           var itemCount=data.data[0].items[i].count;//商品数量
+                           var item_id=data.data[0].items[i]._id;
+                           var itemDesc=data.data[0].items[i].itemId.desc;//商品描述
+                           var itemPrice= data.data[0].items[i].itemId.price;//商品价格
+                           var country=data.data[0].items[i].itemId.shoplive.country;
+                           var code=data.data[0].items[i].itemId.priceCode;
+                           var rate=data.data[0].items[i].itemId.rate;
+                           var unit=areaList[country].currency;                      
+                           var lastprice=Math.ceil(itemPrice*rate*1.15); 
+                           var itemImg=api+data.data[0].items[i].itemId.images[0];
+                           var cartId=data.data[0]._id;
+                           var shoplive=data.data[0].items[i].itemId.shoplive;
+                           overMy[i]=data.data[0].items[i].itemId.shoplive.deadline;                           
+                           DownCountMy(); 
+                           var itemId=data.data[0].items[i].itemId._id;
+                           item_number[item_id]=data.data[0].items[i].itemId.leftCount;
+                           var a={
+                               id:item_id,
+                               data:{
+                                   image:itemImg,
+                                   desc:itemDesc,
+                                   lastprice:lastprice,
+                                   itemPrice:itemPrice,
+                                   rate:rate,
+                                   itemCount:itemCount,
+                                   cartId:cartId,
+                                   code:code,
+                                   itemId:itemId
+                               },
+                               shoplive:shoplive
+                           }
+                           selectGoodsArr.push(a);
+                           console.log(JSON.stringify(selectGoodsArr));
+                           appcan.locStorage.setVal("overMy["+i+"]", overMy[i]);
+                           appcan.locStorage.setVal("itemid["+i+"]", item_id);
+                          
+                        html+= '<li style="display: inline;width:100%" id="edit'+item_id+'" class="edit">'
+                            +'<div class="ub ub-f1 ub-ac ub-pc" style="padding: 0.8em 0.5em;background-color: #FFFFFF;margin-bottom: .5em;">'
+                            +'<div id="'+item_id+'" class=" ub ub-ac ub-pc  shop shopSecond" style="width: 1em;height: 1em;border-radius: .5em;border: 1px solid #00C1F9;margin-right:0.5em " onclick="changeColor(\'' + item_id + '\')">'
+                            +'</div>'
+                            +'<img src="'+itemImg+'" style="width:5em;margin-right: 0.5em;height:5em"/>'
+                            +'<div class="ub ub-ver ub-f1" >'
+                            +'<div class="" style="color:#3D3D3D;">'
+                            +itemDesc
+                            +'</div>'
+                            +'<div class="" style="color:#3D3D3D;line-height: 1em;color:red">'
+                             + '￥'
+                             +'<span class="" id="price'+item_id+'">'
+                             +lastprice
+                             +"</span>"
+                             +'<span class="ulev-1" style="color:#808080; ">='
+                             +itemPrice+unit+'×'+rate+'(汇率)+15%代购费</span>'                      
+
+                            +'</div>'
+                            +'<div class="ub ub-ac" style="color:#323232;margin-top: .3em;">'
+                            +'<div class="ub ">'
+                            +'<div class="ub ub-ac ub-pc border1" style="width:1.8em;border-radius: 0.3em 0 0 0.3em;margin-right:-1px;"  onclick="reduce(\'' + item_id + '\')">-</div>'
+                            +'<div class="ub ub-ac ub-pc uinputmy" style="width:1.8em;">'
+                            +'<input onpaste="return false;"  onkeypress="Keypress()" onchange="all()" placeholder="0" style="text-align: center;width:1.8em;height:1.8em" id="number'+item_id+'" value="'+itemCount+'" onblur="changeCount(\'' + item_id + '\')" />'
+                            +'</div>'
+                            +'<div class="ub ub-ac ub-pc border2" style="width:1.8em;border-radius: 0 0.3em 0.3em 0;" id="add'+item_id+'" onclick="add(\'' + item_id + '\', \'' + itemPrice + '\')">+</div>'
+                            +'</div>'
+                            //+changeHtml
+                           +'<div class="ub ub-f1 ub-ac ub-pc" style="margin-left:.2em;font-size:.9em;">'
+                           +'<div class="fa fa-clock-o" style="margin-right:0.2em;color:#9EA4A5;font-size:1.2em"></div>'
+                           +'<div class="ub ub-ac ub-pc" id="timeMy'+i+'" >'
+
+                           +'</div>'
+                           +'</div>'
+                           +'</div>'
+                           +'</div>'
+                           +'</div>'
+                           +'</div>'                   
+                           +'</li>'
+                      $("#shoppingTrolleyList").append(html);
+                       //var onePrice=$("#itemPrice"+item_id).html();
+                       var conts=$("#number"+item_id).val();
+                       localPrice+=Number(lastprice*conts);
+                       var amount=Math.ceil(localPrice);
+                       
+                       }
+                       if(amount==undefined){
+                          amount=0; 
+                       }
+                       var footer='';
+                       if(len==0){
+                           footer +='<div class="ub ub-hor ub-ac ub-pc uhide" id="footer2" style="width:100%">'
+                            +'<div class="ub ub-f1" onclick="selectAll()">'
+                             +'<div class=" ub  " style="width: 1em;height: 1em;border-radius: .5em;border: 1px solid #00C1F9;margin-right:0.5em;margin-left:0.5em " id="selectAll"></div>'
+                             +'<span class="" style="margin-right: 5em">全选  </span> '
+                             +'</div>'
+                             //+'预计' 
+                             +'<div class="ub ub-f2 " style="color:#FF0D57">'
+                             +'预计：￥'
+                             +'<div class="" id="localPrice" style="margin-right:1em;width:3em">'+amount
+                             +'</div>'
+                             +'</div>'
+
+                             +'<div id="delete" class="ub ub-f1 ub-ac ub-pc uhide" style="color:white;background-color:red;border-radius:0.3em;height: 2.2em;margin-right:0.5em;padding:0 0.5em;width:2.6em"  onclick="delect()">删除</div> '  
+
+
+                             +'<div id="order" class="ub ub-f1 ub-ac ub-pc" style="color:white;background-color:#00C1F9;border-radius:0.3em;height: 2.2em;margin-right:0.5em;padding:0 0.5em;width:2.6em" onclick="selectSubmit();">下单</div> ' 
+                             +'</div>'
+                       }
+                       else{
+                           footer +='<div class="ub ub-hor ub-ac ub-pc " id="footer2" style="width:100%">'
+                             +'<div class="ub ub-f1" onclick="selectAll()">'
+                             +'<div class=" ub  " style="width: 1em;height: 1em;border-radius: .5em;border: 1px solid #00C1F9;margin-right:0.5em ;margin-left:0.5em" id="selectAll"></div>'
+                             +'<span class="" style="margin-right: 5em;">  全选  </span> '
+                             +'</div>'
+                             //+'预计' 
+                             +'<div class="ub ub-f2" style="color:#FF0D57">'
+                             +'预计：￥'
+                             +'<div class="" id="localPrice" style="margin-right:1em;width:3em">'+amount
+                             +'</div>'
+                             +'</div>'
+
+                             +'<div id="delete" class="ub ub-f1 ub-ac ub-pc uhide" style="color:white;background-color:red;border-radius:0.3em;height: 2.2em;margin-right:0.5em;padding:0 0.5em;width:2.6em" onclick="delect()">删除</div> '  
+
+
+                             +'<div id="order" class="ub ub-f1 ub-ac ub-pc" style="color:white;background-color:#00C1F9;border-radius:0.3em;height: 2.2em;margin-right:0.5em;padding:0 0.5em;width:2.6em" onclick="selectSubmit();">下单</div> ' 
+                             //+'</div>'
+                       }
+                       // footer+='<div class="ub " id="footer1">'
+                             // +'<div style="width: 8.5em;line-height: 3em;margin-right:9em" class="ub ub-f1" >  '                
+                             // +'预计 '
+                             // +'<div class="ub " style="color:#FF0D57">'
+                             // +'￥'
+                             // +'<div class="" id="localPrice">'+localPrice
+                             // +'</div>'
+                             // +'</div>'   
+                             // +'</div>'
+                             // +'<div class="ub ub-ac ub-pc ulev-3" onclick="submit();" style="width:6em;padding:0 .5em;height: 2.5em;border-radius:.2em;color:#fff;background-color:#00C1F9;float: right">'
+                             // +'下单（'+len+'）'
+                             // +'</div> '
+                             // +'</div>'
+                            
+                     $('#shopFooter').html(footer);
+                      }
+                      
+                   }
+                             
+                },
+                error : function(errMessage) {
+                    console.log("errMessage:"+JSON.stringify(errMessage));                         
+                }
+            });
+        }
+        
+        // function mousedown(){
+            // alert("down");
+            // $("#order").css("background-color","#17a0c7");
+            // selectSubmit();
+        // }
+        // function mouseup(){
+            // alert("up");
+            // $("#order").css("background-color","red");
+        // }
+        function DownCountMy(){ 
+            var today=new Date();
+            now=parseInt(today.getTime()/1000);
+            var Mylen=appcan.locStorage.getVal("Mylen");
+            //lert(live_len);
+            var overMy=[];
+            for(var i=0;i<Mylen;i++){
+                // alert(i);
+                overMy[i]=appcan.locStorage.getVal("overMy["+i+"]");
+                // alert("over"+i+" "+over[i]);
+                var overtime=moment(overMy[i], 'YYYY-MM-DDTHH:mm:ss.sssZ');
+                var deadline=overtime.unix();  
+                // alert(overtime);    
+                var minus=deadline-now;
+                if(minus>0){                    
+                 $("#timeMy"+i).html('<div class="ub ub-ac ub-pc time" id="hourMy'+i+'"></div>：<div class="ub ub-ac ub-pc time" id="minuteMy'+i+'"></div>：<div class="ub ub-ac ub-pc time" id="secondMy'+i+'"></div>');  
+                 timechangeMy(minus,i);            
+           }else{
+               $("#timeMy"+i).html('<div style="color:#F1F1F1;background-color:#B0B5B6;padding:.1em;border-radius: .3em;font-size: .9em; ">已经结束</div>');
+               // $("#timeMy"+i).parent().parent().parent().parent().remove();
+           }
+        }
+        window.setTimeout("DownCountMy()",2000);
+                
+               // if(minus>0){                    
+                     // $("#timeMy"+i).html('<div class="ub ub-ac ub-pc time" id="hourMy'+i+'"></div>：<div class="ub ub-ac ub-pc time" id="minuteMy'+i+'"></div>：<div class="ub ub-ac ub-pc time" id="secondMy'+i+'"></div>');  
+                     // timechangeMy(minus,i);  
+                     // window.setTimeout("DownCountMy()",2000);          
+               // }else{
+                   // //$("#timeMy"+i).html('<div style="color:#F1F1F1;background-color:#B0B5B6;padding:.1em;border-radius: .3em;font-size: .9em; ">已经结束</div>');
+                   // var ItemId=appcan.locStorage.getVal("itemid["+i+"]");
+                   // // alert(ItemId);
+                   // appcan.request.ajax({
+                        // url :api+'/api/cart/deleteItem',
+                        // type : 'post',
+                        // dataType : 'json',
+                        // data : {
+                             // "userId": userId,
+                             // "cart_item_id":ItemId
+                        // },
+                        // success : function(data) {
+                              // if(data.status == 1){
+                                  // shoppingTrolley();                               
+                              // }                                                   
+                        // },
+                        // error : function(errMessage) {
+                            // //alert("errMessage:"+JSON.stringify(errMessage));                         
+                        // }
+                    // }); 
+               // }
+            // }
+        }        
+        function timechangeMy(minus,i){
+            CSecond=minus%60;
+            CMinute=parseInt(minus%3600/60);
+            CHour=parseInt(minus/3600);
+            if(CMinute<10)
+            {
+                CMinute="0"+CMinute;
+            }
+            if(CHour<10)
+            {
+                CHour="0"+CHour;
+            }
+            if(CSecond<10)
+            {
+                CSecond="0"+CSecond;
+            }  
+            $("#hourMy"+i).html(CHour);
+            $("#minuteMy"+i).html(CMinute);
+            $("#secondMy"+i).html(CSecond); 
+        }
+        var flag=true;
+          function selectSubmit(){
+            // var arr=[];
+            // $('.shopStyle').each(function(i,item){
+                 // arr.push(item.id); 
+            // })var arrMy=[];
+            if(flag){
+                $("#order").css("background-color","#17a0c7"); 
+                flag=false;
+                $('.shopStyle').each(function(i,item){
+                     arrMy.push(item.id); 
+                }) 
+                //alert(strObj);
+                for(var n=0;n<arrMy.length;n++){
+                    var id=arrMy[n];
+                    for(var m=0;m<selectGoodsArr.length;m++){
+                        if(selectGoodsArr[m].id==id){
+                            var b={
+                                id:id,
+                                list:selectGoodsArr[m].data,
+                                shoplive:selectGoodsArr[m].shoplive
+                            }
+                            strObj.push(b);
+                            console.log(JSON.stringify(b));
+                        }
+                    }
+                }
+                if(arrMy.length==0){
+                    return;
+                }
+                appcan.locStorage.setVal("GoodsObj", strObj);
+                arrMy.length=0;
+                strObj.length=0;
+                appcan.window.open('order', 'order.html', 10);                
+                $("#order").css("background-color","#00C1F9");
+                flag=true;
+            }
+        }
+
+
+        
+        function changeColor(id){
+            $("#"+id).toggleClass('fa fa-check shopStyle');
+            $("#edit"+id).toggleClass("flag");               
+            $("#order").css("background-color","#00C1F9");
+            flag=true;
+
+            all();
+            
+        }
+        function change(id,number){
+             for(var i=0;i<selectGoodsArr.length;i++){
+                if(id==selectGoodsArr[i].id){
+                    selectGoodsArr[i].data.itemCount=number;
+                    console.log(selectGoodsArr);
+                }
+            }
+            appcan.request.ajax({
+                url :api+'/api/cart/updateItem',
+                type : 'post',
+                dataType : 'json',
+                data : {
+                     "userId": userId,
+                     "cart_item_id": id,
+                     "count":number
+                },
+                success : function(data) {
+                      if(data.status == 1){
+                         uexWindow.toast(0, 5, "修改成功", 3000);                         
+                      }                  
+                },
+                error : function(errMessage) {
+                    //alert("errMessage:"+JSON.stringify(errMessage));                         
+                }
+            });
+        }
+
+        function removeUhide(){
+            $('#delete').removeClass('uhide');
+            $('#order').addClass('uhide');
+        }
+        function addUhide(){
+            $('#delete').addClass('uhide');
+            $('#order').removeClass('uhide');
+        }
+
+
+         function all(){
+            var sum=0;
+             $('.shopStyle').each(function(i,item){
+              var divId=$(this).attr("id");
+              var number=$("#number"+divId).val();
+              var price=$("#price"+divId).html();
+              sum+=Number(number*price);
+            }) 
+            $("#localPrice").html(sum);
+        }
+
+        
+        function a(){
+            IdArr=[];
+            strObj=[];
+            selectGoodsArr=[];
+        }    
+        function changeCount(id){
+            var number = $("#number"+id).val();
+            if(number>item_number[id]||number<1||isNaN(number)){
+                return alert('请输入合理数值');
+            }
+            all();
+            for(var i=0;i<selectGoodsArr.length;i++){
+                if(id==selectGoodsArr[i].id){
+                    selectGoodsArr[i].data.itemCount=number;
+                }
+            }
+             appcan.request.ajax({
+                url :api+'/api/cart/updateItem',
+                type : 'post',
+                dataType : 'json',
+                data : {
+                     "userId": userId,
+                     "cart_item_id": id,
+                     "count":number
+                },
+                success : function(data) {
+                      if(data.status == 1){
+                         uexWindow.toast(0, 5, "修改成功", 3000);             
+                      }                  
+                },
+                error : function(errMessage) {
+                    //alert("errMessage:"+JSON.stringify(errMessage));                         
+                }
+            });
+        }
+    
+        
+         function selectAll(){ 
+            IdArr.length=0;
+                $("#selectAll").toggleClass('fa fa-check shopStyleAll');
+                if( $("#selectAll").hasClass('fa fa-check shopStyleAll')){
+                    $('.shop').addClass('fa fa-check shopStyle'); 
+                    $(".edit").toggleClass("flag");
+                 
+            var sum=0;
+             $('.shopStyle').each(function(i,item){
+              var divId=$(this).attr("id");
+              var number=$("#number"+divId).val();
+              var price=$("#price"+divId).html();
+              sum+=Number(number*price);
+            })
+           $("#localPrice").html(sum);
+                }
+                else{
+                    var sum=0;
+                     $('.shopStyle').each(function(i,item){
+                      var divId=$(this).attr("id");
+                      var number=$("#number"+divId).val();
+                      var price=$("#price"+divId).html();
+                      sum+=Number(number*price);
+                      $("#localPrice").html(sum);
+                    })
+                    $('.shop').removeClass('fa fa-check shopStyle');
+                    $(".edit").removeClass("flag");
+                    
+              }               
+              $("#order").css("background-color","#00C1F9");
+              flag=true;   
+        }
+
+
+        
+        function add(id,price){
+            // alert(id);
+            var number = $("#number"+id).val();
+            number++;
+            if(number>item_number[id]){
+                alert("抱歉，该商品库存已空啦"); 
+                return;
+            }
+            $("#number"+id).val(number);
+            if( $("#"+id).hasClass('shopStyle')){
+                all();
+                change(id,number);
+            }
+            else{
+               change(id,number);
+            }
+            
+            
+        }
+        function reduce(id){
+            // console.log('==+++++____'+JSON.stringify(item_number));
+            // alert(item_number[id]);
+            var number = $("#number"+id).val();
+            number--;
+            if(number<=0){
+                return;
+            }
+            $("#number"+id).val(number);
+         if( $("#"+id).hasClass('shopStyle')){
+           all();
+           change(id,number);
+         }
+            else{
+             change(id,number);
+           }             
+        }
+        
+         function delect(){
+            /*根据class获取所有的id*/
+           var arr=[];
+            $('.shopStyle').each(function(i,item){
+                 arr.push(item.id); 
+            }) 
+            appcan.window.alert({
+                title : "提示",
+                content : "您是否要删除该商品?",
+                buttons : ['确定', '取消'],
+                callback : function(err, data, dataType, optId) {
+                   if(['确定', '取消'][data]=='确定'){
+                          appcan.request.ajax({
+                            url :api+'/api/cart/deleteItem',
+                            type : 'post',
+                            dataType : 'json',
+                            data : {
+                                 "userId": userId,
+                                 "cart_item_id":arr
+                            },
+                            success : function(data) {
+                                  if(data.status == 1){
+                                     if($('.shop').hasClass('fa fa-check shopStyle')){
+                                         $(".flag").remove();
+                                         $("#shopFooter").empty();
+                                     } 
+                                     /*当删除购物车里面所有的商品时，页面显示相应的图片和文字*/
+                                     if($("#shoppingTrolleyList").html()==''){
+                                       uexWindow.evaluateScript('shopping',0,'$("#changeEdit").html("");');                                       
+                                       var html='';
+                                       html+='<div class="ub ub-ac ub-pc ub-ver" >'
+                                       +'<img src="../image/noon.png" style="margin-top:10em"/>'
+                                       +'<div class="ub" style="color:red;margin-top:0.8em">'
+                                       +'您的购物车中还没有商品哦，马上去选购吧!'
+                                       +'</div>'
+                                       +'</div>'                           
+                                      $("#shoppingTrolleyList").html(html);
+                                      $("#shopFooter").css("background","#F2F2F2");
+                                     }
+                                  }                                                   
+                            },
+                            error : function(errMessage) {
+                                //alert("errMessage:"+JSON.stringify(errMessage));                         
+                            }
+                        }); 
+                    }
+                }
+           });
+        }
+    </script>
+</html>

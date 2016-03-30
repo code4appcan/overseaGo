@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart >
+         <div class="ub ub-ver" id="listview" style="background-color: white">
+
+        </div> 
+    </body>
+    <script src="../js/appcan.js"></script>
+    <script src="../js/appcan.control.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/appcan.listview.js"></script>
+    </body>
+    <script>
+     appcan.ready(function() {
+            //show();
+        });
+        function show(str){
+            var url=api+"/api/item/search?pageNo=1&pageSize=1&keywords="+str;
+             appcan.request.ajax({
+                url : encodeURI(url),
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {
+                    if(data.status==1){
+                       showData(data.data);
+                    }
+                   
+                },
+                error : function(errMessage) {
+                    //alert("errMessage:"+JSON.stringify(errMessage));                         
+                }
+            });
+        }
+        function showData(data) {
+            //alert(data[0]._id);
+            //alert("有"+data.length+"条数据");
+            var len = data.length;
+            var listData = [];
+            for (var i = 0; i< len; i++) {
+                var list = {
+                    id:data[i]._id,
+                    title : data[i].desc,
+                }
+                listData.push(list);
+            }
+            var lv1 = appcan.listview({
+                selector : "#listview",
+                type : "thickLine",
+                hasIcon : true,
+                hasAngle : false,
+                hasSubTitle : false,
+                multiLine : 1,
+                hasCheckbox : false,
+                align : 'left'
+            });
+            lv1.set(listData);
+            lv1.on('click', function(ele, context, obj, subobj) {
+                //alert(context.id+context.title);
+                appcan.locStorage.setVal("good_id", context.id);
+                appcan.locStorage.setVal("mark", 1);
+                appcan.window.open('searchbrand', 'searchbrand.html', 10);
+            })
+        }
+    </script>
+</html>

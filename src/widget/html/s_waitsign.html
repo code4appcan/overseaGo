@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+         <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+         <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+        <script src="../js/main.js"></script>   
+        <script src="../js/country.js"></script>  
+        
+    </head>
+    <body class="um-vp" style="background: #fff" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m">
+                <div class="nav-btn blue" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <h1 class="ut  bc-text ub-f1 ulev-3 ut-s tx-c" tabindex="0">等待买家签收</h1>
+                <div class="nav-btn blue" id="nav-right"></div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l " style="background-color: #F2F2F2;">   
+                <div id="list" calss="ub" style="background-color: #F2F2F2;">             
+                
+                </div>
+            </div>        
+            <!--content结束-->
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+    </body>
+    <script>
+       // var userId='5675551239c3e372278695ae';
+      var userId=appcan.locStorage.getVal("userId");
+        appcan.ready(function() {
+            
+            
+            appcan.request.ajax({
+                url : api+'/api/order/sellerFindOrder?userId='+userId+'&status=5&pageNo=1&pageSize=50',
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {                          
+                    if(data.status == 0){
+                        // uexWindow.toast("0", "5", data.msg, "2000");                            
+                    }
+                    if (data.status == 1) {
+                        // uexWindow.toast("0", "5", data.msg, "2000");    
+                        // console.log(JSON.stringify(data.data[0]));  
+                        var len=data.data.length;                        
+                        if(len==0){
+                            var html="";
+                             html+='<div class="ub ub-ac ub-pc ub-ver" >'
+                             +'<img src="../image/noon.png" style="margin-top:10em"/>'
+                             +'<div class="ub" style="color:red;margin-top:0.8em">'
+                             +'您还没有待签收的订单哦!'
+                             +'</div>'
+                             +'</div>';                           
+                            $("#list").append(html); 
+                        }else{
+                            for(var i=0;i<len;i++){ 
+                                var html="";
+                                var items_len=data.data[i].items.length;                            
+                                appcan.locStorage.setVal("forderdata"+i, data.data[i]);
+                                var rate=data.data[i].items[0].item.rate;
+                                var orderid=data.data[i]._id; 
+                                var contact=data.data[i].address.contact;
+                                var total=0;
+                                for(var j=0;j<items_len;j++){
+                                    var img_url=api+data.data[i].items[j].item.thumbs[0];
+                                    var desc=data.data[i].items[j].item.desc;
+                                    var backdate=data.data[i].shoplive.to_back_day;
+                                    var price=data.data[i].items[j].item.price;
+                                    var count=data.data[i].items[j].count;
+                                    var country=data.data[i].shoplive.country;
+                                    var countryf=areaList[country].name; 
+                                    var unit=areaList[country].currency;             
+                                    var lastprice=Math.ceil(price*rate*1.15);
+                                    total+=lastprice*count;                           
+                                    // alert(price);
+                                    html+='<div class="ub" style="padding: 0.8em;background-color: #FFFFFF;" onclick="ordersign('+i+');">'
+                                        +'<img src="'+img_url+'" style="width:5em;height:5em;margin-right: 0.7em;"/>'
+                                        +'<div class="ub ub-ver ub-f1" >'
+                                            +'<div class="" style="color:#3D3D3D;line-height: 2em;">'
+                                                +desc 
+                                                +'<div style="float: right">×'+count+'</div>'                           
+                                            +'</div>'                                                
+                                            +'<div class="ub ulev-1" style="color:#808080;line-height: 1.6em;margin-top: 0.5em">'
+                                                +'<img src="../image/flag/'+countryf+'.png" style="width:1.2em"/>&nbsp;'+country+'&nbsp;&nbsp;' 
+                                                +'<img src="../image/plane.png" style="width:0.7em"/>&nbsp;'+backdate+'回国'
+                                            +'</div>'
+                                            +'<div class="ulev-1" style="line-height: 1.6em;color:#808080;">'
+                                               +'￥'+lastprice
+                                               +'<span class="ulev-1" style="color:#808080; ">='
+                                               +price+unit+'×'+rate+'(汇率)+15%代购费</span>'
+                                            +'</div>'                                                
+                                        +'</div>'  
+                                    +'</div>';
+                                } 
+                                if(data.data[i].tax){                         
+                                    if(data.data[i].finalAmount){ 
+                                    // var finalprice=Math.ceil(data.data[i].finalAmount*rate*1.15); 
+                                    var finalprice=Math.ceil(data.data[i].finalAmount);                               
+                                    html+='<div class="ub" style="padding:0 1em;padding-bottom:.5em;color: #FF3B77;background-color: #FFFFFF;">'
+                                        +contact+'等待卖家发货'
+                                        +'<div class="ulev-1" style="line-height: 1.6em;color:#808080;margin-left:1em;">'
+                                        +'调价后总计：￥'+finalprice
+                                        +'</div>'
+                                    +'</div>'                                
+                                    +'<div class="ub ulev-1" style="line-height: 1.6em;color:#808080;padding-bottom:.5em;padding-left:1em;background-color: #FFFFFF;">'
+                                        +'调价说明：'+data.data[i].changeAmountReason                                    
+                                    +'</div>'
+                                    +'<div class="ub ulev-1" style="line-height: 1.6em;color:#808080;padding-bottom:.5em;padding-left:1em;background-color: #FFFFFF;">'
+                                        +'补税说明：'+data.data[i].tax.desc+'&nbsp;&nbsp;&nbsp;&nbsp;补税金额：￥'+data.data[i].tax.taxAmount                                  
+                                    +'</div>';
+                                    }else{
+                                        html+='<div class="ub" style="padding:0 1em;padding-bottom:.5em;color: #FF3B77;background-color: #FFFFFF;">'
+                                            +contact+'等待卖家发货'
+                                            +'<div class="ulev-1" style="line-height: 1.6em;color:#808080;margin-left:1em;">'
+                                            +'总计：￥'+total
+                                            +'</div>'
+                                        +'</div>'                                
+                                        +'<div class="ub ulev-1" style="line-height: 1.6em;color:#808080;padding-bottom:.5em;padding-left:1em;background-color: #FFFFFF;">'
+                                            +'补税说明：'+data.data[i].tax.desc+'&nbsp;&nbsp;&nbsp;&nbsp;补税金额：￥'+data.data[i].tax.taxAmount                                  
+                                        +'</div>';
+                                    }
+                                }else{
+                                    if(data.data[i].finalAmount){ 
+                                        // var finalprice=Math.ceil(data.data[i].finalAmount*rate*1.15); 
+                                        var finalprice=Math.ceil(data.data[i].finalAmount);    
+                                        html+='<div class="ub" style="padding:0 1em;padding-bottom:.5em;color: #FF3B77;background-color: #FFFFFF;">'
+                                            +contact+'等待卖家发货'
+                                            +'<div class="ulev-1" style="line-height: 1.6em;color:#808080;margin-left:1em">'
+                                            +'调价后总计：￥'+finalprice
+                                            +'</div>'
+                                        +'</div>'                                
+                                        +'<div class="ub ulev-1" style="line-height: 1.6em;color:#808080;padding-bottom:.5em;padding-left:1em;background-color: #FFFFFF;">'
+                                            +'调价说明：'+data.data[i].changeAmountReason                                    
+                                        +'</div>';
+                                    }else{
+                                        html+='<div class="ub" style="padding:0 1em;padding-bottom:.5em;color: #FF3B77;background-color: #FFFFFF;">'
+                                            +contact+'等待卖家发货'
+                                            +'<div class="ulev-1" style="line-height: 1.6em;color:#808080;margin-left:1em">'
+                                            +'总计：￥'+total
+                                            +'</div>'
+                                        +'</div>';
+                                    }  
+                                }                              
+                                html+='<div class="ub" style="border-top: 1px solid #DEDEDE;background-color: #FFFFFF;padding:.8em 0;margin-bottom:.5em">'
+                                    +'<div class="ub ub-f1"></div>'
+                                     +'<div class="ub ub-ac ub-pc">'
+                                         +'<div class="ub ub-ac ub-pc ulev-3 concern" onclick="travel('+"'"+orderid+"'"+');">'
+                                            +'货品游记'
+                                        +'</div>'
+                                    +'</div>'              
+                                +'</div>'; 
+                                $("#list").append(html);                                                  
+                            }      
+                        } 
+                    }  
+                },
+                error : function(errMessage) {
+                    alert("errMessage"+errMessage);                 
+                }
+            });  
+            
+        });
+        appcan.button(".nav-btn", "btn-act", function() {
+            appcan.window.close(-1);
+        })
+        function travel(id){
+            appcan.locStorage.setVal("orderid",id);  
+            appcan.window.open('travel', 'travel.html', 10);  
+        }
+        function ordersign(i){
+            appcan.locStorage.setVal("forder",i);
+            appcan.window.open('s_signorder', 's_signorder.html', 10); 
+        }
+        
+    </script>
+</html>

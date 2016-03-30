@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+
+    </head>
+    <body class="um-vp" style="background:#fff;" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m">
+                <div class="nav-btn blue" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <h1 class="ut  bc-text ub-f1 ulev-3 ut-s tx-c" tabindex="0">消息</h1>
+                <div class="nav-btn blue" id="nav-right"></div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l " style="background-color: #F2F2F2">
+                <div class="ub ub-ver">                    
+                    <div class="ub ub-f1" id="sys" style="padding: 1em;background-color: #FFFFFF;margin-bottom: .5em">
+                        <img src="../image/news1.png" style="width:3em;margin-right: 0.7em;"/>
+                        <div class="ub ub-ver ub-f1" >
+                            <div class="" style="color:#3D3D3D;line-height: 1.8em;">
+                                系统消息
+                                <div style="float: right;color: #AEAEAE" id="system_time"></div>
+                            </div>
+                            <div class="" style="color:#FF0D57;">
+                               <span class="ulev-1" style="color:#808080; " id="system">无新消息</span>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="ub ub-f1" id="ord" style="padding: 1em;background-color: #FFFFFF;margin-bottom: .5em">
+                        <img src="../image/news2.png" style="width:3em;margin-right: 0.7em;"/>
+                        <div class="ub ub-ac ub-pc uhide" style="color:#fff;width: .8em;height: .8em;line-height: .8em; border-radius: .5em;border:1px solid #fff;background-color: #FF0000;position: relative;top: -.4em;left:-1.6em;" id="ordercount"></div>
+                        <div class="ub ub-ver ub-f1" >
+                            <div class="" style="color:#3D3D3D;line-height: 1.8em;">
+                                订单消息
+                                <div style="float: right;color: #AEAEAE" id="order_time"></div>
+                            </div>
+                            <div class="" style="color:#FF0D57;">
+                               <span class="ulev-1" style="color:#808080; " id="order">无新消息</span>
+                            </div>                            
+                        </div>
+                    </div>
+                    <div class="ub ub-f1" id="cou" style="padding: 1em;background-color: #FFFFFF;margin-bottom: .5em">
+                        <img src="../image/news3.png" style="width:3em;margin-right: 0.7em;"/>
+                        <div class="ub ub-ac ub-pc uhide" style="color:#fff;width: .8em;height: .8em;line-height: .8em;border-radius: .5em;border:1px solid #fff;background-color: #FF0000;position: relative;top: -.4em;left:-1.6em;" id="couponcount"><!--<span style="position: relative;top: -.3em;">…</span>--></div>
+                        <div class="ub ub-ver ub-f1" >
+                            <div class="" style="color:#3D3D3D;line-height: 1.8em;">
+                                优惠券消息
+                                <div style="float: right;color: #AEAEAE" id="coupon_time"></div>
+                            </div>
+                            <div class="" style="color:#FF0D57;">
+                               <span class="ulev-1" style="color:#808080; " id="coupon">无新消息</span>
+                            </div>                            
+                        </div>
+                    </div>
+                    <div class="ub ub-f1" id="con" style="padding: 1em;background-color: #FFFFFF;margin-bottom: .5em">
+                        <img src="../image/news4.png" style="width:3em;margin-right: 0.7em;"/>
+                        <div class="ub ub-ac ub-pc uhide" style="color:#fff;width: .8em;height: .8em;line-height: .8em; border-radius: .5em;border:1px solid #fff;background-color: #FF0000;position: relative;top: -.4em;left:-1.6em;" id="consultcount"></div>
+                        <div class="ub ub-ver ub-f1" >
+                            <div class="" style="color:#3D3D3D;line-height: 1.8em;">
+                                购买咨询&现场帮忙看
+                                <div style="float: right;color: #AEAEAE" id="consult_time" ></div>
+                            </div>
+                            <div class="" style="color:#FF0D57;">
+                               <span class="ulev-1" style="color:#808080; " id="consult">无新消息</span>
+                            </div>                            
+                        </div>
+                    </div>
+                     <div class="ub ub-f1" id="ca" style="padding: 1em;background-color: #FFFFFF;margin-bottom: .5em">
+                        <img src="../image/Care.png" style="width:3em;margin-right: 0.7em;"/>
+                        <div class="ub ub-ac ub-pc uhide" style="color:#fff;width: .8em;height: .8em;line-height: .8em; border-radius: .5em;border:1px solid #fff;background-color: #FF0000;position: relative;top: -.4em;left:-1.6em;" id="carecount"></div>
+                        <div class="ub ub-ver ub-f1" >
+                            <div class="" style="color:#3D3D3D;line-height: 1.8em;">
+                                关注消息
+                                <div style="float: right;color: #AEAEAE" id="care_time" ></div>
+                            </div>
+                            <div class="" style="color:#FF0D57;">
+                               <span class="ulev-1" style="color:#808080; " id="care">无新消息</span>
+                            </div>                            
+                        </div>
+                    </div>
+                    <div class="ub ub-f1" id="mon" style="padding: 1em;background-color: #FFFFFF;margin-bottom: .5em">
+                        <img src="../image/Qianbao.png" style="width:3em;margin-right: 0.7em;"/>
+                        <div class="ub ub-ac ub-pc uhide" style="color:#fff;width: .8em;height: .8em;line-height: .8em; border-radius: .5em;border:1px solid #fff;background-color: #FF0000;position: relative;top: -.4em;left:-1.6em;" id="moneycount"></div>
+                        <div class="ub ub-ver ub-f1" >
+                            <div class="" style="color:#3D3D3D;line-height: 1.8em;">
+                                提现消息
+                                <div style="float: right;color: #AEAEAE" id="money_time" ></div>
+                            </div>
+                            <div class="" style="color:#FF0D57;">
+                               <span class="ulev-1" style="color:#808080; " id="money">无新消息</span>
+                            </div>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--content结束-->
+
+            </div>
+            <script src="../js/appcan.js"></script>
+            <script src="../js/appcan.control.js"></script>
+            <script src="../js/main.js"></script>
+            <script src="../js/moment.js"></script>
+    </body>
+    <script>
+        var userId=appcan.locStorage.getVal("userId");
+        // var userId = "5699dce9a5dc79c35cb89678";
+        appcan.ready(function() {            
+            var today=new Date();
+            timestamp=today.getTime()+60000;
+            appcan.locStorage.setVal("timestamp",timestamp);
+            uexWindow.evaluateScript('root',0,'getnewest();'); 
+            uexWindow.evaluateScript('my',0,'getnewest();'); 
+              
+                // alert("ss");
+            appcan.request.ajax({
+                url : api + '/api/message/home/' + userId,
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {
+                    console.log(JSON.stringify(data));
+                    if(data.data.system){
+                       $("#system").html(data.data.system.content); 
+                       $("#system_time").html(judgetime(data.data.system.updateTime));
+                    }
+                    if(data.data.order){
+                       $("#order").html(data.data.order.content);
+                       $("#order_time").html(judgetime(data.data.order.updateTime));
+                       $("#ordercount").removeClass("uhide");
+                       if(data.number.ordernum<10){
+                           $("#ordercount").html(data.number.ordernum);
+                       }else{
+                           var html='<span style="position: relative;top: -.3em;">…</span>';
+                           $("#ordercount").html(html);
+                       }
+                    }
+                    if(data.data.coupon){
+                      $("#coupon").html(data.data.coupon.content); 
+                      $("#coupon_time").html(judgetime(data.data.coupon.updateTime)); 
+                      $("#couponcount").removeClass("uhide");
+                      if(data.number.couponnum<10){
+                           $("#couponcount").html(data.number.couponnum);
+                       }else{
+                           var html='<span style="position: relative;top: -.3em;">…</span>';
+                           $("#couponcount").html(html);
+                       }
+                    }
+                    if(data.data.consult){
+                       $("#consult").html(data.data.consult.content);
+                       $("#consult_time").html(judgetime(data.data.consult.updateTime));
+                       $("#consultcount").removeClass("uhide");
+                       if(data.number.consultnum<10){
+                           $("#consultcount").html(data.number.consultnum);
+                       }else{
+                           var html='<span style="position: relative;top: -.3em;">…</span>';
+                           $("#consultcount").html(html);
+                       }
+                    }
+                    if(data.data.focus){
+                       $("#care").html(data.data.focus.content);
+                       $("#care_time").html(judgetime(data.data.focus.updateTime));
+                       $("#carecount").removeClass("uhide");
+                       if(data.number.focusnum<10){
+                           $("#carecount").html(data.number.focusnum);
+                       }else{
+                           var html='<span style="position: relative;top: -.3em;">…</span>';
+                           $("#carecount").html(html);
+                       }
+                    }
+                    if(data.data.money){
+                       $("#money").html(data.data.money.content);
+                       $("#money_time").html(judgetime(data.data.money.updateTime));
+                       $("#moneycount").removeClass("uhide");
+                       if(data.number.moneynum<10){
+                           $("#moneycount").html(data.number.moneynum);
+                       }else{
+                           var html='<span style="position: relative;top: -.3em;">…</span>';
+                           $("#moneycount").html(html);
+                       }
+                    }
+                   
+                },
+                error : function() {
+                    alert("error");
+                }
+            });          
+        })
+        
+        
+        appcan.button(".nav-btn", "btn-act", function() {
+            this.id == "nav-left" &&appcan.window.close(-1);
+        })
+        
+        appcan.button("#sys","btn-act",function(){   
+            appcan.window.open("system_msg","system_msg.html",10); 
+        })
+        appcan.button("#ord","btn-act",function(){   
+            appcan.window.open("order_msg","order_msg.html",10); 
+        })
+        appcan.button("#cou","btn-act",function(){   
+            appcan.window.open("coupon_msg","coupon_msg.html",10); 
+        })
+        appcan.button("#con","btn-act",function(){   
+            appcan.window.open("consult_msg","consult_msg.html",10); 
+        })
+         appcan.button("#ca","btn-act",function(){   
+            appcan.window.open("care_msg","care_msg.html",10); 
+        })
+         appcan.button("#mon","btn-act",function(){   
+            appcan.window.open("money_msg","money_msg.html",10); 
+        })
+        
+         function judgetime(time){
+            var today=new Date();
+            var nowtime=parseInt(today.getTime()/1000);     
+           // alert(nowtime);
+            var overtime=moment(time, 'YYYY-MM-DDTHH:mm:ss.sssZ');
+            var deadline=overtime.unix();
+            var minus=nowtime-deadline;
+           if((minus/86400)>1){   
+               // var d="2015-12-16T06:27:19.189Z";
+               var ctime=new Date(time);   
+               var yy=ctime.getFullYear();
+               var MM=ctime.getMonth()+1;
+               var dd=ctime.getDate();  
+               return yy+"-"+MM+"-"+dd;          
+               // alert(ztime);
+           }else if((minus/3600)>1){
+               var hh=parseInt(minus/3600);
+               return hh+"小时前";
+               // alert(ztime);               
+           }else if((minus/60)>1){
+               var mm=parseInt(minus/60); 
+               return mm+"分钟前";
+               // alert(ztime);               
+           }else{
+               return "0分钟前";
+           }            
+        }   
+    </script>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+         <div class="ub ub-ver">
+                    <ul id="orderList">
+                       
+                    </ul>
+                </div> 
+    </body>
+    <script src="../js/appcan.js"></script>
+    <script src="../js/appcan.control.js"></script>
+     <script src="../js/moment.js"></script>
+     <script src="../js/main.js"></script>
+     <script src="../js/country.js"></script>
+    </body>
+    <script>
+    //var arr=['2015-12-20T12:00:00.000Z','2015-12-20T12:00:00.000Z'];
+    var userId=appcan.locStorage.getVal("userId");
+    
+        appcan.ready(function() {
+             show();
+        });
+         function show(){
+            var html='';
+            var changeText;
+            var changeTime;
+            appcan.request.ajax({
+                url :api+'/api/order/customerFindOrder?userId='+userId+'&pageNo=1&pageSize=50&status=1',
+                type : 'get',
+                dataType : 'json',
+                contentType : 'application/json',
+                success : function(data) {
+                      if(data.status == 1){
+                             var html='';
+                          if(data.data.length==0){
+                           html+='<li class="ub ub-ac ub-pc ub-ver" >'
+                           +'<img src="../image/noon.png" style="margin-top:10em"/>'
+                           +'<div class="ub" style="color:red;margin-top:0.8em">'
+                           +'您还没有待确认的订单哦!'
+                           +'</div>'
+                           +'</li>'                           
+                          $("#orderList").html(html);
+                          }
+                          else{
+                            //$("#orderList").html('');  
+                            $("#orderList").find("li").remove();
+                             var shopLen=data.data.length;
+                        appcan.locStorage.setVal("live_len", shopLen);
+                        var over=[];
+                        for(var i=0;i<shopLen;i++){
+                            var html='';
+                            var back=data.data[i].shoplive.to_back_day;
+                            var country=data.data[i].shoplive.country;
+                            var countryf=areaList[country].name; 
+                            var len=data.data[i].items.length;
+                            var orderId=data.data[i]._id;                            
+                            appcan.locStorage.setVal("orderid["+i+"]", data.data[i]._id);
+                            var orderStatus=data.data[i].orderStatus;
+                            over[i]=data.data[i].shoplive.deadline;
+                            appcan.locStorage.setVal("over["+i+"]", over[i]);
+                            if(orderStatus==1){
+                               changeText="等待卖家确认";
+                               changeHtml='<div class="ub ub-ac ub-pc ulev-3 concern" onclick="cancleOrder(\'' + orderId + '\')">取消订单 </div>'
+                            }
+                            html+='<li id="'+orderId+'" style="background-color: #FFFFFF;margin-top: 0.8em">'
+                            var goodsArr=[];
+                            var oneOrderPrice=0;
+                        for(var j=0;j<len;j++){
+                            //alert(data.data[i].items[j].item.images[0]);
+                            var imgSrc=api+data.data[i].items[j].item.images[0];
+                            var price=data.data[i].items[j].item.price;
+                            var code=data.data[i].items[j].item.priceCode;
+                            var rate=data.data[i].items[j].item.rate;
+                            var unit=areaList[country].currency;                      
+                            var lastprice=Math.ceil(price*rate*1.15);
+                            var name=data.data[i].items[j].item.desc;
+                            var itemCount=data.data[i].items[j].count;
+                            oneOrderPrice+=Number(itemCount*lastprice);
+                             html+='<div class="ub ub-f1 ub-ver" style="" onclick="openDetail(\'' + orderStatus + '\',\'' + orderId + '\',\'' + back + '\',\'' + country + '\')">'
+                                 +'<div class="ub" style="padding: 0.8em;">'
+                                 +'<img src="'+imgSrc+'" style="width:6em;margin-right: 0.7em;height:6em"/>'
+                                 +'<div class="ub ub-ver ub-f1" >'
+                                 +'<div class="" style="color:#3D3D3D;line-height: 2em;">'
+                                 + name 
+                                 +'<div style="float: right">×'+itemCount+'</div>'                      
+                                 +'</div>'
+                                 +'<div class="ub ulev-1" style="color:#808080;line-height: 1.6em;">'
+                                 +'<img src="../image/flag/'+countryf+'.png" style="width:1.5em"/>&nbsp;'
+                                 +country
+                                 +'&nbsp;&nbsp;' 
+                                 +'<img src="../image/plane.png" style="width:0.7em"/>&nbsp;'
+                                 +back
+                                 +'回国'
+                                 +'</div>'
+                                 +'<div class="" style="color:#3D3D3D;line-height: 1em;color:red">'
+                                 + '￥ '
+                                 +lastprice
+                                 +'<span class="ulev-1" style="color:#808080; ">='
+                                 +price+unit+'×'+rate+'(汇率)+15%代购费</span>'                      
+                                 +'</div>'
+                                 +'</div>'
+                                 +'</div>'                                      
+                                 +'</div>' 
+                                
+                        }
+                      //  appcan.locStorage.setVal('goodsArr',goodsArr);  
+                      if(data.data[i].finalAmount){
+                            // var finalprice=Math.ceil(data.data[i].finalAmount*rate*1.15);
+                            var finalprice=Math.ceil(data.data[i].finalAmount);
+                            html+='<div class="ub" style="padding:0 1em;padding-bottom:.5em;color: #FF3B77;background-color: #FFFFFF;">'
+                                +'等待卖家接单'
+                                +'<div class="ulev-1" style="line-height: 1.6em;color:#808080;margin-left:1em;">'
+                                +'调价后总计：￥'+finalprice
+                                +'</div>'
+                            +'</div>'                                
+                            +'<div class="ub ulev-1" style="line-height: 1.6em;color:#808080;padding-bottom:.5em;padding-left:1em;background-color: #FFFFFF;">'
+                                +'调价说明：'+data.data[i].changeAmountReason                                    
+                            +'</div>'                                
+                            +'<div class="ub" style="border-top: 1px solid #DEDEDE;background-color: #FFFFFF;padding:.8em 0;margin-bottom:.5em">'
+                                +'<div class="ub ub-f1">'
+                                    +'<div class="ub" id="time'+i+'" style="color:#323232;font-size: .9em;display: none;line-height:1.5em;margin-left:1em">'
+                                    +'</div>'
+                                +'</div>'
+                                 +'<div class="ub ub-ac ub-pc">'
+                                   +changeHtml
+                                +'</div>'              
+                            +'</div>';   
+                        }else{
+                            html+='<div class="ub ub-hor" style="padding:0 0 0.6em 0.8em;;background-color:white;border-bottom:1px solid #cdcdcd">'
+                                 +'<div class="ub" id="changeText" style="color: #FF3B77">'
+                                 +changeText
+                                 +'</div>'
+                                 +'<div class="ulev-1" id="" style="line-height: 1.6em;color:#808080;margin-left:1em">预计:￥'
+                                 +oneOrderPrice
+                                 +'</div>'
+                                 + '</div>'
+                                 +'<div class="ub" style="border-top: 1px solid #F5F5F5;background-color: #FFFFFF;padding:.8em 0;">'
+                                 +'<div class="ub ub-f1">'
+                                 +'<div class="ub" id="time'+i+'" style="color:#323232;margin-top: .5em;font-size: .9em;display: none;line-height:1.5em;margin-left:1em">'
+                                 +'</div>'
+                                 +'</div>'
+                                 +'<div class="ub ub-ac ub-pc" id="changeHtml" >'
+                                 +changeHtml
+                                 +'</div>'
+                                 +'</div>'   
+                        }
+                       
+                        html+='</li>';
+                         $('#orderList').append(html); 
+                         }
+                     
+                      console.log($('#orderList').html());
+                     }
+                         
+                      
+                      }    
+                                  
+                },
+                error : function(errMessage) {
+                    //alert("errMessage:"+JSON.stringify(errMessage));                         
+                }
+            });
+               DownCount();
+            }
+           function cancleOrder(orderId){
+               // alert(orderId);
+                 appcan.window.alert({
+                    title : "提示",
+                    content : "您是否要取消当前订单?",
+                    buttons : ['确定', '取消'],
+                    callback : function(err, data, dataType, optId) {
+                       if(['确定', '取消'][data]=='确定'){
+                          appcan.request.ajax({
+                            url :api+'/api/order/cancel?userId='+userId+'&orderId='+orderId,
+                            type : 'get',
+                            dataType : 'json',
+                            success : function(data) {
+                                  if(data.status == 1){
+                                      //alert('取消成功');
+                                      $('.concern').addClass('da');
+                                     if($('.concern').hasClass('da')){
+                                     $('#'+orderId).remove();
+                                      uexWindow.evaluatePopoverScript("cart", "content", "shoppingTrolley()");
+                                     }
+                                     if($("#orderList").html()==""){
+                                         var html='';
+                                           html+='<div class="ub ub-ac ub-pc ub-ver" >'
+                                           +'<img src="../image/noon.png" style="margin-top:10em"/>'
+                                           +'<div class="ub" style="color:red;margin-top:0.8em">'
+                                           +'您还没有待付款的订单哦!'
+                                           +'</div>'
+                                           +'</div>'                           
+                                          $("#orderList").html(html);
+                                     }
+                                    
+                                  }                  
+                                 },
+                            error : function(errMessage) {
+                                //alert("errMessage:"+JSON.stringify(errMessage));                         
+                            }
+                        });
+                       }
+                    }
+                });
+        }
+        function openDetail(orderStatus,orderId,back,country){
+            appcan.locStorage.setVal("back", back);
+            appcan.locStorage.setVal("country", country);
+            appcan.locStorage.setVal("orderId",orderId);
+            appcan.window.open("firmorder","firmorder.html",10);
+        }
+         function DownCount(){ 
+            var today=new Date();
+            now=parseInt(today.getTime()/1000);
+            var over=[];
+            var live_len=appcan.locStorage.getVal("live_len");
+            var over=[];
+            for(var i=0;i<live_len;i++){
+                over[i]=appcan.locStorage.getVal("over["+i+"]");
+                var overtime=moment(over[i], 'YYYY-MM-DDTHH:mm:ss.sssZ');
+                var deadline=overtime.unix();  
+               minus=deadline-now;
+               if(minus>0){                    
+                     $("#time"+i).html('<div style="color:#ADADAD">剩余</div><div class="ub ub-ac ub-pc time" id="hour'+i+'" style="margin-left: 0.5em"></div>：<div class="ub ub-ac ub-pc time" id="minute'+i+'"></div>：<div class="ub ub-ac ub-pc time" id="second'+i+'"></div>');  
+                     timechange(minus,i);
+                     window.setTimeout("DownCount()",1000);
+                     //$('#changeHtml').html('<div class="ub ub-ac ub-pc ulev-3 concern" >取消订单 </div>');
+               }else{
+                   //$("#time"+i).html('<div style="color:#F1F1F1;background-color:#B0B5B6;padding:.3em .7em;border-radius: .3em;font-size: 1em; ">已经结束</div>');
+                    //$('#changeHtml').html('<div class="ub ub-ac ub-pc ulev-3 concern" style="border:1px solid #cdcdcd;color:#cdcdcd">取消订单 </div>');  
+                   var orderId=appcan.locStorage.getVal("orderid["+i+"]");
+                   appcan.request.ajax({
+                        url :api+'/api/order/cancel?userId='+userId+'&orderId='+orderId,
+                        type : 'get',
+                        dataType : 'json',
+                        success : function(data) {
+                              if(data.status == 1){
+                                 uexWindow.evaluatePopoverScript("my", "content", "showMyData()");
+                                 uexWindow.reload();
+                              }                  
+                         },
+                        error : function(errMessage) {
+                            //alert("errMessage:"+JSON.stringify(errMessage));                         
+                        }
+                    });             
+               }
+            }
+        }        
+        function timechange(minus,i){
+            CSecond=minus%60;
+            CMinute=parseInt(minus%3600/60);
+            CHour=parseInt(minus/3600);
+            if(CMinute<10)
+             {
+                CMinute="0"+CMinute;
+            }
+            if(CHour<10)
+            {
+                CHour="0"+CHour;
+            }
+            if(CSecond<10)
+            {
+                CSecond="0"+CSecond;
+            }  
+            $("#hour"+i).html(CHour);
+            $("#minute"+i).html(CMinute);
+            $("#second"+i).html(CSecond); 
+        }
+        function confirm(){
+            appcan.window.open('firmorder','firmorder.html',10);
+        }
+    </script>
+</html>

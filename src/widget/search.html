@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+         <link rel="stylesheet" href="css/mystyle.css">
+         <link rel="stylesheet" href="css/content.css">
+        <link rel="stylesheet" href="css/common.css">
+    </head>
+    <style type="text/css">
+        .uinput2 input, .uinput textarea {
+            margin: 0px;
+            width: 70%;
+            height: 1.5em;
+            margin-top:0.2em;
+            -webkit-appearance: none;
+            padding: .4em 0;
+            line-height: 1.2em;
+            text-decoration: none;
+            font-size: 1em;
+            display: block;
+        }
+    </style>
+    <body class="um-vp " style="background:#fff;" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m">
+                <div class="ub uinput2 ub-ac ub-pc" style="width:100%;">
+                <!-- <input class="" id="searching"  readonly="readonly" onclick="searching();" placeholder="搜索品牌、类别、名称" style="width:80%;position:relative;height:30px;border-radius:5px;border: 1px solid #8AE3E5;background-color: white"> -->
+                <input type="text" id="search" value=""readonly="readonly" onclick="searching();" class=" uc-a1  uinn uba ulev-1 searchBox ub ub-ac ub-pc" placeholder="搜索品牌、类别、名称" style="background-color: white;border-color: rgba(0,0,0,0.1);width:90%;border-radius:5px;border: 1px solid #8AE3E5;"/>
+                </div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l"  style="background: #F2F2F2">
+
+            </div>
+            <!--content结束-->
+<div id="footer" class="uf t-bla ub tab  b-gra2 c-gra2" style="border-top: 1px solid #C9C9C9;background-color: #FFFFFF;padding-top: 0.3em;height:2.5em">
+                <div class="pos_re ub ub-f1">                    
+                    <div id="index" class="ub-f1 ub ub-ver ">
+                        <div class="ub-f1 ub-img5 icon1 mar_b"></div>
+                        <div class="uinn-a13 ulev-4 tx-c act-col" style="color:#7C7C7C">
+                            淘现场
+                        </div>
+                    </div>
+                </div>
+                <div class="pos_re ub ub-f1">                   
+                    <div id="search" class="ub-f1 ub ub-ver">
+                        <div class="ub-f1 ub-img5 icon2_act mar_b"></div>
+                        <div class="uinn-a13 ulev-4 ub ub-ac ub-pc " style="color:#00C1F9"> 
+                            查询
+                        </div>
+                    </div>
+                </div>
+                <div class="pos_re ub ub-f1">                    
+                    <div id="publish" class="ub-f1 ub ub-ver">
+                        <div class="ub-f1 ub-img5 icon3 mar_b"></div>
+                        <div class="uinn-a13 ulev-4 ub ub-ac ub-pc " style="color:#7C7C7C">
+                            发布
+                        </div>
+                    </div>
+                </div>
+                <div class="pos_re ub ub-f1">                   
+                    <div id="cart" class="ub-f1 ub ub-ver ">
+                        <div class="ub-f1 ub-img5 icon4 mar_b"></div>
+                        <div class="uinn-a13 ulev-4  ub ub-ac ub-pc" style="color:#7C7C7C">
+                            购物车
+                        </div>
+                    </div>
+                </div>
+                <div class="pos_re ub ub-f1">                   
+                    <div id="my" class="ub-f1 ub ub-ver ">
+                        <div class="ub-f1 ub-img5 icon5 mar_b"></div>
+                        <div class="uinn-a13 ulev-4 tx-c act-col" style="color:#7C7C7C">
+                            我的
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+        <script src="js/main.js"></script>
+    </body>
+    <script>
+        var userId=appcan.locStorage.getVal("userId");       
+        appcan.ready(function() {
+            // alert('search'+userId);
+            var titHeight = $('#header').offset().height;
+            appcan.frame.open("content", "search_content.html", 0, titHeight);
+            window.onorientationchange = window.onresize = function() {
+                appcan.frame.resize("content", 0, titHeight);
+            }
+            uexWindow.evaluateScript('root',0,'prepublish();');
+            var presstime=0;
+            uexWindow.setReportKey(0, 1);
+            uexWindow.onKeyPressed = function(keyCode) {
+                if (keyCode == 0) { 
+                    //uexWidgetOne.exit(1);
+                    if(presstime==0){
+                       uexWindow.toast("0", "5","再按一次返回键退出！", "3000"); 
+                       presstime=1;
+                    }else{
+                        presstime=1;
+                        uexWidgetOne.exit(0);
+                    }
+                    setTimeout(function() {
+                        presstime=0;
+                    }, 3000); 
+                }
+            } 
+            // alert(userId);
+        });
+        appcan.button("#index", "btn-act", function() {
+           uexWindow.open("root","0","index.html","0","0","0","0","200");
+        })
+        appcan.button("#publish", "btn-act", function() {
+            if(userId!=null){  
+                var deviceInfo=appcan.locStorage.getVal("deviceInfo"); 
+                var countryCode=appcan.locStorage.getVal("countryCode"); 
+                 if(countryCode==0){
+                    appcan.frame.open("GPSpop","html/GPSpop.html");
+                }else{          
+                    appcan.request.ajax({
+                        url :api+'/api/shoplive/checkQualification?deviceInfo='+deviceInfo+'&userId='+userId+'&countryCode='+countryCode,
+                        type : 'GET',
+                        dataType : 'json',
+                        success : function(data) {
+                            if(data.status==0){
+                                appcan.locStorage.setVal("reminder", "1");
+                                if(uexWidgetOne.platformName == "iOS"){
+                                    appcan.window.open("reminder","html/reminder.html",10,1024);
+                                } else {
+                                    appcan.window.open("reminder","html/reminder.html",10);
+                                }
+                            }
+                            if(data.status==1){
+                                appcan.request.ajax({//564f05aa88eb79982c4bf2ae
+                                    url :api+'/api/user/me/'+userId,
+                                    type : 'GET',
+                                    dataType : 'json',
+                                    success : function(data) {
+                                        if(data.status==1){
+                                           if(data.data.user.account) {                                               
+                                                uexWindow.evaluateScript('root',0,'publishadr();');
+                                                uexWindow.open("publish","0","publish.html","0","0","0","0","200");
+                                           }else{
+                                                uexWindow.toast("0", "5", "为了您的钱款安全，请先设置支付宝收款账号", "2000");
+                                                setTimeout(function() {
+                                                    if(uexWidgetOne.platformName == "iOS"){
+                                                        appcan.window.open("myalinum","html/myalinum.html",10,1024);
+                                                    } else {
+                                                        appcan.window.open("myalinum","html/myalinum.html",10);
+                                                    }  
+                                                }, 2000);                         
+                                           }                  
+                                        }if(data.status == 0){
+                                         uexWindow.toast("1","5",data.msg,-1);
+                                        }         
+                                    },
+                                    error : function(errMessage) {
+                                        //alert("errMessage:"+JSON.stringify(errMessage));                         
+                                    }
+                                }); 
+                            } 
+                            if(data.status==2){
+                                uexWindow.toast("0", "5", data.msg, "2000");
+                                setTimeout(function() {
+                                    if(uexWidgetOne.platformName == "iOS"){                                        
+                                        appcan.window.open("apply","html/apply.html",0,1024);
+                                    } else {
+                                        appcan.window.open("apply","html/apply.html",0);
+                                    } 
+                                }, 2000);  
+                            }         
+                        },
+                        error : function(errMessage) {
+                            //alert("errMessage:"+JSON.stringify(errMessage));                         
+                        }
+                    }); 
+                }
+            }else{
+                appcan.window.open("login","login.html",16);
+            }
+        })
+        appcan.button("#cart", "btn-act", function() {
+            if(userId!=null){                
+                uexWindow.open("cart","0","cart.html","0","0","0","0","200");
+            } else{
+                appcan.window.open("login","login.html",16);
+            }
+        })
+        appcan.button("#my", "btn-act", function() {
+            if(userId!=null){                
+                uexWindow.open("my","0","my.html","0","0","0","0","200");
+            } else{
+                appcan.window.open("login","login.html",16);
+            }
+        })
+        function searching(){
+             if((userId!=null)&&(uexWidgetOne.platformName == "iOS")){              
+                appcan.window.open('searchCatgeras', 'html/searchCatgeras.html', 10,1024);
+            } else{            
+                appcan.window.open('searchCatgeras', 'html/searchCatgeras.html', 10);
+            } 
+        }
+
+    </script>
+</html>

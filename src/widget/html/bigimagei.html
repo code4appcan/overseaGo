@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+    </head>
+
+    <body class="um-vp" style="background:#000;" ontouchstart  >
+        <div id="content" class="ub-con ub-img" style="background-color: rgba(0,0,0,1)">       
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/main.js"></script>
+    </body>
+    <script>        
+        var mybigimgs=appcan.locStorage.getVal("myimgs");
+        var myimgs=JSON.parse(mybigimgs);
+        var count=appcan.locStorage.getVal("myimgcount");
+        // alert(myimgs+","+count);
+        var myimg=appcan.locStorage.getVal("myimg");
+        var img_url=api+myimg;
+        var startX = 0;  
+        var len=myimgs.length;
+        //alert(len);
+        appcan.ready(function() {
+            $("#content").css("background-image","url("+img_url+")");
+            isTouchDevice();
+        });
+
+        $("#content").click(function(){   
+            appcan.frame.close('bigimagei');    
+        })
+              
+        //touchstart事件  
+        function touchSatrtFunc(evt) {  
+            try{  
+                //evt.preventDefault(); //阻止触摸时浏览器的缩放、滚动条滚动等  
+                var touch = evt.touches[0]; //获取第一个触点  
+                var x = Number(touch.pageX); //页面触点X坐标  
+                //记录触点初始位置  
+                startX = x;  
+            }
+            catch (e) {  
+                alert('touchSatrtFunc：' + e.message);  
+            }  
+        }  
+  
+        //touchmove事件，这个事件无法获取坐标  
+        function touchMoveFunc(evt) {  
+            try{  
+                //evt.preventDefault(); //阻止触摸时浏览器的缩放、滚动条滚动等  
+                var touch = evt.touches[0]; //获取第一个触点  
+                var x = Number(touch.pageX); //页面触点X坐标  
+                //判断滑动方向  
+                //alert(count);
+                if (x - startX > 0) {  
+                    //alert('<br/>向右滑动');  
+                    count--;
+                    if(count>=0){
+                        //alert(count);
+                        img_url=api+myimgs[count];
+                        //alert(img_url);
+                        $("#content").css("background-image","url("+img_url+")");
+                    }
+                }else if(x - startX < 0){
+                    //alert('<br/>向左滑动');
+                    count++;
+                    if(count<len){
+                        //alert(count);
+                        img_url=api+myimgs[count];
+                        //alert(img_url);
+                        $("#content").css("background-image","url("+img_url+")");
+                    }
+                }
+           }  
+           catch (e) {  
+               alert('touchMoveFunc：' + e.message);  
+           }  
+        }  
+  
+        //touchend事件  
+        function touchEndFunc(evt) {  
+            try {  
+                //evt.preventDefault(); //阻止触摸时浏览器的缩放、滚动条滚动等  
+            }  
+            catch (e) {  
+                alert('touchEndFunc：' + e.message);  
+            }  
+        }  
+  
+        //绑定事件  
+        function bindEvent() {  
+            document.addEventListener('touchstart', touchSatrtFunc, false);  
+            document.addEventListener('touchmove', touchMoveFunc, false);  
+            document.addEventListener('touchend', touchEndFunc, false);  
+        }  
+  
+            //判断是否支持触摸事件  
+        function isTouchDevice() {  
+            try {  
+                document.createEvent("TouchEvent");  
+                //alert("支持TouchEvent事件！");  
+                bindEvent(); //绑定事件  
+            }  
+            catch (e) {  
+                alert("不支持TouchEvent事件！" + e.message);  
+            }  
+        }  
+
+    </script>
+</html>

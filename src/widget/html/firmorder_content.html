@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+         <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+         <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+        
+    </head>
+    <body class="um-vp" ontouchstart>
+        <div class="ub ub-f1 ub-ver" style="background-color: #FFFFFF;line-height: 3em;margin-bottom: .5em;">
+            <div class="ub" style="height:3em;border-bottom: 1px solid #DBDBDB;padding:0 1em;color: #7A7A7A">
+                订单号：<span id="orderNo"></span>
+            </div>
+            <div class="ub" style="height:3em;padding:0 1em;color: #FF3B77">
+                等待卖家确认订单
+            </div>
+         </div>
+         <div class="ub ub-f1" style="padding: 0.8em;background-color: #FFFFFF;margin-bottom: .5em;">
+            <div class="ub ub-ver ub-f1" >
+                <div class="" style="color:#3D3D3D;line-height: 2em;margin:0 1em;">
+                    收货人：<span id="contact"></span>
+                    <div style="float: right" id="tel"></div>
+                </div>
+                
+                <div class="ub ulev-1" style="color:#808080;line-height: 1.4em;margin-top: .5em;padding: 0 1em;">
+                    <img class="" src="../image/Pin-Assistor.png" style="width:1.2em"/>
+                    <div style="width:85%;margin: 0 1em;"><span id="address"></span></div>
+                    <!-- <div class="fa fa-angle-right fa-2x"></div> -->
+                    
+                </div>
+            </div>
+        </div>
+        <div class="ub ub-ver" >
+            <ul id="List">
+              
+            </ul>
+        </div>
+        
+        <div class="ub ub-f1" style="padding: 0.8em;background-color: #FFFFFF;margin-bottom: .5em;">
+            <div class="ub ub-f1" style="line-height: 2em;">                        
+                <div class="" style="color:#3D3D3D;margin: 0 .5em;" >配送                           
+                </div>
+                <img class="" src="../image/Question2.png" style="width:1.5em;margin-top: .2em;" id="peisong"/>
+                <div style="color:#808080;margin-left: 30%;">卖家回国后发货，到付</div>
+            </div>
+        </div>
+        <div class="ub ub-f1" style="margin-top:2em;padding-bottom: 1em">
+            <div class="ub ub-ac ub-pc">                        
+                 <div style="width:90%;color:#B2B2B2;font-size:.8em;">
+                     温馨提示：在同一卖家购买商品金额超过免税金额导致过关收取的关税费，由买家承担。
+                 </div>
+            </div>
+        </div>
+
+
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/main.js"></script>
+        <script src="../js/country.js"></script>
+    </body>
+    <script>
+     var orderId=appcan.locStorage.getVal("orderId");
+     var country=appcan.locStorage.getVal("country");
+     var countryf=areaList[country].name; 
+     var back=appcan.locStorage.getVal("back");
+        appcan.ready(function() {
+           show();
+        });
+        function show(){ 
+            appcan.request.ajax({//566eb3034eeaf48c2b46cf19
+                url :api+'/api/order/shoppingInfo?orderId='+orderId,
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {
+                    if(data.status==1){
+                        var address=data.data.address.detail;
+                        var contact=data.data.address.contact;
+                        var tel=data.data.address.tel;
+                        var orderNo=data.data.orderNo;
+                        $('#orderNo').html(orderNo);
+                        $("#address").html(address);
+                        $("#contact").html(contact);
+                        $("#tel").html(tel);
+                        var len=data.data.items.length;
+                        //alert(len);
+                        var html="";
+                        var totalPrice=0;
+                        for(var i=0;i<len;i++){
+                            var price=data.data.items[i].item.price;
+                            var code=data.data.items[i].item.priceCode;
+                            var rate=data.data.items[i].item.rate;
+                            var unit=areaList[country].currency;                      
+                            var lastprice=Math.ceil(price*rate*1.15);
+                            var desc=data.data.items[i].item.desc;
+                            var count=data.data.items[i].count;
+                            totalPrice+=Number(lastprice*count);
+                            uexWindow.evaluateScript('firmorder','0','totalPrice('+totalPrice+')');
+                            $("#total").html(totalPrice);
+                            var imgSrc=api+data.data.items[i].item.images[0];
+                            html+='<li>'
+                            +'<div class="ub ub-f1" style="padding: 0.8em;background-color: #FFFFFF;margin-bottom: .1em;">'
+                            +'<img src="'+imgSrc+'" style="width:7em;margin-right: 0.7em;height:7em"/>'
+                            +'<div class="ub ub-ver ub-f1" >'
+                            +'<div class="" style="color:#3D3D3D;line-height: 2em;">'
+                            +desc
+                            +'<div style="float: right">×'+count+'</div>'
+                            +'</div>'
+                            +'<div class="ub ulev-1" style="color:#808080;line-height: 1.6em;">'
+                            +'<img src="../image/flag/'+countryf+'.png" style="width:1.2em"/>&nbsp;'
+                            +country
+                            +'&nbsp;&nbsp; '
+                            + '<img src="../image/plane.png" style="width:0.7em"/>&nbsp;'
+                            +back
+                            +'回国'
+                            +'</div>'
+                            +'<div class="" style="color:#3D3D3D;line-height: 1.2em;color:red">'
+                             + '￥ '
+                             +lastprice
+                             +'<span class="ulev-1" style="color:#808080; ">='
+                             +price+unit+'×'+rate+'(汇率)+15%代购费</span>'                      
+                             +'</div>'
+                       +'</div>'
+                       + '</div>'
+                       +'</li>'
+                       $("#List").html(html);
+                       
+                        }
+                        
+                    }
+                },
+                error : function(errMessage) {
+                    alert("errMessage:"+JSON.stringify(errMessage));                         
+                }
+            });
+        }
+         appcan.button("#peisong", "btn-act", function() {
+             appcan.frame.open("questionPop", "questionPop.html",0,0);
+        });
+    </script>
+</html>

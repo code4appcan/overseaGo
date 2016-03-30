@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+         <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+         <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+        
+    </head>
+    <body class="um-vp" ontouchstart>
+        
+
+         <div class="" id="list"  style="background-color: #F2F2F2">
+
+        </div>      
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/main.js"></script>  
+        <script src="../js/pinyin.js"></script>  
+    </body>
+    <script>
+        var cText = 0;
+        var cJson = 1;
+        var cInt = 2;
+       var arr=[];
+       var flag=appcan.locStorage.getVal("flag");
+      window.uexOnload=function(){
+          // if(flag==11){
+              ShowBrands();
+          // }else{
+             // Showcategories();
+          // }
+          
+          uexIndexBar.onTouchResult = function(opId, dataType, data) {
+              //alert(opId+":"+dataType+":"+data);
+              location.href = "#" + data;
+          } 
+    }
+    function showBar(){
+        var arrList = {
+                'A' : '',
+                'B' : '',
+                'C' : '',
+                'D' : '',
+                'E' : '',
+                'F' : '',
+                'G' : '',
+                'H' : '',
+                'I' : '',
+                'J' : '',
+                'K' : '',
+                'L' : '',
+                'M' : '',
+                'N' : '',
+                'O' : '',
+                'P' : '',
+                'Q' : '',
+                'R' : '',
+                'S' : '',
+                'T' : '',
+                'U' : '',
+                'V' : '',
+                'W' : '',
+                'X' : '',
+                'Y' : '',
+                'Z' : ''
+            }
+            var str = '';
+            for (var i in arr) {               
+               arrList[arr[i].code] += '<div class="uinn" style="padding:1em 1.5em;background:#fff;border-bottom: 1px solid #D9D9D9;" onclick="openDetail(\'' + arr[i]._id + '\',\'' + arr[i].name + '\',\'' + arr[i].image + '\')">' +arr[i].name + '</div>';
+            }
+            for (var i in arrList) {
+                var aa = arrList[i];                
+                str += ('<div id="' + i + '" class="uinn" style="padding:1em 1.5em;">' + i + '</div>'+aa );
+            }
+            $('#list').html(str);
+            indexBarOpen();
+    }
+        // function close(){
+              // uexIndexBar.close();
+        // }
+        function indexBarOpen() {
+            var x = parseInt($('#list').offset().width);
+            var y = parseInt(appcan.locStorage.getVal('uexIndexBar_y'));
+            var em = $('#list').css('font-size');
+            var w = 2 * parseInt(em);
+            var h = parseInt(appcan.locStorage.getVal('uexIndexBar_h'));
+            var data={
+                textColor:"#006DFF"
+            }
+            var extras=JSON.stringify(data);
+            uexIndexBar.open(x - w, y, w, h,extras);                   
+        }
+        
+        // function Showcategories(){
+            // appcan.request.ajax({
+                // url : api+'/api/brandAndCategory/get',
+                // type : 'GET',
+                // dataType : 'json',
+                // success : function(data) {                          
+                    // if(data.status == 0){
+                        // uexWindow.toast("0", "5", data.msg, "2000");
+                    // }
+                    // if (data.status == 1) { 
+                        // var len=data.data.categories.length;                      
+                        // for(var i=0;i<len;i++){
+                             // var pinyin = codefans_net_CC2PY(data.data.categories[i].name);//汉字转换成拼音
+                             // var goodsPin=pinyin.substr(0, 1);//截取首字母
+                                // newarr  =
+                                 // {    "_id" :data.data.categories[i]._id,
+                                     // "name":data.data.categories[i].name,
+                                     // "code":goodsPin
+                                 // }                                 
+                               // arr.push(newarr);
+                               // showBar();
+                            // } 
+                    // }
+                // },
+                // error : function(errMessage) {
+                   // // alert("errMessage"+errMessage);                 
+                // }
+            // });
+        // }
+        function ShowBrands(){
+             appcan.request.ajax({
+                url : api+'/api/brand/list?page=1&rows=100',
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {                          
+                    if(data.status == 0){
+                        uexWindow.toast("0", "5", data.msg, "2000");
+                    }
+                    if (data.status == 1) { 
+                        var len=data.rows.length;    
+                        for(var j=0;j<len;j++){
+                             var brandspinyin = codefans_net_CC2PY(data.rows[j].name);//汉字转换成拼音
+                             var brandsPin=brandspinyin.substr(0, 1);//截取首字母
+                                newarr  =
+                                 {    "_id" :data.rows[j]._id,
+                                     "name":data.rows[j].name,
+                                     "image":api+data.rows[j].brandImage,
+                                     "code":brandsPin
+                                 }                                 
+                               arr.push(newarr);
+                               showBar();
+                            } 
+                    }
+                },
+                error : function(errMessage) {
+                    //alert("errMessage"+errMessage);                 
+                }
+            });
+        }
+        
+   
+  function codefans_net_CC2PY(l1) {
+    var l2 = l1.length;
+    var I1 = "";
+    var reg = new RegExp('[a-zA-Z0-9\- ]');
+    for (var i=0;i<l2;i++) {
+        var val = l1.substr(i,1);
+        var name = arraySearch(val,PinYin);
+        if(reg.test(val)) {
+            I1 += val;
+        } else if (name!==false) {
+            I1 += name;
+        }
+
+    }
+    I1 = I1.replace(/ /g,'-');
+    while (I1.indexOf('--')>0) {
+        I1 = I1.replace('--','-');
+    }
+    return I1;
+}
+
+function arraySearch(l1,l2){
+    for (var name in PinYin){
+        if (PinYin[name].indexOf(l1)!=-1) {
+            return ucfirst(name); break;
+        }
+    }
+    return false;
+}
+
+function ucfirst(l1){
+    if (l1.length>0) {
+        var first = l1.substr(0,1).toUpperCase();
+        var spare = l1.substr(1,l1.length);
+        return first + spare;
+    }
+}
+
+function openDetail(id,name,img){
+    appcan.locStorage.setVal("brand_id", id);
+    appcan.locStorage.setVal("brand_name", name);
+    // alert(flag);
+    if(flag=="share2"){
+          uexWindow.evaluatePopoverScript("share2", "content", "getbrand()");         
+          uexWindow.evaluateScript('list',0,'appcan.window.close(-1);');
+      }else if(flag=="share"){
+          // alert("share");
+          uexWindow.evaluatePopoverScript("share", "content", "getbrand()");         
+          uexWindow.evaluateScript('list',0,'appcan.window.close(-1);');
+          // appcan.window.close(-1);
+      }else if(flag=="share3"){
+          // alert("share");
+          uexWindow.evaluatePopoverScript("share3", "content", "getbrand()");         
+          uexWindow.evaluateScript('list',0,'appcan.window.close(-1);');
+          // appcan.window.close(-1);
+      }else{
+          appcan.locStorage.setVal("brand_img",img); 
+          appcan.window.open('searchbrand', 'searchbrand.html', 10); 
+      }
+    
+    // if(flag==11){
+          // appcan.locStorage.setVal("brand_id", id);
+        // appcan.window.open('searchbrand', 'searchbrand.html', 10);  
+      // }else{
+         // appcan.locStorage.setVal("good_id",id);
+         // appcan.window.open('searchCatgeras', 'searchCatgeras.html', 10);
+      // }
+    
+}
+
+ </script>
+</html>

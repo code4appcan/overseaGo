@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+         <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+         <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+        <script src="../js/main.js"></script>
+        
+    </head>
+    <body class="um-vp" style="background:#fff;" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m">
+                <div class="nav-btn blue" id="nav-left"><div class="fa fa-angle-left fa-2x"></div> </div>
+                <h1 class="ut  bc-text ub-f1 ulev-3 ut-s tx-c" tabindex="0">资质申请</h1>
+                <div class="nav-btn blue" id="nav-right">提交</div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l " style="background-color: #F2F2F2">
+                <div class="ub ub-ver" id="t_img">
+                    <div class="ub ub-f1 ub-ac ub-pc" style="padding: .5em;background: url(../image/line.png) no-repeat 50% 37%">                        
+                        <div class="ub ub-ver ub-ac ub-pc" style="color:#00C1F9;">
+                            <div class="ub ub-ac ub-pc" style="margin:.5em 1.8em;color:#fff;width: 1.4em;height: 1.4em;border-radius: .7em;background-color: #00C1F9;">1</div>
+                            <p>提交申请</p>
+                        </div>
+                        <div class="ub ub-ver ub-ac ub-pc" style="color:#B8B8B8;">
+                             <div class="ub ub-ac ub-pc" style="margin:.5em 1.8em;width: 1.4em;height: 1.4em;border-radius: .7em;background-color: #FFFFFF;">2</div>
+                             <p>审批</p>
+                        </div>
+                         <div class="ub ub-ver ub-ac ub-pc" style="color:#B8B8B8;">
+                             <div class="ub ub-ac ub-pc" style="margin:.5em 1.8em; width: 1.4em;height: 1.4em;border-radius: .7em;background-color: #FFFFFF;">3</div>
+                             <p>完成</p>
+                        </div>
+                    </div>
+                    <div class="ub ub-pc ub-ac" style="padding:.8em .5em;line-height: 1.4em;">                        
+                        <img src="../image/choosePic.png" id="applypic" style="width: 6em;height: 6em;margin-top:.5em; " onclick="choose();"/>
+                        <p style="margin:0 1em;width: 68%;font-size:.9em;color: #5E5E5E">请任意添加一张照片，如护照签入签出页面照片、境外酒店入住证明文件、来回机票行程单、境外刷卡回单等，以证明您是近期出境的游客。<br />
+                            (我们会对您的个人信息严格保密)</p>
+                    </div>
+                </div>
+                 <div class="ub ub-f1 ub-ver" style="background-color: #FFFFFF;padding: .8em 0;margin-bottom: .8em;height: 8em;">
+                    <div class="ub uinput3" style="height: 6em;">
+                        <textarea id="desc" placeholder="填写申请缘由..."></textarea>
+                    </div>                  
+                </div>
+                <p style="font-size:.9em;line-height: 1.5em;margin-top: 1.5em;padding:0 .7em;color: #5E5E5E ">说明：</p>
+                <p style="font-size:.9em;line-height: 1.5em;padding:.25em .7em;color: #5E5E5E ">1、如果您是在国外第一次安装海外购APP；或者国内安装后，在出境前一个月内未打开过海外购应用，或者禁止了海外购获取您的位置信息，由于无法获取第一个国内位置节点，导致您即使身处境外，也无法发布。请进行“资质申请”提交您的相关出境证明文件。</p>
+                <p style="font-size:.9em;line-height: 1.5em;padding:.25em .7em;color: #5E5E5E ">2、海外购APP会识别并要求使用同一手机操作，如果原手机损坏或丢失，将不能进行回到国内后的下一步发货或收款等操作。您可以通过新手机使用原来海外购账号密码登陆，并提供出入境相关证明文件（证明文件显示的姓名要和绑定的收款账号的姓名一致）。</p>
+                   
+            </div>        
+            <!--content结束-->
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+    </body>
+    <script>
+    
+      var userId=appcan.locStorage.getVal("userId");      
+      var deviceInfo=appcan.locStorage.getVal("deviceInfo"); 
+      // alert(deviceInfo);
+        appcan.ready(function() {
+        });
+         appcan.button(".nav-btn", "btn-act", function() {
+            this.id == "nav-left" && appcan.window.close(-1);
+            if(this.id == "nav-right"){
+                var desc = $("#desc").val();                
+                appcan.request.ajax({
+                    url :api+'/api/qualification/createApply',                        
+                    type : 'post',
+                    dataType : 'json',
+                    data:{
+                        applyerId:userId,
+                        deviceInfo:deviceInfo,
+                        desc:desc,
+                        image:image,
+                        thumb:thumb
+                    },
+                    success : function(data) {
+                        if(data.status==1){
+                            uexWindow.toast("0", "5", data.msg, "2000");
+                            window.setTimeout("appcan.window.close(-1);",1000); 
+                        }if(data.status==0){
+                            uexWindow.toast("0", "5", data.msg, "2000");
+                        }
+                    },
+                    error : function(errMessage) {
+                        alert("errMessage:"+JSON.stringify(errMessage));                         
+                    }
+                });    
+            }
+        })     
+        
+        
+         function choose(){  
+             // appcan.frame.open("choosepic","choosepic.html"); 
+             takephoto();                               
+        } 
+        
+        var img_url='';
+        var image;
+        var thumb; 
+        function choosepic(){             
+            var data = {
+                min:1,
+                max:1,
+                quality:0.5,
+                detailedInfo:false
+            }
+            var json = JSON.stringify(data);
+            uexImage.openPicker(json);
+            uexImage.onPickerClosed=function(info){
+                img_url = JSON.parse(info).data[0]; 
+                uploadimg();
+            }
+        } 
+        function takephoto(){  
+            if(uexWidgetOne.platformName == "iOS" || uexWidgetOne.platformName == "ios"){
+                 uexCamera.cbOpen=function (opCode, dataType, data){
+                    img_url=data;
+                    uploadimg();
+                }
+                uexCamera.open(0,50);   
+            }else{
+                uexCamera.cbOpenInternal=function (opCode, dataType, data){//仅android    
+                    img_url=data;
+                    uploadimg();
+                }
+                uexCamera.openInternal(0,50);     
+            }       
+        }
+          
+         function uploadimg() {             
+            appcan.request.ajax({
+                url : api+'/api/util/uploadImage?type=2',
+                type : 'POST',
+                dataType : 'json',
+                data : {
+                    image : {
+                        path : img_url
+                    }
+                },
+                success : function(data, status) {
+                    if (data.status == 1) {
+                       //alert(JSON.stringify(data));                                              
+                       appcan.window.openToast('上传成功', 1500, 5, 0); 
+                       thumb=data.url[0];
+                       image=data.url[1]; 
+                       $("#applypic").attr("src",api+thumb);
+                    } else {
+                        appcan.window.openToast('上传失败', 1500, 5, 0);         
+                    }
+                },
+                error : function(err) {
+                    appcan.window.openToast('上传失败', 1500, 5, 0);
+                 }   
+            })
+        }     
+             
+        
+    </script>
+</html>

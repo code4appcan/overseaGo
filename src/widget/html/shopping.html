@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+         <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+    </head>
+    <body class="um-vp " style="background: #fff" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m">
+                <div class="nav-btn blue" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <h1 class="ut  bc-text ub-f1 ulev-3 ut-s tx-c" tabindex="0">购物车</h1>
+                <div class="nav-btn blue" id="changeEdit" onclick="edit()">编辑</div>
+
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l " style="background-color: #F2F2F2">
+
+            </div>        
+            <!--content结束-->
+            <div class="ub  bc-bg ub-ac" id="footer" style="">
+                <!-- <div class="ub ub-hor ub-ac ub-pc uhide" id="footer2" style="width:100%"> -->
+                            <!-- <div class="ub ub-f1">
+                             <div class=" ub  " style="width: 1em;height: 1em;border-radius: .5em;border: 1px solid #00C1F9;margin-right:0.7em " onclick="selectAll()" id="selectAll"></div>
+                             <span class="" style="margin-right: 5em">  全选  </span> 
+                             </div>
+                             
+                             <div class="ub ub-f2 " style="color:#FF0D57">
+                             预计￥
+                             <div class="" id="localPrice" style="margin-right:1em;width:4em">
+                             </div>
+                             </div>
+                             <div id="delete" class="ub ub-f1 ub-ac ub-pc uhide" style="color:white;background-color:red;border-radius:0.3em;height: 2.5em;"  onclick="delect()">删除</div> 
+                             <div id="order" class="ub ub-f1 ub-ac ub-pc" style="color:white;background-color:#00C1F9;border-radius:0.3em;height: 2em"  onclick="selectSubmit();">下单</div>   -->
+                             <!-- </div> -->
+            </div>
+
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+    </body>
+    <script>
+        appcan.ready(function() {
+            var titHeight = $('#header').offset().height;
+            appcan.frame.open("content", "shopping_content.html", 0, titHeight);
+            window.onorientationchange = window.onresize = function() {
+                appcan.frame.resize("content", 0, titHeight);
+            }
+        });
+        appcan.button("#nav-left", "btn-act", function() {
+            uexWindow.evaluatePopoverScript("cart", "content", "shoppingTrolley()");
+            appcan.window.close(-1);
+        })
+        function edit(){
+            var action = $('#changeEdit').html();
+            if (action == '编辑') {
+                $('#changeEdit').html('完成');
+               uexWindow.evaluatePopoverScript("shopping", "content", "removeUhide()");
+                
+            } else if (action == '完成') {
+                $('#changeEdit').html('编辑');
+                uexWindow.evaluatePopoverScript("shopping", "content", "addUhide()");
+            }
+        }
+    </script>
+</html>

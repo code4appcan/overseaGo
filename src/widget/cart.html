@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+         <link rel="stylesheet" href="css/mystyle.css">  
+         <link rel="stylesheet" href="css/content.css">
+        <link rel="stylesheet" href="css/common.css">
+    </head>
+    <body class="um-vp " style="background:#fff;" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m">
+                <div class="nav-btn blue" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <h1 class="ut  bc-text ub-f1 ulev-3 ut-s tx-c" tabindex="0">购物车</h1>
+                <div class="nav-btn blue" id="changeEdit" onclick="edit()">编辑</div>
+
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l"  style="background: #F2F2F2">
+
+            </div>
+            <!--content结束-->
+            
+            <div id="footer" class="uf t-bla ub tab  b-gra2 c-gra2" style="border-top: 1px solid #C9C9C9;background-color: #FFFFFF;padding-top: 0.3em;height:2.5em">
+                <div class="pos_re ub ub-f1">                    
+                    <div id="index" class="ub-f1 ub ub-ver ">
+                        <div class="ub-f1 ub-img5 icon1 mar_b"></div>
+                        <div class="uinn-a13 ulev-4 tx-c act-col" style="color:#7C7C7C">
+                            淘现场
+                        </div>
+                    </div>
+                </div>
+                <div class="pos_re ub ub-f1">                   
+                    <div id="search" class="ub-f1 ub ub-ver">
+                        <div class="ub-f1 ub-img5 icon2 mar_b"></div>
+                        <div class="uinn-a13 ulev-4 ub ub-ac ub-pc " style="color:#7C7C7C"> 
+                            查询
+                        </div>
+                    </div>
+                </div>
+                <div class="pos_re ub ub-f1">                    
+                    <div id="publish" class="ub-f1 ub ub-ver">
+                        <div class="ub-f1 ub-img5 icon3 mar_b"></div>
+                        <div class="uinn-a13 ulev-4 ub ub-ac ub-pc " style="color:#7C7C7C">
+                            发布
+                        </div>
+                    </div>
+                </div>
+                <div class="pos_re ub ub-f1">                   
+                    <div id="cart" class="ub-f1 ub ub-ver ">
+                        <div class="ub-f1 ub-img5 icon4_act mar_b"></div>
+                        <div class="uinn-a13 ulev-4  ub ub-ac ub-pc" style="color:#00C1F9">
+                            购物车
+                        </div>
+                    </div>
+                </div>
+                <div class="pos_re ub ub-f1">                   
+                    <div id="my" class="ub-f1 ub ub-ver ">
+                        <div class="ub-f1 ub-img5 icon5 mar_b"></div>
+                        <div class="uinn-a13 ulev-4 tx-c act-col" style="color:#7C7C7C">
+                            我的
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+        <script src="js/main.js"></script>
+    </body>
+    <script>
+        var userId=appcan.locStorage.getVal("userId");   
+        appcan.ready(function() {
+            // alert('cart');
+            var titHeight = $('#header').offset().height;
+            appcan.frame.open("content", "cart_content.html", 0, titHeight);
+            window.onorientationchange = window.onresize = function() {
+                appcan.frame.resize("content", 0, titHeight);
+            }
+            uexWindow.evaluateScript('root',0,'premy();');
+            var presstime=0;
+            uexWindow.setReportKey(0, 1);
+            uexWindow.onKeyPressed = function(keyCode) {
+                if (keyCode == 0) { 
+                    //uexWidgetOne.exit(1);
+                    if(presstime==0){
+                       uexWindow.toast("0", "5","再按一次返回键退出！", "3000"); 
+                       presstime=1;
+                    }else{
+                        presstime=1;
+                        uexWidgetOne.exit(0);
+                    }
+                    setTimeout(function() {
+                        presstime=0;
+                    }, 3000); 
+                }
+            } 
+            
+        });
+        appcan.button("#nav-left", "btn-act", function() {
+            appcan.window.close(-1);
+        })
+        function edit(){
+            var action = $('#changeEdit').html();
+            if (action == '编辑') {
+                $('#changeEdit').html('完成');
+               uexWindow.evaluatePopoverScript("cart", "content", "removeUhide()");
+                
+            } else if (action == '完成') {
+                $('#changeEdit').html('编辑');
+                uexWindow.evaluatePopoverScript("cart", "content", "addUhide()");
+            }
+        }
+        
+        appcan.button("#search", "btn-act", function() {
+           uexWindow.open("search","0","search.html","0","0","0","0","200");
+        })
+        appcan.button("#index", "btn-act", function() {
+           uexWindow.open("root","0","index.html","0","0","0","0","200");
+        })
+         appcan.button("#publish", "btn-act", function() {
+            var deviceInfo=appcan.locStorage.getVal("deviceInfo"); 
+            var countryCode=appcan.locStorage.getVal("countryCode"); 
+                // alert(deviceInfo+","+userId+","+countryCode); 
+             if(countryCode==0){
+                appcan.frame.open("GPSpop","html/GPSpop.html");
+            }else{
+                appcan.request.ajax({
+                    url :api+'/api/shoplive/checkQualification?deviceInfo='+deviceInfo+'&userId='+userId+'&countryCode='+countryCode,
+                    type : 'GET',
+                    dataType : 'json', 
+                    success : function(data) {
+                        if(data.status==0){
+                            // uexWindow.toast("0", "5", data.msg, "2000");
+                            appcan.locStorage.setVal("reminder", "1");
+                            // appcan.window.open("reminder","html/reminder.html",10,1024);
+                            if(uexWidgetOne.platformName == "iOS"){
+                                appcan.window.open("reminder","html/reminder.html",10,1024);
+                            } else {
+                                appcan.window.open("reminder","html/reminder.html",10);
+                            }
+                        }
+                        if(data.status==1){
+                             appcan.request.ajax({//564f05aa88eb79982c4bf2ae
+                                url :api+'/api/user/me/'+userId,
+                                type : 'GET',
+                                dataType : 'json',
+                                success : function(data) {
+                                    if(data.status==1){
+                                       if(data.data.user.account) { 
+                                            uexWindow.evaluateScript('root',0,'publishadr();');
+                                            uexWindow.open("publish","0","publish.html","0","0","0","0","200");
+                                       }else{
+                                            uexWindow.toast("0", "5", "为了您的钱款安全，请先设置支付宝收款账号", "2000");
+                                            setTimeout(function() {
+                                                // appcan.window.open("myalinum","html/myalinum.html",10,1024); 
+                                                if(uexWidgetOne.platformName == "iOS"){
+                                                    appcan.window.open("myalinum","html/myalinum.html",10,1024);
+                                                } else {
+                                                    appcan.window.open("myalinum","html/myalinum.html",10);
+                                                }  
+                                            }, 2000);                         
+                                       }                  
+                                    }if(data.status == 0){
+                                     uexWindow.toast("1","5",data.msg,-1);
+                                    }         
+                                },
+                                error : function(errMessage) {
+                                    //alert("errMessage:"+JSON.stringify(errMessage));                         
+                                }
+                            }); 
+                        } 
+                        if(data.status==2){
+                            uexWindow.toast("0", "5", data.msg, "2000");
+                            setTimeout(function() {
+                                // appcan.window.open("apply","html/apply.html",0,1024);
+                                if(uexWidgetOne.platformName == "iOS"){                                        
+                                        appcan.window.open("apply","html/apply.html",0,1024);
+                                    } else {
+                                        appcan.window.open("apply","html/apply.html",0);
+                                    } 
+                            }, 2000);  
+                        }         
+                    },
+                    error : function(errMessage) {
+                        //alert("errMessage:"+JSON.stringify(errMessage));                         
+                    }
+                }); 
+            }
+        })
+        appcan.button("#my", "btn-act", function() {
+           uexWindow.open("my","0","my.html","0","0","0","0","200");
+        })
+        
+    </script>
+</html>

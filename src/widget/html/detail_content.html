@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/ui-box.css">
+    <link rel="stylesheet" href="../css/ui-base.css">
+    <link rel="stylesheet" href="../css/ui-color.css">
+    <link rel="stylesheet" href="../css/appcan.icon.css">
+    <link rel="stylesheet" href="../css/appcan.control.css">
+    <link rel="stylesheet" href="../css/content.css">  
+    <link rel="stylesheet" href="../css/common.css">                
+</head>
+<body class="um-vp bc-bg" ontouchstart style="background-color:#F2F2F2;">
+     <div class="ub ub-ver" id="detail_t">
+       <div class="" id="scrollpic"></div>
+     </div>  
+     <div class="ub ub-ver" id="details" style="background-color: #FFFFFF;">
+       
+       </div>        
+
+    
+    <div class="ub ub-ver" style="background-color: #FFFFFF;">
+        <div class="ub ub-f1 ub-ac ub-pc" style="height:3em;">
+            购买咨询
+        </div>
+        <div class="ub ub-ver" id="replys">
+             
+        </div>          
+    </div>    
+    <div id="footer">
+      <div  style="height: 2.4em;background-color: #FFFFFF;padding: .5em 0;border-top: 1px solid #DDDDDD;position: fixed;width: 100%;bottom: 0">
+            <div id="buy" class="ub ub-ac ub-pc ub-f1" style="padding-top:.1em;display:none" >
+                <div class="ub ub-ac ub-pc ub-f1 ulev-3" >
+                    <div class="ub ub-ac ub-pc buy" id="buyQ">购买咨询</div>                            
+                </div>
+                <div class="ub ub-ac ub-pc ub-f1 ulev-3" >
+                    <div class="ub fa fa-shopping-cart fa-2x" id="cart" style="color:#00C1F9;" onclick="openShoping()"></div>                            
+                </div>
+                <div class="ub ub-ac ub-pc ub-f1 ulev-3" id="detailstatus" style="margin-right: 0.5em">                    
+                    <!-- <div class="ub ub-ac ub-pc ulev-3 addcart" onclick="addcart();">添加购物车</div>    -->
+                    <!-- <div class="ub ub-ac ub-pc over1">已售罄</div>                           -->
+                </div>                                                 
+            </div>
+            <div class="ub uinput12 uhide" id="consult" style="height: 2.2em;background-color: #FFFFFF;">
+                    <input type="text" onblur="hide()" id="inputtext" placeholder="回复"/>
+                    <button class="send" onclick="sendConsult();">发送</button>
+             </div>        
+        </div>
+     </div>
+
+</body>
+<script src="../js/appcan.js"></script>
+<script src="../js/appcan.control.js"></script>
+<script src="../js/main.js"></script> 
+<script src="../js/moment.js"></script>  
+<script src="../js/country.js"></script>    
+<script>
+        var userId=appcan.locStorage.getVal("userId");
+         var detail_id=appcan.locStorage.getVal("detail_id");
+         var sellerId;
+         var arr = [];
+         var bigimage=[];
+         appcan.ready(function() { 
+             scrollpic(); 
+             appcan.request.ajax({
+                    url :api+'/api/user/findCare',
+                    type : 'GET',
+                    dataType : 'json',
+                    data : {
+                         userId: userId
+                    },
+                    success : function(data) {
+                        if(data.status==1){
+                            concerns=data.data[0].seller;                                                                                                                      
+                         }         
+                    },
+                    error : function(errMessage) {
+                        //alert("errMessage:"+JSON.stringify(errMessage));                         
+                    }
+              });          
+            showdetail();
+            consultant();
+            uexScrollPicture.onPicItemClick= function(data){
+                var count=JSON.parse(data).index;
+                // appcan.locStorage.setVal("myimgs",bigimage);
+                // appcan.locStorage.setVal("myimgcount",count);
+                // appcan.locStorage.setVal("myimg",bigimage[count]);
+                // appcan.locStorage.setVal("detail_id",detail_id);
+                // appcan.frame.open("bigimageil","bigimageil.html");  
+                
+                
+                var len = bigimage.length; 
+                var datas=[]; 
+                var url_imgb;
+                for (var i = 0; i < len; i++) {
+                    url_imgb = api+bigimage[i];
+                    datas[i] ={"src" : url_imgb};
+                }   
+                var params = {
+                    "displayActionButton" : false,
+                    "displayNavArrows" : false,
+                    "enableGrid" : false,
+                    "startOnGrid" : false,
+                    "startIndex" : count,
+                    data :datas
+                };
+                var data = JSON.stringify(params);
+                uexImage.openBrowser(data);
+            }             
+         }) 
+         function scrollpic(){            
+            var w;
+            uexDevice.getInfo('17');
+            uexDevice.cbGetInfo=function (opCode,dataType,data){
+                var devicesize=JSON.parse(data).model;//JSON.parse    
+                if(devicesize.indexOf('GT')==0){
+                    w=screen.availWidth*3/4; 
+                }else{
+                    w=screen.availWidth; 
+                }                    
+                var h=w;
+                $("#scrollpic").css("height",h+"px"); 
+            };   
+        }
+        function consultant(){ 
+            $("#replys").html(''); 
+            appcan.request.ajax({
+                url : api+'/api/consult/list?itemId='+detail_id+'&pageNo=1&pageSize=10',
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {                          
+                    if(data.status == 0){
+                        uexWindow.toast("0", "5", data.msg, "2000");
+                    }
+                    if (data.status == 1) {
+                        //alert(data);
+                        var len=data.data.length;
+                        var html = ""; 
+                      
+                        for(var i=0;i<len;i++){
+                            var content=data.data[i].content;
+                            var avatar=api+data.data[i].user.avatar;
+                            var nickname=data.data[i].user.nickname; 
+                            var customer_id=data.data[i].user._id;
+                            var creattime=data.data[i].createTime;
+                            var id=data.data[i]._id;                     
+                            judgetime(creattime);
+                            if(userId==sellerId){//(!data.data[i].replyContent)&&
+                                html+='<div class="ub ub-ver" id="reply'+i+'" onclick="replycustomer('+"'"+customer_id+"'"+','+"'"+id+"'"+','+i+');" >'
+                                    +'<div class="ub ub-f1 ub-ac" style="color:#808080;border-top: 1px solid #DDDDDD;">'
+                                        +'<div class="ub ub-f1 ub-ac">'
+                                            +'<img src="'+avatar+'" class="hbi"/>'                       
+                                            +'<div class="ub ulev-5 ub-f1">'
+                                               +nickname
+                                            +'</div> '                     
+                                            +'<div class="ub ub-ac ub-pc ulev-1" style="margin-right:.5em;">'
+                                               +ztime 
+                                            +'</div>'
+                                        +'</div>'
+                                    +'</div>'
+                                    +'<div class="ub" style="padding:.5em .7em;color:#535353;line-height:1.5em;">'
+                                       +' <p>'+content+'</p>'           
+                                   +' </div>'
+                               +' </div>'; 
+                            }else{
+                                html+='<div class="ub ub-ver" id="reply'+i+'">'
+                                    +'<div class="ub ub-f1 ub-ac" style="color:#808080;border-top: 1px solid #DDDDDD;">'
+                                        +'<div class="ub ub-f1 ub-ac">'
+                                            +'<img src="'+avatar+'" class="hbi"/>'                       
+                                            +'<div class="ub ulev-5 ub-f1">'
+                                               +nickname
+                                            +'</div> '                     
+                                            +'<div class="ub ub-ac ub-pc ulev-1" style="margin-right:.5em;">'
+                                               +ztime 
+                                            +'</div>'
+                                        +'</div>'
+                                    +'</div>'
+                                    +'<div class="ub" style="padding:.5em .7em;color:#535353;line-height:1.5em;">'
+                                       +' <p>'+content+'</p>'           
+                                   +' </div>'
+                               +' </div>'; 
+                            }                            
+                           if(data.data[i].replyContent.length!=0){
+                               var relen= data.data[i].replyContent.length;
+                               for(var j=0;j<relen;j++){
+                                   var replyContent=data.data[i].replyContent[j].content;
+                                   var updatetime=data.data[i].replyContent[j].time;
+                                   var utime=judgetime1(updatetime);
+                                   html+='<div class="ub ub-ver seller" style="padding:0 1em;"  >'
+                                        +'<div class="ub ub-f1 ub-ac"  style="color:#808080;border-top: 1px solid #DDDDDD;">'
+                                            +'<div class="ub ub-f1 ub-ac" style="height:2.3em;line-height: 3em;">'                  
+                                                 +'<div class="ub ulev-5 ub-f1"  style="color:#00C1F9;margin-left: 1em;">'
+                                                    +' 卖家回复：'
+                                                 +'</div>'                      
+                                                 +'<div class="ub ub-ac ub-pc ulev-1" style="margin-right:.5em;">'
+                                                    +utime
+                                                 +'</div>'
+                                             +'</div>'
+                                         +'</div>'
+                                         +'<div class="ub" style="padding:.5em 1em;color:#535353;line-height: 1.5em;">'
+                                             +'<p>'+replyContent+'</p>'
+                                         +'</div>'            
+                                     +'</div>';
+                                }
+                            }
+                        }                        
+                        $("#replys").append(html);
+                          if(userId==sellerId){
+                            $("#footer").remove();
+                        } else {
+                            $("#replys").append('<div style="width:100%;height:3.2em"></div>')
+                        }
+                    }  
+                },
+                error : function(errMessage) {
+                    //alert("errMessage"+errMessage);                 
+                }
+            });         
+        }  
+
+        function replycustomer(id1,id2,i){ 
+           var have_input=$("#reply"+i).next().is(".uinput12");
+           var minusMy=appcan.locStorage.getVal("minusMy");
+            if(minusMy<0){
+                var alertcontent="淘现场已经结束！";
+                appcan.locStorage.setVal("alertcontent",alertcontent);
+                appcan.frame.open("alertPop","alertPop.html");
+            }else if(!have_input){
+               $(".uinput12").remove();
+               var rhtml="";
+               rhtml+='<div class="ub uinput12" style="padding:.7em .5em ">'
+                        +'<input type="text" id="inputtext'+i+'" placeholder="回复"/>'               
+                        +'<button class="send" onclick="send('+"'"+id1+"'"+','+"'"+id2+"'"+','+i+');this.disabled = true;">发送</button>'
+                    +'</div>';
+               $("#reply"+i).after(rhtml);
+               $("#inputtext"+i).focus(); 
+               uexWindow.showSoftKeyboard(); 
+           }            
+        }
+        function send(id1,id2,i){            
+            $(".send").css("background-color","#17a0c7");
+            var content= $("#inputtext"+i).val();
+            appcan.request.ajax({
+                url :api+'/api/consult/reply',
+                type : 'post',
+                dataType : 'json',
+                data : {
+                    consultId:id2,
+                    userId:userId,
+                    itemId:detail_id,
+                    reply_content:content,
+                    customerId:id1
+                },
+                success : function(data) {
+                    if(data.status==1){
+                        uexWindow.toast("0", "5", data.msg, "2000");
+                        $("#reply"+i).next().remove();
+                        var html="";
+                        html+='<div class="ub ub-ver seller" style="padding:0 1em;">'
+                            +'<div class="ub ub-f1 ub-ac"  style="color:#808080;border-top: 1px solid #DDDDDD;">'
+                                +'<div class="ub ub-f1 ub-ac" style="height:2.3em;line-height: 3em">'                  
+                                     +'<div class="ub ulev-5 ub-f1"  style="color:#00C1F9;margin-left: 1em;">'
+                                        +' 卖家回复：'
+                                     +'</div>'                      
+                                     +'<div class="ub ub-ac ub-pc ulev-1" style="margin-right:.5em;">'
+                                        +'0分钟前'
+                                     +'</div>'
+                                 +'</div>'
+                             +'</div>'
+                             +'<div class="ub" style="padding:.5em 1em;color:#535353;line-height: 1.5em;">'
+                                 +'<p>'+content+'</p>'
+                             +'</div>'            
+                         +'</div>';
+                         $("#reply"+i).after(html);
+                    }if(data.status==0){
+                        uexWindow.toast("0", "5", data.msg, "2000");
+                    }
+                },
+                error : function(errMessage) {
+                    //alert("errMessage:"+JSON.stringify(errMessage));                         
+                }
+            });     
+        }  
+         function judgetime(time){
+            var today=new Date();
+            var nowtime=parseInt(today.getTime()/1000);       
+            var overtime=moment(time, 'YYYY-MM-DDTHH:mm:ss.sssZ');
+            var deadline=overtime.unix();
+            var minus=nowtime-deadline;
+           if((minus/86400)>1){   
+               // var d="2015-12-16T06:27:19.189Z";
+               var ctime=new Date(time);   
+               var yy=ctime.getFullYear();
+               var MM=ctime.getMonth()+1;
+               var dd=ctime.getDate();  
+               ztime= yy+"-"+MM+"-"+dd;          
+               // alert(ztime);
+           }else if((minus/3600)>1){
+               var hh=parseInt(minus/3600);
+               ztime=hh+"小时前";
+               // alert(ztime);               
+           }else if((minus/60)>1){
+               var mm=parseInt(minus/60);
+               ztime=mm+"分钟前";
+               // alert(ztime);               
+           }else{
+               ztime="0分钟前";
+           }           
+        } 
+         function judgetime1(time){
+            // alert("-------");
+            var today=new Date();
+            var nowtime=parseInt(today.getTime()/1000);       
+            // var overtime=moment(time, 'YYYY-MM-DDTHH:mm:ss.sssZ');
+            // var deadline=overtime.unix();
+            var minus=nowtime-parseInt(time/1000);
+           if((minus/86400)>1){   
+               // var d="2015-12-16T06:27:19.189Z";
+               // alert(1);
+               var ctime=new Date(time);   
+               var yy=ctime.getFullYear();
+               var MM=ctime.getMonth()+1;
+               var dd=ctime.getDate();  
+               return yy+"-"+MM+"-"+dd;          
+               // alert(ztime);
+           }else if((minus/3600)>1){
+               // alert(2);
+               var hh=parseInt(minus/3600);
+               return hh+"小时前";
+               // alert(ztime);               
+           }else if((minus/60)>1){
+               // alert(3);
+               var mm=parseInt(minus/60);
+               return mm+"分钟前";
+               // alert(ztime);               
+           }else{
+               return "0分钟前";
+           }             
+        }         
+          
+        function showdetail(){    
+            appcan.request.ajax({
+                url : api+'/api/item/detail/'+detail_id,//56790e1426c8b75833ffdbd4',
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {                          
+                    if(data.status == 0){
+                        uexWindow.toast("0", "5", data.msg, "2000");
+                    }
+                    if (data.status == 1) {
+                        console.log(data);
+                        // alert(data);
+                        var html = "";  
+                        var desc=data.data.desc;
+                        var price=data.data.price;  
+                        var leftCount=data.data.leftCount;  
+                        var offShelf=data.data.offShelf;                        
+                        appcan.locStorage.setVal("leftCount", leftCount);   
+                        appcan.locStorage.setVal("offShelf", offShelf);   
+                        //"images_400_300": [],
+                        sellerId = data.data.shoplive.seller._id;      
+                        appcan.locStorage.setVal('sellerId',sellerId);
+                        var code=data.data.priceCode;
+                        var rate=data.data.rate;
+                        var country=data.data.shoplive.country;                                 
+                        var locationInfo=data.data.shoplive.locationInfo;
+                        var countryf=areaList[country].name; 
+                        var unit=areaList[country].currency;                      
+                        var lastprice=Math.ceil(price*rate*1.15);
+                        html += '<div class="ub ub-ver ub-f1 tdesc">'
+                                    +'<div class="desc">'
+                                        +desc
+                                    +'</div>'
+                                    +'<div class="ub ub-ver rc">'
+                                         +'￥'
+                                         +lastprice
+                                         +'<span class="ulev-1" style="color:#808080; ">='
+                                         +price+unit+'×'+rate+'(汇率)+15%代购费</span>'                                                                                           
+                                    +'</div>'
+                                +'</div>';
+                        $("#detail_t").append(html);                       
+                        
+                        var items_len = data.data.shoplive.items.length;
+                        var url_img1 = data.data.shoplive.seller.avatar;
+                        var seller_url = api + url_img1;                               
+                        //var url_img2 = data.data.shoplive.images[0];
+                        var url_img2; 
+                        if(data.data.shoplive.thumbs.length>0){                                                
+                            url_img2 = data.data.shoplive.thumbs[0];
+                        }else{                                                
+                            url_img2 = data.data.shoplive.images[0];
+                        }   
+                        var shop_url = api + url_img2; 
+                        var back=data.data.shoplive.to_back_day;
+                        over=data.data.shoplive.deadline;
+                        appcan.locStorage.setVal("over", over); 
+                        DownCount();                       
+                        appcan.locStorage.setVal('share_item_img',data.data.images[0]);
+                        appcan.locStorage.setVal('share_item_content',desc);
+                        appcan.locStorage.setVal('share_item_thumbs',data.data.thumbs[0]);
+                        var nickname = data.data.shoplive.seller.nickname;
+                        var seller_id = data.data.shoplive._id;
+                        var desc=data.data.shoplive.desc;
+                        var count=items_len;
+                        var html = "";                               
+                        html += '<div class="ub ub-f1 ub-ac hb">'
+                        +'<img src="'+seller_url+'" class="hbi"/>'
+                        +'<div class="ub ub-f1 ub-ver">'
+                            +'<div class="ub ulev-5" >'
+                                +nickname
+                            +'</div>'
+                            +'<div class="ub ulev-1" style="color:#808080">'
+                            +'<img src="../image/flag/'+countryf+'.png" style="width:1.2em;height:.8em"/>&nbsp;'+country+'&nbsp;&nbsp;' 
+                            +'<img src="../image/plane.png" style="width:0.7em"/>&nbsp;'
+                                +back
+                                +'回国'
+                            +'</div>'
+                        +'</div>'
+                        // +'<div class="ub ub-ac ub-pc ulev-3 concern">'
+                            // +'+关注'
+                        // +'</div>'
+                        +'<div class="ub" id="user">'                                   
+                        +'</div>'
+                        +'</div>'
+                        +'<div class="ub ub-f1" style="padding: 0.7em">'
+                        +'<img onclick="openscene('+"'"+seller_id+"'"+');" src="'+shop_url+'" style="width:8em;height:8em;margin-right: 0.5em"/>'
+                        +'<div class="ub ub-ver ub-f1" style="line-height:1.5em">'
+                            +'<div class="" onclick="openscene('+"'"+seller_id+"'"+');">'
+                                +desc
+                            +'</div>'
+                            +'<div class="" style="color:#8A8A8A;font-size:.8em;">'
+                                +'<img src="../image/Pin-Assistor.png" style="width:0.7em"/ >&nbsp;'+locationInfo+'&nbsp;&nbsp;'+count+'件商品'
+                            +'</div>'
+                            +'<div class="ub" id="time" style="color:#323232;margin-top: .5em;font-size: .9em;display: none;">'
+                            +'</div>'       
+                        +'</div>'
+                        +'</div>';                        
+                        $("#details").append(html);
+                        
+                        if(userId==null||concerns==null){                     
+                              var chtml="";
+                              chtml+='<div onclick="concern_s();" class="ub ub-ac ub-pc ulev-3 concern">'
+                                        +'+关注'
+                                    +'</div>';                                       
+                            $("#user").append(chtml);      
+                        }else{
+                            if(userId==sellerId){                                
+                            }else{
+                                var slen=concerns.length;
+                                // alert(slen);
+                                if(slen==0){
+                                    var chtml="";
+                                      chtml+='<div onclick="concern_su('+"'"+sellerId+"'"+');" class="ub ub-ac ub-pc ulev-3 concern">'
+                                                +'+关注'
+                                            +'</div>';                                       
+                                    $("#user").append(chtml); 
+                                }else{
+                                    var concern;
+                                    for(var k=0;k<slen;k++){
+                                        if(concerns[k]._id==sellerId){                                                     
+                                            concern=1;     
+                                            break;
+                                        }else{
+                                            concern=0;    
+                                        }
+                                     }                                                                             
+                                     if(concern==1){
+                                         var chtml="";
+                                         chtml+='<div class="ub ub-ac ub-pc ulev-3 concern1" onclick="cancle('+"'"+sellerId+"'"+');" >'
+                                                      +'已关注'
+                                                  +'</div>';                                       
+                                          $("#user").append(chtml);
+                                     }else{
+                                         var chtml="";
+                                          chtml+='<div onclick="concern_su('+"'"+sellerId+"'"+');" class="ub ub-ac ub-pc ulev-3 concern">'
+                                                    +'+关注'
+                                                +'</div>';                                       
+                                        $("#user").append(chtml);
+                                    }
+                                } 
+                            }   
+                        }
+                        bigimage=data.data.images;  
+                        var len = data.data.images.length;  
+                        for (var i = 0; i < len; i++) {
+                            var url_img = data.data.images_400_300[i];
+                            arr[i] ='"'+api+url_img+'"';                           
+                        }
+                        showslider();                        
+                    }  
+                },
+                error : function(errMessage) {
+                    //alert("errMessage"+errMessage);                      
+                    uexWindow.toast("0", "5", "网络信号差", "2000");               
+                }
+            });             
+            // DownCount(); 
+        }  
+                
+        function concern_s(){            
+            // uexWindow.evaluateScript('root',0,'login();');            
+            appcan.window.open("login","../login.html",16);
+        }
+        
+        function cancle(id){
+            appcan.window.alert({
+                title : "提示",
+                content : "您是否要取消关注?",
+                buttons : ['确定', '取消'],
+                callback : function(err, data, dataType, optId) {
+                   if(['确定', '取消'][data]=='确定'){
+                           appcan.request.ajax({
+                                url :api+'/api/user/sellerCancel',
+                                type : 'post',
+                                dataType : 'json',
+                                data : {
+                                     userId: userId,
+                                     sellerId: id
+                                },
+                                success : function(data) {
+                                     if(data.status == 0){
+                                         uexWindow.toast("0", "5", data.msg, "2000");                            
+                                     }
+                                      if(data.status == 1){
+                                          //alert("ddd"); 
+                                          $("#user").empty();
+                                          var chtml="";
+                                          chtml+='<div onclick="concern_su('+"'"+id+"'"+');" class="ub ub-ac ub-pc ulev-3 concern">'
+                                                    +'+关注'
+                                                +'</div>';
+                                          $("#user").append(chtml);
+                                           uexWindow.evaluatePopoverScript("my", "content", "showMyData()");                    
+                                      }                  
+                                },
+                                error : function(errMessage) {
+                                    //alert("errMessage:"+JSON.stringify(errMessage));                         
+                                }
+                            });
+                        }
+                   }
+              });
+          }
+        
+        
+         function concern_su(id){            
+               appcan.request.ajax({
+                    url :api+'/api/user/sellerAdd',
+                    type : 'post',
+                    dataType : 'json',
+                    data : {
+                         userId: userId,//"564f05aa88eb79982c4bf2ae",
+                         sellerId: id
+                    },
+                    success : function(data) { 
+                          if(data.status == 0){
+                              uexWindow.toast("0", "5", data.msg, "2000");                            
+                          }
+                          if(data.status==1){
+                              //alert("success");
+                              $("#user").empty();
+                              var chtml="";
+                               chtml+='<div class="ub ub-ac ub-pc ulev-3 concern1" onclick="cancle('+"'"+id+"'"+');" >'
+                                            +'已关注'
+                                        +'</div>';                                       
+                               $("#user").append(chtml);   
+                               uexWindow.evaluatePopoverScript("my", "content", "showMyData()");                             
+                          }           
+                    },
+                    error : function(errMessage) {
+                        //alert("errMessage:"+JSON.stringify(errMessage));                         
+                    }
+                });
+        }       
+        var statustime=0; 
+        function DownCount(){ 
+            var today=new Date();
+            now=parseInt(today.getTime()/1000);
+            var over=appcan.locStorage.getVal("over");
+            var overtime=moment(over, 'YYYY-MM-DDTHH:mm:ss.sssZ');
+            var deadline=overtime.unix();  
+            var minus=deadline-now;
+            if(statustime==0){
+                appcan.locStorage.setVal("minusMy",minus);           
+                //uexWindow.evaluateScript("detail",0,'status();');
+                status();
+                statustime++;
+            }
+           if(minus>0){                    
+                 $("#time").html('<div style="color:#ADADAD">剩余</div><div class="ub ub-ac ub-pc time" id="hour" style="margin-left: 0.5em"></div>：<div class="ub ub-ac ub-pc time" id="minute"></div>：<div class="ub ub-ac ub-pc time" id="second"></div>');  
+                 timechange(minus);            
+           }else{
+               $("#time").html('<div style="color:#F1F1F1;background-color:#B0B5B6;padding:.3em .7em;border-radius: .3em;font-size: 1em; ">已经结束</div>');
+           }
+            
+            window.setTimeout("DownCount()",1000);
+        }        
+        function timechange(minus){
+            CSecond=minus%60;
+            CMinute=parseInt(minus%3600/60);
+            CHour=parseInt(minus/3600);
+            if(CMinute<10)
+            {
+                CMinute="0"+CMinute;
+            }
+            if(CHour<10)
+            {
+                CHour="0"+CHour;
+            }
+            if(CSecond<10)
+            {
+                CSecond="0"+CSecond;
+            }  
+            $("#hour").html(CHour);
+            $("#minute").html(CMinute);
+            $("#second").html(CSecond); 
+        }  
+        function openscene(id){
+             appcan.locStorage.setVal("scene_id", id);
+             appcan.window.open("scene","scene.html",10);
+        }
+        function showslider(){
+            var w=screen.availWidth;
+            // var h=parseInt(w*2/3);  
+            var h=w; 
+            uexScrollPicture.createNewScrollPicture('{"interval":"3000","anchor":["0","0"],"height":"'+h+'","width":"'+w+'","urls":['+arr+'],"viewId":"'+detail_id+'"}');
+            uexScrollPicture.startAutoScroll('{"viewId":"'+detail_id+'"}');       
+        }
+      appcan.button("#buyQ", "btn-act", function() { 
+          var minusMy=appcan.locStorage.getVal("minusMy");  
+          if(userId==null){          
+                appcan.window.open("login","../login.html",16);
+            }else if(minusMy<0){
+                var alertcontent="淘现场已经结束！";
+                appcan.locStorage.setVal("alertcontent",alertcontent);
+                appcan.frame.open("alertPop","alertPop.html");
+            }else{  
+                 $("#buy,#consult").toggleClass("uhide");
+                 $("#inputtext").focus(); 
+                 uexWindow.showSoftKeyboard();           
+            } 
+        })
+        
+         function hide(){
+           setTimeout(function(){ 
+               $("#buy,#consult").toggleClass("uhide");
+               },200);
+         }
+         
+          function openShoping(){
+            if(userId!=null){              
+                appcan.window.open('shopping','shopping.html',10);
+            } else{            
+                appcan.window.open("login","../login.html",16);
+            } 
+        }
+       function sendConsult(){           
+            $(".send").css("background-color","#17a0c7");
+            var content= $("#inputtext").val();
+            console.log("userId:"+userId+",itemId:"+detail_id+",content:"+content);
+            appcan.request.ajax({
+                url :api+'/api/consult/add',
+                type : 'post',
+                dataType : 'json',
+                data : {
+                    userId:userId,
+                    itemId:detail_id,
+                    content:content,
+                    sellerId:sellerId
+                },
+                success : function(data) {
+                    if(data.status==1){
+                        uexWindow.toast("0", "5", data.msg, "2000");
+                        consultant();
+                    }if(data.status==0){
+                        uexWindow.toast("0", "5", data.msg, "2000");
+                    }
+                },
+                error : function(errMessage) {
+                    //alert("errMessage:"+JSON.stringify(errMessage));                         
+                }
+            });       
+        }
+        var flag=true;
+        function addcart() {  
+            if(userId==null){
+                appcan.window.open("login","../login.html");
+            }else if(userId==sellerId){
+                //alert("不能购买自己发布的商品！");
+                var alertcontent="不能购买自己发布的商品！";
+                appcan.locStorage.setVal("alertcontent",alertcontent);
+                appcan.frame.open("alertPop","alertPop.html");
+                return;
+            }else{  
+                // alert("ss");  
+               if(flag){                   
+                   $("#addcart").css("background-color","#17a0c7");  
+                   flag=false;    
+                   appcan.request.ajax({
+                        url :api+'/api/cart/addItem',
+                        type : 'POST',
+                        dataType : 'json',
+                        data : {
+                             "userId": userId,
+                             "items": {"itemId":detail_id}
+                        },
+                        success : function(data) {
+                              if(data.status == 1){
+                                 uexWindow.toast("0", "5", "添加成功", "2000");
+                                 uexWindow.evaluatePopoverScript("cart", "content", "shoppingTrolley()");
+                                 $("#addcart").css("background-color","#00C1F9");
+                                 flag=true;
+                              }  
+                              else{                          
+                                  uexWindow.toast("0", "5", "添加失败", "2000");
+                                  $("#addcart").css("background-color","#00C1F9");
+                                  flag=true;
+                              }                
+                        },
+                        error : function(errMessage) {
+                            //alert("errMessage:"+JSON.stringify(errMessage)); 
+                            $("#addcart").css("background-color","#00C1F9");
+                            flag=true;                        
+                        }
+                    }) 
+                } 
+            }                
+        }        
+         function status(){
+             var minusMy=appcan.locStorage.getVal("minusMy");                    
+             var leftCount=appcan.locStorage.getVal("leftCount");  
+             var offShelf=appcan.locStorage.getVal("offShelf"); 
+             // alert(offShelf);  
+             var changehtml="";                    
+            if(minusMy<0){
+                changehtml='<div class="ub ub-ac ub-pc over1">已结束</div>'; 
+            }else if(offShelf=='true'){
+                changehtml='<div class="ub ub-ac ub-pc over1">已下架</div>'; 
+            }else if(leftCount==0){
+                changehtml='<div class="ub ub-ac ub-pc over1">已售罄</div>';    
+            }else{
+                changehtml='<div class="ub ub-ac ub-pc addcart" id="addcart" onclick="addcart();">添加购物车</div>'; 
+            }
+            $("#detailstatus").html(changehtml);
+        }
+
+</script>
+</html>

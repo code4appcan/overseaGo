@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+    </head>
+
+    <body class="um-vp" style="background:#000;" ontouchstart  >
+        <div id="content" class="ub-con ub-img" style="background-color: rgba(0,0,0,1)">       
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/main.js"></script>
+    </body>
+    <script>        
+        var mybigimgs=appcan.locStorage.getVal("myimgs");
+        var myimgs=JSON.parse(mybigimgs);
+        var count=appcan.locStorage.getVal("myimgcount");
+        var detail_id=appcan.locStorage.getVal("detail_id");
+        // alert(myimgs+","+count);
+        var myimg=appcan.locStorage.getVal("myimg");
+        var img_url=api+myimg;
+        var len=myimgs.length;
+        var arr = [];
+        //alert(len);
+        appcan.ready(function() {
+            uexScrollPicture.onPicItemClick= function(data){
+                appcan.frame.close('bigimageil');   
+            }  
+            // $("#content").css("background-image","url("+img_url+")");
+            for (var i = 0; i < len; i++) {
+                img_url=api+myimgs[count];
+                arr[i] ='"'+img_url+'"';
+                if(count<len-1){  
+                    count++;
+                }else{
+                    count=0;
+                }                                         
+            }
+            showslider();
+            
+        });
+
+        $("#content").click(function(){   
+            appcan.frame.close('bigimageil');    
+        })
+        
+        function showslider(){
+            var w=screen.availWidth;
+            var h=screen.availHeight;  
+            uexScrollPicture.createNewScrollPicture('{"interval":"3000","anchor":["0","0"],"height":"'+h+'","width":"'+w+'","urls":['+arr+'],"viewId":"'+detail_id+count+'"}');
+        }
+              
+    </script>
+</html>

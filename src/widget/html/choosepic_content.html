@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+         <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+         <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+        <script src="../js/main.js"></script>  
+        
+    </head>
+    <body class="um-vp" ontouchstart style="background-color: rgba(0,0,0,0.5);" >                      
+         <div class="ub ub-ac ub-pc" style="width: 100%;height: 100%">
+            <div class="ub ub-ac ub-pc ub-ver" style="width: 100%;height: 16em;color:#6F6F6F;font-size:.8em;background: #FFFFFF;position: absolute;bottom: 4.5em">
+               <div class="ub ub-ac ub-pc" style="padding: .5em 0;width: 100%;height: 3em;border-bottom: 1px solid #CDCDCD;font-size: 1.1em;color:#000000;" >选择要使用的应用</div>
+               <div class="ub ub-f1" style="margin: .5em 0;">
+                    <div class="ub ub-ac ub-pc ub-ver ub-f1" style="padding:.7em 3em;">                    
+                        <img src="../image/camera.png" id="camera" style="width: 4.5em;" />
+                        <p>拍照</p>
+                    </div>
+                    <div class="ub ub-ac ub-pc ub-ver ub-f1" style="padding:.7em 3em;">                    
+                        <img src="../image/photo.png" id="photo" style="width: 4.5em;" />
+                        <p>相册</p>
+                    </div>
+                </div>
+            </div>  
+            
+             <div class="ub ub-ac ub-pc" style="width: 100%;height: 4.5em;color:#6F6F6F;font-size:.8em;background: #FFFFFF;position: absolute;bottom: 0">
+                <div class="ub ub-ac ub-pc ulev-3" id="cancle" style="width:80%;height: 2.4em;border-radius:.5em;color:#00C1F9;background-color:#FFFFFF;border: 1px solid #00C1F9;">
+                                                取消
+                </div>
+            </div>               
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+    </body>
+    <script>
+    
+        var name= appcan.locStorage.getVal("name");
+        //alert(name);
+        appcan.ready(function() {
+        });
+        appcan.button("#cancle", "btn-act", function() { 
+            appcan.frame.close('choosepic_content');
+        });
+        appcan.button("#camera", "btn-act", function() {
+            uexWindow.evaluatePopoverScript("", "content", "takephoto()");
+            appcan.frame.close('choosepic_content');
+        });
+        appcan.button("#photo", "btn-act", function() {
+             uexWindow.evaluatePopoverScript("", "content", "choosepic()");
+              appcan.frame.close('choosepic_content');
+        });
+        
+    </script>
+</html>

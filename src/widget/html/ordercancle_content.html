@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+         <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+         <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+        <script src="../js/main.js"></script>  
+        <!-- <script src="../js/country.js"></script>   -->
+        
+    </head>
+    <body class="um-vp" ontouchstart style="background-color: rgba(0,0,0,0.5);" >                      
+         <div class="ub ub-ac ub-pc" style="width: 100%;height: 100%">
+            <div class="ub ub-ver" style="width: 18em;height: 14em;color:#6F6F6F;background: #FFFFFF;border: 1px solid #7B7B7B;border-radius: .5em">
+                <div style="height: 3em;width:100%;border-bottom: .1em solid #00C1F9;line-height: 3em;text-align: center;font-size: 1.1em">取消订单</div>
+                <div class="ub uinput6" style="margin: .7em 0 0 1em ;font-size: .9em">
+                                                        取消订单原因：                    
+                </div>
+                 <div class="ub uinput7" style="height: 4.5em;width:80%;padding:.5em 8%;">
+                        <textarea id="explain" placeholder="取消说明： 没有货了、行李已超重等。 "></textarea>
+                    </div>  
+                <div class="ub ub-ac ub-pc"style="padding:.5em 0;">                    
+                     <div class="ub ub-ac ub-pc ulev-3 concern" id="cancle">
+                        取消
+                    </div>
+                    <div class="ub ub-ac ub-pc ulev-3 concern1" id="adjust">
+                       确认               
+                    </div>
+                </div>  
+            </div>               
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+    </body>
+    <script>
+      // var userId='5675551239c3e372278695ae';
+      var userId=appcan.locStorage.getVal("userId");      
+      // var country= appcan.locStorage.getVal('country');              
+        appcan.ready(function() {            
+            // var code=areaList[country].code;  
+            // var unit=areaList[country].currency;
+            // // $("#unit").html(country);
+            // $("#unit").html(unit+"("+code+")");
+        });
+         appcan.button("#cancle", "btn-act", function() { 
+            appcan.frame.close('ordercancle_content');
+        })
+         appcan.button("#adjust", "btn-act", function() {
+            var reason = $("#explain").val();
+            var orderid= appcan.locStorage.getVal('orderid');  
+            // alert(orderid);       
+             appcan.request.ajax({
+                url : api+'/api/order/sellerCancelOrder',
+                type : 'POST',
+                dataType : 'json',
+                data : {
+                    userId:userId,
+                    orderId:orderid,
+                    cancelReason: reason  
+                },
+                success : function(data) {                            
+                    if(data.status == 0){
+                        uexWindow.toast("0", "5", "信息不完整", "2000");
+                    }
+                    if (data.status == 1) {
+                        uexWindow.toast("0", "5", data.msg, "2000");
+                        // uexWindow.evaluateScript('s_firm',0,'window.location.reload();');
+                        uexWindow.evaluateScript('',0,'cancleresult();');   
+                        uexWindow.evaluatePopoverScript("my", "content", "showMyData()"); 
+                        appcan.frame.close('ordercancle_content');
+                    }
+                },
+                error : function(errMessage) {
+                    alert("errMessage"+errMessage);
+                 
+                }
+            });
+        })
+    </script>
+</html>

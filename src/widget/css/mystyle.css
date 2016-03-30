@@ -1,0 +1,59 @@
+.padding1{
+    padding: .8em;
+}
+
+.bgcolor1{
+    background-color: #F2F2F2;
+}
+
+.contact{
+    color:#3D3D3D;
+    line-height: 2em;
+    margin:0 1em;
+}
+.detail_a{
+    color:#808080;
+    line-height: 1.4em;
+    margin-top:.5em;
+    padding: 0 1em;
+}
+
+
+
+.icon1_act {
+    background-image: url('../image/Shopping-active.png');
+    
+}
+.icon1{
+  background-image: url('../image/Shopping.png');  
+}
+.icon2 {
+   background-image: url('../image/search.png');
+   
+}
+.icon2_act{
+   background-image: url('../image/search-act.png'); 
+    
+}
+.icon3{
+    background-image: url('../image/release.png');
+
+}
+.icon3_act{
+     background-image: url('../image/release-act.png');
+}
+.icon4{
+    background-image: url('../image/cart.png');
+}
+.icon4_act{
+    background-image: url('../image/cart-acitive.png');
+}
+.icon5{
+   background-image: url('../image/user.png'); 
+}
+.icon5_act{
+    background-image: url('../image/user-active.png'); 
+}
+ .mar_b{
+            margin-bottom: 0.2em
+        }

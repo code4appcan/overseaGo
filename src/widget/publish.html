@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+         <link rel="stylesheet" href="css/mystyle.css">
+        <link rel="stylesheet" href="css/common.css"> 
+        <link rel="stylesheet" href="css/content.css">
+    </head>
+    
+    <body class="um-vp" style="background:#fff;" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m">
+                <div class="nav-btn" id="nav-left"></div>
+                <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">发布</h1>
+                <div class="nav-btn blue" id="nav-right">下一步</div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l" style="background: #F2F2F2">
+
+            </div>
+            <!--content结束-->
+            <div id="footer" class="uf t-bla ub tab  b-gra2 c-gra2" style="border-top: 1px solid #C9C9C9;background-color: #FFFFFF;padding-top: 0.3em;height:2.5em">
+                <div class="pos_re ub ub-f1">                    
+                    <div id="index" class="ub-f1 ub ub-ver ">
+                        <div class="ub-f1 ub-img5 icon1 mar_b"></div>
+                        <div class="uinn-a13 ulev-4 tx-c act-col" style="color:#7C7C7C">
+                            淘现场
+                        </div>
+                    </div>
+                </div>
+                <div class="pos_re ub ub-f1">                   
+                    <div id="search" class="ub-f1 ub ub-ver">
+                        <div class="ub-f1 ub-img5 icon2 mar_b"></div>
+                        <div class="uinn-a13 ulev-4 ub ub-ac ub-pc " style="color:#7C7C7C"> 
+                            查询
+                        </div>
+                    </div>
+                </div>
+                <div class="pos_re ub ub-f1">                    
+                    <div id="publish" class="ub-f1 ub ub-ver">
+                        <div class="ub-f1 ub-img5 icon3_act mar_b"></div>
+                        <div class="uinn-a13 ulev-4 ub ub-ac ub-pc " style="color:#00C1F9">
+                            发布
+                        </div>
+                    </div>
+                </div>
+                <div class="pos_re ub ub-f1">                   
+                    <div id="cart" class="ub-f1 ub ub-ver ">
+                        <div class="ub-f1 ub-img5 icon4 mar_b"></div>
+                        <div class="uinn-a13 ulev-4  ub ub-ac ub-pc" style="color:#7C7C7C">
+                            购物车
+                        </div>
+                    </div>
+                </div>
+                <div class="pos_re ub ub-f1">                   
+                    <div id="my" class="ub-f1 ub ub-ver ">
+                        <div class="ub-f1 ub-img5 icon5 mar_b"></div>
+                        <div class="uinn-a13 ulev-4 tx-c act-col" style="color:#7C7C7C">
+                            我的
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+        <script src="js/main.js"></script>   
+        <script src="js/country.js"></script>  
+    </body>
+    <script>
+      var userId=appcan.locStorage.getVal("userId");
+        // var userId='5699dce9a5dc79c35cb89678';
+        appcan.ready(function() {
+            // alert("publish"+userId);
+            var titHeight = $('#header').offset().height;
+            appcan.frame.open("content", "publish_content.html", 0, titHeight);
+            window.onorientationchange = window.onresize = function() {
+                appcan.frame.resize("content", 0, titHeight);
+            }
+            uexWindow.evaluateScript('root',0,'precart();');
+            var presstime=0;
+            uexWindow.setReportKey(0, 1);
+            uexWindow.onKeyPressed = function(keyCode) {
+                if (keyCode == 0) { 
+                    //uexWidgetOne.exit(1);
+                    if(presstime==0){
+                       uexWindow.toast("0", "5","再按一次返回键退出！", "3000"); 
+                       presstime=1;
+                    }else{
+                        presstime=1;
+                        uexWidgetOne.exit(0);
+                    }
+                    setTimeout(function() {
+                        presstime=0;
+                    }, 3000); 
+                }
+            } 
+
+        });
+        appcan.button(".nav-btn", "btn-act", function() {
+           var desc = appcan.locStorage.getVal("desc");
+           var h = appcan.locStorage.getVal("hour");
+           var ms = appcan.locStorage.getVal("minute");
+           var backdate=appcan.locStorage.getVal("backdate");       
+           var have_img=appcan.locStorage.getVal("have_img");
+           // alert(desc+","+h+","+ms+","+backdate+","+have_img);   
+            var lat=appcan.locStorage.getVal("lat");
+            var log=appcan.locStorage.getVal("log");
+            // alert(lat+","+log);
+            var country=appcan.locStorage.getVal("country");
+            //var country="英国";
+            var street=appcan.locStorage.getVal("street");
+            street=street.replace(/\s/ig,'');
+            var snumber=appcan.locStorage.getVal("snumber");
+            var locationInfo=street+snumber+'号';
+            // alert(locationInfo);
+            var area = areaList[country].area;
+            var code=areaList[country].code;  
+            var unit=areaList[country].currency;
+            appcan.locStorage.setVal("code",code);
+            appcan.locStorage.setVal("unit",unit);
+            if(have_img=='false'){
+                uexWindow.toast(0, 5, "请上传图片", 3000);
+            }else if((backdate=='')||(desc=='')||(h=='')||(ms=='')){
+                uexWindow.toast(0, 5, "信息不完整", 3000);
+            }else{
+                var thumb=appcan.locStorage.getVal("thumb");
+                var image=appcan.locStorage.getVal("image"); 
+                // alert(thumb+", "+image); 
+                var uploadHttp=api + '/api/shoplive/add?userId='+userId+'&desc='
+                           +desc+'&endTime='+h+'-'+ms+'&backTime='+backdate+'&latlng='
+                           +lat+','+log+'&location_info='+locationInfo+'&country='+country+'&area='+area+'&image='+image+'&thumb='+thumb;
+                // alert(uploadHttp);
+                 appcan.request.ajax({
+                    url :encodeURI(uploadHttp),
+                    type : 'get',
+                    dataType : 'json',
+                    success : function(data, status) {
+                        if (data.status == 1) {
+                           appcan.window.openToast('创建成功', 1500, 5, 0);
+                           var shoplive_id=data.id;
+                           appcan.locStorage.setVal("shoplive_id",shoplive_id);  
+                           appcan.window.open('share2', 'html/share2.html', 10);                           
+                           uexWindow.evaluatePopoverScript("", "content", "remove()");  
+                           appcan.locStorage.remove("desc"); 
+                           appcan.locStorage.remove("hour");
+                           appcan.locStorage.remove("minute");
+                           appcan.locStorage.remove("backdate"); 
+                           appcan.locStorage.remove("have_img");
+                           appcan.locStorage.remove("thumb");
+                           appcan.locStorage.remove("image");  
+                        } else {
+                            appcan.window.openToast('创建失败', 1500, 5, 0);         
+                        }
+                    },
+                    error : function(err) {
+                        //appcan.window.openToast('创建失败', 1500, 5, 0);
+                        uexWindow.toast("0", "5", "网络信号差", "2000");  
+                     }   
+                })
+            }
+        })
+        
+        appcan.button("#index", "btn-act", function() {
+           uexWindow.open("root","0","index.html","0","0","0","0","200");
+        })
+        appcan.button("#search", "btn-act", function() {
+           uexWindow.open("search","0","search.html","0","0","0","0","200");
+        })
+        appcan.button("#cart", "btn-act", function() {
+           uexWindow.open("cart","0","cart.html","0","0","0","0","200");
+        })
+        appcan.button("#my", "btn-act", function() {
+           uexWindow.open("my","0","my.html","0","0","0","0","200");
+        })
+    </script>
+</html>

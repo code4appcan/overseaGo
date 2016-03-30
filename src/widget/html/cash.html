@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+         <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+         <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../css/content.css">
+        <link rel="stylesheet" href="../css/common.css">
+        <script src="../js/main.js"></script>
+        
+    </head>
+    <body class="um-vp" style="background:#fff;" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh ub bc-head-m">
+                <div class="nav-btn blue" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <h1 class="ut  bc-text ub-f1 ulev-3 ut-s tx-c" tabindex="0">提现</h1>
+                <div class="nav-btn blue" id="nav-right"></div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l " style="background-color: #FFFFFF;padding: 4em 1.5em;">  
+                <div class="ub ub-ac ub-pc ub-ver" style="font-size: 1.1em;">
+                    <div class="ub uinput14" id="count" style="color: #898989;height: 2em;margin-top: 1em">
+                    </div>
+                    <div class="ub uinput14" id="countname" style="color: #898989;height: 2em;margin-top: 1em">
+                    </div>
+                    <div class="ub ub-ac ub-pc uinput11" style="color: #898989;height: 2em;margin-top: 1em">
+                        &nbsp;&nbsp;提现金额：&nbsp;&nbsp;<input type="number" id="money" />
+                    </div>
+                    <div class="ub ub-ac ub-pc uhide" id="alert" style="color: #E73309;height: 2em;margin-top: .5em"></div>
+                     <div class="ub ub-ac ub-pc ub-ver ub-f1" style="background: #FFFFFF;margin:1.5em .7em; ">                    
+                        <!-- <div class="ub" style="line-height: 2.5em;">提现金额：<p style="color: #FF2266" id="integarl">200</p>元</div> -->
+                        <p style="color: #00C1F9;font-size: .8em;line-height: 1.5em;">温馨提示：为确保资金安全，该支付宝必须通过实名认证，7个工作日内系统会将资金打入指定支付宝内</p>
+                    </div>
+                    <div id="cash" class="ub" style="background: #00C1F9;color: #FFFFFF;padding: .6em 2.5em;border-radius: .2em;margin-top: .5em" onclick="cash()">
+                        提现                
+                    </div>
+                </div>   
+            </div>        
+            <!--content结束-->
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/main.js"></script>
+        <script src="../js/appcan.control.js"></script>
+    </body>
+    <script>
+    // var userId="569c446fee5a7d392390719c";
+    var userId=appcan.locStorage.getVal("userId");
+    var money=appcan.locStorage.getVal("money");
+    var count;
+    var countname;
+        appcan.ready(function() {
+            appcan.request.ajax({//564f05aa88eb79982c4bf2ae
+                url :api+'/api/user/me/'+userId,
+                type : 'GET',
+                dataType : 'json',
+                success : function(data) {
+                    if(data.status==1){
+                       if(data.data.user.account) { 
+                           var chtml='';
+                           var nhtml='';
+                           count=data.data.user.account;
+                           countname=data.data.user.accountname;
+                           chtml+=' 支付宝账户：<span style="color: #3D3D3D">'+count+'</span>';
+                           nhtml+=' 支付宝认证姓名：<span style="color: #3D3D3D">'+countname+'</span>';
+                            $("#count").html(chtml);
+                            $("#countname").html(nhtml);
+                       }else{
+                          $("#submit").removeClass('uhide');                           
+                       }                  
+                    }         
+                },
+                error : function(errMessage) {
+                    //alert("errMessage:"+JSON.stringify(errMessage));                         
+                }
+            }); 
+
+        });
+        appcan.button(".nav-btn", "btn-act", function() {
+            appcan.window.close(-1);
+        })
+        $("#money").blur(function(){    
+             var num=$("#money").val();
+             if(num<=0){
+                 $("#alert").removeClass("uhide");
+                 $("#alert").html("提现金额必须为正数！");
+                 $("#money").val(""); 
+             }if(num>money){
+                 $("#alert").removeClass("uhide");
+                 $("#alert").html("提现金额不能超过账号余额！");
+                 $("#money").val(""); 
+            }  
+        });         
+        $("#money").focus(function(){ 
+             $("#alert").addClass("uhide");  
+         });
+        function cash(){   
+             var num=$("#money").val();        
+            // alert(num+","+count+","+countname);
+            // var obj = {
+                    // "userId":userId,
+                    // "alipayAccount":count,
+                    // "alipayNickname":countname,
+                    // "amount": money
+            // };
+           // alert(JSON.stringify(obj));
+             appcan.request.ajax({
+                url :api+'/api/trans/withdraw',
+                type : 'post',
+                dataType : 'json',
+                //contentType : 'application/json',
+                data :{
+                    "userId":userId,
+                    "alipayAccount":count,
+                    "alipayNickname":countname,
+                    "amount": num
+                },
+                success : function(data) {
+                  if(data.status == 1){
+                     uexWindow.toast("1","5",data.msg,-1);
+                     appcan.window.close(-1);
+                  }  
+                },
+                error : function(errMessage) {
+                    //alert("errMessage:"+JSON.stringify(errMessage));                         
+                }
+            });
+        }
+        
+    </script>
+</html>
